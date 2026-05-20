@@ -48,7 +48,6 @@ O **Circuito Terê Verde** é um website moderno e responsivo que:
 | Estilização | CSS Modules |
 | Estado | useState + hooks customizados |
 | Dados | Mock JSON local |
-| Deploy | Vercel |
 
 ---
 
