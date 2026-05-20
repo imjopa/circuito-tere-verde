@@ -1,0 +1,119 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--green-700);
+  box-shadow: var(--shadow-md);
+}
+
+.nav {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  text-decoration: none;
+}
+.brandIcon { font-size: 1.25rem; }
+.brandName {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--white);
+  white-space: nowrap;
+}
+
+.links {
+  display: flex;
+  list-style: none;
+  gap: 1.25rem;
+  margin-left: auto;
+}
+
+.links a {
+  font-size: 0.875rem;
+  color: rgba(255,255,255,0.75);
+  text-decoration: none;
+  transition: color var(--transition);
+  padding-bottom: 2px;
+}
+
+.links a:hover { color: var(--green-300); }
+.links a.active {
+  color: var(--green-400);
+  border-bottom: 2px solid var(--green-400);
+}
+
+.adminBtn {
+  background: var(--green-400);
+  color: var(--green-900);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0.4rem 1rem;
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  transition: background var(--transition);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.adminBtn:hover { background: var(--green-300); }
+
+.menuBtn {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--white);
+  font-size: 1.25rem;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.mobileMenu {
+  background: var(--green-800);
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem 1.5rem 1rem;
+  gap: 0;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.mobileLink {
+  color: rgba(255,255,255,0.8);
+  font-size: 0.9375rem;
+  padding: 0.75rem 0;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  transition: color var(--transition);
+}
+.mobileLink:hover { color: var(--green-400); }
+.mobileLinkActive { color: var(--green-400); }
+
+.mobileAdminBtn {
+  display: inline-block;
+  margin-top: 0.875rem;
+  background: var(--green-400);
+  color: var(--green-900);
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.5rem 1.25rem;
+  border-radius: var(--radius-full);
+  text-decoration: none;
+  text-align: center;
+  transition: background var(--transition);
+}
+.mobileAdminBtn:hover { background: var(--green-300); }
+
+@media (max-width: 768px) {
+  .links  { display: none; }
+  .adminBtn { display: none; }
+  .menuBtn { display: flex; align-items: center; justify-content: center; }
+}

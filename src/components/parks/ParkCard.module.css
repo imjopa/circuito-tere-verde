@@ -1,0 +1,83 @@
+.card {
+  background: var(--white);
+  border: 1px solid var(--gray-100);
+  border-top: 4px solid var(--accent, var(--green-700));
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.type {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--gray-500);
+}
+
+.statusDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green-400);
+}
+
+.name {
+  font-size: 1.125rem;
+  color: var(--green-800);
+  margin-bottom: 0.5rem;
+}
+
+.description {
+  font-size: 0.8125rem;
+  color: var(--gray-500);
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.metaList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background: var(--green-50);
+  border-radius: var(--radius-md);
+}
+
+.metaList li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8125rem;
+}
+
+.metaLabel {
+  color: var(--gray-500);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  background: var(--green-100);
+  color: var(--green-800);
+  font-size: 0.6875rem;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+}

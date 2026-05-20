@@ -1,0 +1,61 @@
+.page { min-height: 100vh; }
+.pageHeader { background: var(--green-700); padding: 2rem 1.5rem; }
+.pageHeaderContent { max-width: 1200px; margin: 0 auto; }
+.pageTitle    { font-size: 1.75rem; color: var(--white); }
+.pageSubtitle { font-size: 0.875rem; color: rgba(255,255,255,0.65); margin-top: 4px; }
+
+.main { max-width: 1200px; margin: 0 auto; padding: 1.75rem 1.5rem; }
+
+.filterRow { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.filterLabel { font-size: 0.8125rem; color: var(--gray-500); white-space: nowrap; }
+.filterChips { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+.chip {
+  background: var(--white); border: 1px solid var(--gray-300); color: var(--gray-500);
+  font-size: 0.8125rem; padding: 5px 14px; border-radius: var(--radius-full);
+  transition: all var(--transition); cursor: pointer;
+}
+.chip:hover { border-color: var(--green-600); color: var(--green-700); }
+.chipActive  { background: var(--green-700); border-color: var(--green-700); color: var(--white); }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.25rem; }
+
+.card { background: var(--white); border: 1px solid var(--gray-100); border-radius: var(--radius-lg); overflow: hidden; transition: box-shadow var(--transition), transform var(--transition); }
+.card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+
+.cardHeader {
+  padding: 1.25rem 1.25rem 0.75rem;
+  background: var(--green-700);
+  position: relative;
+}
+.cardHeader[data-park="tres-picos"]           { background: linear-gradient(135deg, #0f5c44, #1a6b5a); }
+.cardHeader[data-park="serra-dos-orgaos"]     { background: linear-gradient(135deg, #0a3d2e, #0f5c44); }
+.cardHeader[data-park="montanhas-teresopolis"]{ background: linear-gradient(135deg, #1a6b5a, #2a9d7f); }
+
+.cardBadges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 0.75rem; }
+
+.accessBadge { font-size: 0.6875rem; font-weight: 500; padding: 3px 10px; border-radius: var(--radius-full); }
+.easy   { background: #dcfce7; color: #14532d; }
+.medium { background: #fef9c3; color: #713f12; }
+.hard   { background: #fee2e2; color: #7f1d1d; }
+
+.bathingBadge { font-size: 0.6875rem; padding: 3px 10px; border-radius: var(--radius-full); background: rgba(255,255,255,0.2); color: var(--white); }
+
+.cardName { font-size: 1.125rem; color: var(--white); }
+.cardPark { font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-top: 2px; }
+
+.cardBody { padding: 1rem 1.25rem; display: flex; flex-direction: column; gap: 0.875rem; }
+
+.metaRow { display: flex; gap: 1rem; }
+.metaItem { font-size: 0.8125rem; color: var(--gray-500); display: flex; align-items: center; gap: 4px; }
+
+.description { font-size: 0.875rem; color: var(--gray-600); line-height: 1.6; }
+
+.infoBlock {}
+.infoLabel { font-size: 0.6875rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-500); margin-bottom: 2px; }
+.infoText  { font-size: 0.8125rem; color: var(--gray-600); line-height: 1.5; }
+
+.tips {}
+.tipsLabel { font-size: 0.6875rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--gray-500); margin-bottom: 4px; }
+.tipsList { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+.tipItem   { font-size: 0.8125rem; color: var(--gray-600); }
