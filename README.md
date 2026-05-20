@@ -34,7 +34,6 @@ O **Circuito Terê Verde** é um website moderno e responsivo que:
 | Tela | Descrição |
 |------|-----------|
 | **Home** | Landing page com hero, busca, cards dos 3 parques, acesso rápido e eventos |
-| **Trilhas** | Listagem com filtros por dificuldade e parque, busca textual e cards detalhados |
 | **Admin — Login** | Autenticação segura com proteção de rotas |
 | **Admin — Dashboard** | Métricas de acesso, gestão de trilhas e gráfico de visitantes |
 
