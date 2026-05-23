@@ -57,9 +57,17 @@
   margin-bottom: 2rem;
 }
 
-.form { display: flex; flex-direction: column; gap: 1rem; }
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
 
-.field { display: flex; flex-direction: column; gap: 6px; }
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
 
 .label {
   font-size: 0.8125rem;
@@ -75,12 +83,14 @@
   font-size: 0.9375rem;
   color: var(--gray-900);
   outline: none;
-  transition: border-color var(--transition), box-shadow var(--transition);
+  transition:
+    border-color var(--transition),
+    box-shadow var(--transition);
 }
 
 .input:focus {
   border-color: var(--green-600);
-  box-shadow: 0 0 0 3px rgba(42,157,127,0.12);
+  box-shadow: 0 0 0 3px rgba(42, 157, 127, 0.12);
 }
 
 .errorMessage {
@@ -100,11 +110,18 @@
   padding: 0.75rem;
   border-radius: var(--radius-md);
   margin-top: 0.5rem;
-  transition: background var(--transition), opacity var(--transition);
+  transition:
+    background var(--transition),
+    opacity var(--transition);
 }
 
-.submitBtn:hover:not(:disabled) { background: var(--green-800); }
-.submitBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+.submitBtn:hover:not(:disabled) {
+  background: var(--green-800);
+}
+.submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
 .hint {
   font-size: 0.75rem;

@@ -9,16 +9,31 @@
 }
 
 /* Aberta — verde */
-.open         { background: #dcfce7; color: #14532d; }
+.open {
+  background: #dcfce7;
+  color: #14532d;
+}
 
 /* Fechada — vermelho */
-.closed       { background: #fee2e2; color: #7f1d1d; }
+.closed {
+  background: #fee2e2;
+  color: #7f1d1d;
+}
 
 /* Manutenção — amarelo */
-.maintenance  { background: #fef9c3; color: #713f12; }
+.maintenance {
+  background: #fef9c3;
+  color: #713f12;
+}
 
 /* Risco Climático — laranja */
-.climateRisk  { background: #ffedd5; color: #7c2d12; }
+.climateRisk {
+  background: #ffedd5;
+  color: #7c2d12;
+}
 
 /* Lotada — azul */
-.full         { background: #dbeafe; color: #1e3a5f; }
+.full {
+  background: #dbeafe;
+  color: #1e3a5f;
+}

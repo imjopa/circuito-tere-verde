@@ -3,7 +3,9 @@
   border: 1px solid var(--gray-100);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  transition: box-shadow var(--transition), transform var(--transition);
+  transition:
+    box-shadow var(--transition),
+    transform var(--transition);
 }
 
 .card:hover {
@@ -21,9 +23,15 @@
   background: var(--green-700);
 }
 
-.imageArea[data-park="serra-dos-orgaos"] { background: linear-gradient(135deg, #0a3d2e, #0f5c44); }
-.imageArea[data-park="tres-picos"]       { background: linear-gradient(135deg, #0f5c44, #1a6b5a); }
-.imageArea[data-park="montanhas-teresopolis"] { background: linear-gradient(135deg, #1a6b5a, #2a9d7f); }
+.imageArea[data-park="serra-dos-orgaos"] {
+  background: linear-gradient(135deg, #0a3d2e, #0f5c44);
+}
+.imageArea[data-park="tres-picos"] {
+  background: linear-gradient(135deg, #0f5c44, #1a6b5a);
+}
+.imageArea[data-park="montanhas-teresopolis"] {
+  background: linear-gradient(135deg, #1a6b5a, #2a9d7f);
+}
 
 .imageArea > :first-child {
   position: absolute;
@@ -55,7 +63,9 @@
   color: var(--gray-500);
 }
 
-.metaIcon { font-size: 0.75rem; }
+.metaIcon {
+  font-size: 0.75rem;
+}
 
 .footer {
   display: flex;

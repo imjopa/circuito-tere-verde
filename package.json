@@ -1,11 +1,17 @@
 {
   "name": "circuito-tere-verde",
-  "private": true,
   "version": "1.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
     "build": "vite build",
+    "dev": "vite",
+    "check": "npm run format && npm run lint && npm run typecheck",
+    "typecheck": "tsc",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "format": "oxfmt",
+    "format:fix": "oxfmt --fix",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -17,6 +23,10 @@
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "@vitejs/plugin-react": "^4.2.0",
+    "oxfmt": "^0.51.0",
+    "oxlint": "^1.66.0",
+    "typescript": "^6.0.3",
     "vite": "^5.0.0"
-  }
+  },
+  "packageManager": "npm@11.15.0"
 }

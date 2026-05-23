@@ -20,8 +20,12 @@
   color: var(--gray-500);
 }
 
-.group { border-bottom: 1px solid var(--gray-100); }
-.group:last-of-type { border-bottom: none; }
+.group {
+  border-bottom: 1px solid var(--gray-100);
+}
+.group:last-of-type {
+  border-bottom: none;
+}
 
 .groupLabel {
   display: block;
@@ -45,12 +49,25 @@
   text-align: left;
   transition: background var(--transition);
 }
-.resultItem:hover { background: var(--green-50); }
+.resultItem:hover {
+  background: var(--green-50);
+}
 
-.resultIcon { font-size: 1.125rem; flex-shrink: 0; }
+.resultIcon {
+  font-size: 1.125rem;
+  flex-shrink: 0;
+}
 
-.resultName { font-size: 0.875rem; font-weight: 500; color: var(--gray-900); }
-.resultMeta { font-size: 0.75rem; color: var(--gray-500); margin-top: 1px; }
+.resultName {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--gray-900);
+}
+.resultMeta {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  margin-top: 1px;
+}
 
 .footer {
   padding: 0.5rem 1rem;

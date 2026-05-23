@@ -1,14 +1,15 @@
 # 🌿 Circuito Terê Verde
+
 > Plataforma digital unificada de turismo consciente para os parques naturais de Teresópolis, RJ.
 
 ---
 
 ## 👥 Integrantes
 
-| Nome | RA |
-|------|----|
-| João Paulo da Costa Rosa | 06007776 |
-| Leonardo Gurgel | XXXXXXXX |
+| Nome                            | Matrícula |
+| ------------------------------- | --------- |
+| João Paulo da Costa Rosa        | 06007776  |
+| Leonardo Gurgel Maciel Ferreira | 06010973  |
 
 ---
 
@@ -31,23 +32,23 @@ O **Circuito Terê Verde** é um website moderno e responsivo que:
 
 ### Telas do MVP
 
-| Tela | Descrição |
-|------|-----------|
-| **Home** | Landing page com hero, busca, cards dos 3 parques, acesso rápido e eventos |
-| **Admin — Login** | Autenticação segura com proteção de rotas |
-| **Admin — Dashboard** | Métricas de acesso, gestão de trilhas e gráfico de visitantes |
+| Tela                  | Descrição                                                                  |
+| --------------------- | -------------------------------------------------------------------------- |
+| **Home**              | Landing page com hero, busca, cards dos 3 parques, acesso rápido e eventos |
+| **Admin — Login**     | Autenticação segura com proteção de rotas                                  |
+| **Admin — Dashboard** | Métricas de acesso, gestão de trilhas e gráfico de visitantes              |
 
 ---
 
 ## 🛠️ Tecnologias
 
-| Camada | Tecnologia |
-|--------|-----------|
-| Framework | React 18 + Vite 5 |
-| Roteamento | React Router v6 |
-| Estilização | CSS Modules |
-| Estado | useState + hooks customizados |
-| Dados | Mock JSON local |
+| Camada      | Tecnologia                    |
+| ----------- | ----------------------------- |
+| Framework   | React 18 + Vite 5             |
+| Roteamento  | React Router v6               |
+| Estilização | CSS Modules                   |
+| Estado      | useState + hooks customizados |
+| Dados       | Mock JSON local               |
 
 ---
 

@@ -1,8 +1,13 @@
-import StatusBadge from '../ui/StatusBadge'
-import DifficultyBadge from '../ui/DifficultyBadge'
-import styles from './TrailCard.module.css'
+import StatusBadge from "../ui/StatusBadge";
+import DifficultyBadge from "../ui/DifficultyBadge";
+import styles from "./TrailCard.module.css";
+import type { Trail } from "../../data/trails";
 
-export default function TrailCard({ trail }) {
+export interface TrailCardProps {
+  trail: Trail;
+}
+
+export default function TrailCard({ trail }: TrailCardProps) {
   return (
     <article className={styles.card}>
       <div className={styles.imageArea} data-park={trail.parkId}>
@@ -31,10 +36,8 @@ export default function TrailCard({ trail }) {
           <span className={styles.parkName}>{trail.parkName}</span>
         </div>
 
-        {trail.conditions && (
-          <p className={styles.conditions}>{trail.conditions}</p>
-        )}
+        {trail.conditions && <p className={styles.conditions}>{trail.conditions}</p>}
       </div>
     </article>
-  )
+  );
 }

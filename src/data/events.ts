@@ -1,0 +1,113 @@
+export type ParkEventCategory = "guided_trail" | "education" | "volunteer" | "workshop";
+export type ParkEventStatus = "open" | "few_spots" | "full" | "cancelled";
+
+export interface ParkEvent {
+  id: string;
+  title: string;
+  park: string;
+  parkId: string;
+  date: string;
+  time: string;
+  duration: string;
+  category: ParkEventCategory;
+  categoryLabel: string;
+  status: ParkEventStatus;
+  spots: number;
+  spotsLeft: number;
+  description: string;
+  requirements: string[];
+  price: string;
+}
+
+export const events: ParkEvent[] = [
+  {
+    id: "ev-001",
+    title: "Trilha Guiada — Pedra do Sino",
+    park: "Serra dos Órgãos",
+    parkId: "serra-dos-orgaos",
+    date: "2026-06-14",
+    time: "07:00",
+    duration: "8h",
+    category: "guided_trail",
+    categoryLabel: "Trilha Guiada",
+    status: "open",
+    spots: 12,
+    spotsLeft: 4,
+    description:
+      "Trilha guiada até o cume da Pedra do Sino com guia credenciado pelo ICMBio. Inclui briefing de segurança, kit de primeiros socorros e suporte durante todo o percurso.",
+    requirements: ["Preparo físico intermediário", "Calçado apropriado", "Água (mínimo 2L)"],
+    price: "R$ 80,00 por pessoa",
+  },
+  {
+    id: "ev-002",
+    title: "Educação Ambiental — Fauna da Mata Atlântica",
+    park: "Três Picos",
+    parkId: "tres-picos",
+    date: "2026-06-21",
+    time: "09:00",
+    duration: "3h",
+    category: "education",
+    categoryLabel: "Educativo",
+    status: "open",
+    spots: 30,
+    spotsLeft: 18,
+    description:
+      "Atividade educativa conduzida por biólogos do parque. Aborda a biodiversidade local, espécies ameaçadas e a importância da conservação da Mata Atlântica.",
+    requirements: ["Qualquer idade", "Roupa confortável"],
+    price: "Gratuito",
+  },
+  {
+    id: "ev-003",
+    title: "Mutirão de Limpeza — Circuito Verde",
+    park: "Montanhas de Teresópolis",
+    parkId: "montanhas-teresopolis",
+    date: "2026-07-05",
+    time: "08:00",
+    duration: "4h",
+    category: "volunteer",
+    categoryLabel: "Voluntário",
+    status: "open",
+    spots: 50,
+    spotsLeft: 23,
+    description:
+      "Ação voluntária de coleta de resíduos nas trilhas e entorno do parque. Material de coleta fornecido pela organização. Certificado de participação ao final.",
+    requirements: ["Luvas de proteção", "Calçado fechado"],
+    price: "Gratuito",
+  },
+  {
+    id: "ev-004",
+    title: "Observação Noturna de Fauna",
+    park: "Serra dos Órgãos",
+    parkId: "serra-dos-orgaos",
+    date: "2026-07-12",
+    time: "19:00",
+    duration: "3h",
+    category: "education",
+    categoryLabel: "Educativo",
+    status: "few_spots",
+    spots: 15,
+    spotsLeft: 2,
+    description:
+      "Atividade noturna para observação de animais de hábitos noturnos nativos da Serra dos Órgãos. Conduzida por zoólogo especialista com equipamento de visão noturna.",
+    requirements: ["Maiores de 14 anos", "Lanterna", "Roupa escura e quente"],
+    price: "R$ 60,00 por pessoa",
+  },
+  {
+    id: "ev-005",
+    title: "Workshop de Fotografia na Natureza",
+    park: "Três Picos",
+    parkId: "tres-picos",
+    date: "2026-07-19",
+    time: "06:30",
+    duration: "5h",
+    category: "workshop",
+    categoryLabel: "Workshop",
+    status: "open",
+    spots: 10,
+    spotsLeft: 7,
+    description:
+      "Workshop prático de fotografia de natureza e paisagem. Saída ao amanhecer para capturar a neblina da serra. Instrutor com experiência em fotografia de natureza.",
+    requirements: ["Câmera fotográfica (qualquer)", "Disposição para caminhada leve"],
+    price: "R$ 120,00 por pessoa",
+  },
+];

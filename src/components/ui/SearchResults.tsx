@@ -1,44 +1,47 @@
-import { useNavigate } from 'react-router-dom'
-import styles from './SearchResults.module.css'
+import { useNavigate } from "react-router-dom";
+import styles from "./SearchResults.module.css";
+import type { Trail } from "../../data/trails";
+import type { Waterfall } from "../../data/waterfalls";
+import type { Park } from "../../data/parks";
 
-/**
- * SearchResults — dropdown que aparece sob a barra de busca na Home.
- * Exibe resultados agrupados por categoria.
- */
-export default function SearchResults({ results, onClose }) {
-  const navigate = useNavigate()
+export interface SearchResultsProps {
+  results: {
+    parks: Park[];
+    trails: Trail[];
+    waterfalls: Waterfall[];
+    total: number;
+  };
+  onClose: () => void;
+}
+
+export default function SearchResults({ results, onClose }: SearchResultsProps) {
+  const navigate = useNavigate();
 
   if (!results || results.total === 0) {
     return (
       <div className={styles.dropdown} role="status" aria-live="polite">
         <p className={styles.empty}>Nenhum resultado encontrado.</p>
       </div>
-    )
+    );
   }
 
-  function handleTrailClick() {
-    onClose()
-    navigate('/trilhas')
-  }
+  const handleTrailClick = () => {
+    onClose();
+    navigate("/trilhas");
+  };
 
-  function handleWaterfallClick() {
-    onClose()
-    navigate('/cachoeiras')
-  }
+  const handleWaterfallClick = () => {
+    onClose();
+    navigate("/cachoeiras");
+  };
 
   return (
     <div className={styles.dropdown} role="listbox" aria-label="Resultados da busca">
-
       {results.parks.length > 0 && (
         <div className={styles.group}>
           <span className={styles.groupLabel}>Parques</span>
-          {results.parks.map(park => (
-            <button
-              key={park.id}
-              className={styles.resultItem}
-              onClick={onClose}
-              role="option"
-            >
+          {results.parks.map((park) => (
+            <button key={park.id} className={styles.resultItem} onClick={onClose} role="option">
               <span className={styles.resultIcon}>🏞️</span>
               <div>
                 <p className={styles.resultName}>{park.name}</p>
@@ -52,7 +55,7 @@ export default function SearchResults({ results, onClose }) {
       {results.trails.length > 0 && (
         <div className={styles.group}>
           <span className={styles.groupLabel}>Trilhas</span>
-          {results.trails.map(trail => (
+          {results.trails.map((trail) => (
             <button
               key={trail.id}
               className={styles.resultItem}
@@ -62,7 +65,9 @@ export default function SearchResults({ results, onClose }) {
               <span className={styles.resultIcon}>🥾</span>
               <div>
                 <p className={styles.resultName}>{trail.name}</p>
-                <p className={styles.resultMeta}>{trail.parkName} · {trail.difficultyLabel}</p>
+                <p className={styles.resultMeta}>
+                  {trail.parkName} · {trail.difficulty}
+                </p>
               </div>
             </button>
           ))}
@@ -72,7 +77,7 @@ export default function SearchResults({ results, onClose }) {
       {results.waterfalls.length > 0 && (
         <div className={styles.group}>
           <span className={styles.groupLabel}>Cachoeiras</span>
-          {results.waterfalls.map(wf => (
+          {results.waterfalls.map((wf) => (
             <button
               key={wf.id}
               className={styles.resultItem}
@@ -82,7 +87,9 @@ export default function SearchResults({ results, onClose }) {
               <span className={styles.resultIcon}>💧</span>
               <div>
                 <p className={styles.resultName}>{wf.name}</p>
-                <p className={styles.resultMeta}>{wf.parkName} · {wf.accessLabel}</p>
+                <p className={styles.resultMeta}>
+                  {wf.parkName} · {wf.access}
+                </p>
               </div>
             </button>
           ))}
@@ -90,8 +97,11 @@ export default function SearchResults({ results, onClose }) {
       )}
 
       <div className={styles.footer}>
-        <span>{results.total} resultado{results.total !== 1 ? 's' : ''} encontrado{results.total !== 1 ? 's' : ''}</span>
+        <span>
+          {results.total} resultado{results.total !== 1 ? "s" : ""} encontrado
+          {results.total !== 1 ? "s" : ""}
+        </span>
       </div>
     </div>
-  )
+  );
 }

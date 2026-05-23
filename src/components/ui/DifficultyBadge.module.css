@@ -4,6 +4,15 @@
   padding: 4px 12px;
   border-radius: var(--radius-full);
 }
-.easy   { background: #dcfce7; color: #14532d; }
-.medium { background: #fef9c3; color: #713f12; }
-.hard   { background: #fee2e2; color: #7f1d1d; }
+.easy {
+  background: #dcfce7;
+  color: #14532d;
+}
+.medium {
+  background: #fef9c3;
+  color: #713f12;
+}
+.hard {
+  background: #fee2e2;
+  color: #7f1d1d;
+}

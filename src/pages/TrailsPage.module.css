@@ -1,14 +1,30 @@
-.page { min-height: 100vh; }
+.page {
+  min-height: 100vh;
+}
 
 .pageHeader {
   background: var(--green-700);
   padding: 2rem 1.5rem;
 }
-.pageHeaderContent { max-width: 1200px; margin: 0 auto; }
-.pageTitle { font-size: 1.75rem; color: var(--white); }
-.pageSubtitle { font-size: 0.875rem; color: rgba(255,255,255,0.65); margin-top: 4px; }
+.pageHeaderContent {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.pageTitle {
+  font-size: 1.75rem;
+  color: var(--white);
+}
+.pageSubtitle {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.65);
+  margin-top: 4px;
+}
 
-.main { max-width: 1200px; margin: 0 auto; padding: 1.75rem 1.5rem; }
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.75rem 1.5rem;
+}
 
 .searchBar {
   background: var(--white);
@@ -57,7 +73,11 @@
   white-space: nowrap;
 }
 
-.filterChips { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+.filterChips {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
 
 .chip {
   background: var(--white);
@@ -68,7 +88,10 @@
   border-radius: var(--radius-full);
   transition: all var(--transition);
 }
-.chip:hover { border-color: var(--green-600); color: var(--green-700); }
+.chip:hover {
+  border-color: var(--green-600);
+  color: var(--green-700);
+}
 
 .chipActive {
   background: var(--green-700);
@@ -88,8 +111,15 @@
   padding: 4rem 1rem;
   color: var(--gray-500);
 }
-.empty span { font-size: 2.5rem; display: block; margin-bottom: 1rem; }
-.empty p { font-size: 0.9375rem; margin-bottom: 1.25rem; }
+.empty span {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+.empty p {
+  font-size: 0.9375rem;
+  margin-bottom: 1.25rem;
+}
 
 .resetBtn {
   background: var(--green-600);
@@ -99,4 +129,6 @@
   border-radius: var(--radius-full);
   transition: background var(--transition);
 }
-.resetBtn:hover { background: var(--green-700); }
+.resetBtn:hover {
+  background: var(--green-700);
+}

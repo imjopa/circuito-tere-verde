@@ -1,27 +1,25 @@
-import { useState } from 'react'
-import Navbar from '../components/layout/Navbar'
-import { waterfalls } from '../data/waterfalls'
-import styles from './WaterfallsPage.module.css'
+import { useState } from "react";
+import Navbar from "../components/layout/Navbar";
+import { waterfalls } from "../data/waterfalls";
+import styles from "./WaterfallsPage.module.css";
 
 const ACCESS_FILTERS = [
-  { value: 'all',    label: 'Todas'   },
-  { value: 'easy',   label: 'Fácil'   },
-  { value: 'medium', label: 'Moderado'},
-  { value: 'hard',   label: 'Difícil' },
-]
+  { value: "all", label: "Todas" },
+  { value: "easy", label: "Fácil" },
+  { value: "medium", label: "Moderado" },
+  { value: "hard", label: "Difícil" },
+];
 
 const ACCESS_CONFIG = {
-  easy:   { label: 'Fácil acesso',    className: 'easy'   },
-  medium: { label: 'Acesso moderado', className: 'medium' },
-  hard:   { label: 'Acesso difícil',  className: 'hard'   },
-}
+  easy: { label: "Fácil acesso", className: "easy" },
+  medium: { label: "Acesso moderado", className: "medium" },
+  hard: { label: "Acesso difícil", className: "hard" },
+};
 
 export default function WaterfallsPage() {
-  const [activeAccess, setActiveAccess] = useState('all')
+  const [activeAccess, setActiveAccess] = useState("all");
 
-  const filtered = waterfalls.filter(
-    wf => activeAccess === 'all' || wf.access === activeAccess
-  )
+  const filtered = waterfalls.filter((wf) => activeAccess === "all" || wf.access === activeAccess);
 
   return (
     <div className={styles.page}>
@@ -30,7 +28,10 @@ export default function WaterfallsPage() {
       <div className={styles.pageHeader}>
         <div className={styles.pageHeaderContent}>
           <h1 className={styles.pageTitle}>Cachoeiras</h1>
-          <p className={styles.pageSubtitle}>{filtered.length} cachoeira{filtered.length !== 1 ? 's' : ''} encontrada{filtered.length !== 1 ? 's' : ''}</p>
+          <p className={styles.pageSubtitle}>
+            {filtered.length} cachoeira{filtered.length !== 1 ? "s" : ""} encontrada
+            {filtered.length !== 1 ? "s" : ""}
+          </p>
         </div>
       </div>
 
@@ -38,10 +39,10 @@ export default function WaterfallsPage() {
         <div className={styles.filterRow}>
           <span className={styles.filterLabel}>Dificuldade de acesso:</span>
           <div className={styles.filterChips}>
-            {ACCESS_FILTERS.map(f => (
+            {ACCESS_FILTERS.map((f) => (
               <button
                 key={f.value}
-                className={`${styles.chip} ${activeAccess === f.value ? styles.chipActive : ''}`}
+                className={`${styles.chip} ${activeAccess === f.value ? styles.chipActive : ""}`}
                 onClick={() => setActiveAccess(f.value)}
               >
                 {f.label}
@@ -51,8 +52,8 @@ export default function WaterfallsPage() {
         </div>
 
         <div className={styles.grid}>
-          {filtered.map(wf => {
-            const accessCfg = ACCESS_CONFIG[wf.access]
+          {filtered.map((wf) => {
+            const accessCfg = ACCESS_CONFIG[wf.access];
             return (
               <article key={wf.id} className={styles.card}>
                 <div className={styles.cardHeader} data-park={wf.parkId}>
@@ -71,7 +72,7 @@ export default function WaterfallsPage() {
                 <div className={styles.cardBody}>
                   <div className={styles.metaRow}>
                     <span className={styles.metaItem}>⬆️ {wf.height}</span>
-                    <span className={styles.metaItem}>🏞️ {wf.parkName.split(' ')[0]}</span>
+                    <span className={styles.metaItem}>🏞️ {wf.parkName.split(" ")[0]}</span>
                   </div>
 
                   <p className={styles.description}>{wf.description}</p>
@@ -90,16 +91,18 @@ export default function WaterfallsPage() {
                     <p className={styles.tipsLabel}>Dicas</p>
                     <ul className={styles.tipsList}>
                       {wf.tips.map((tip, i) => (
-                        <li key={i} className={styles.tipItem}>• {tip}</li>
+                        <li key={i} className={styles.tipItem}>
+                          • {tip}
+                        </li>
                       ))}
                     </ul>
                   </div>
                 </div>
               </article>
-            )
+            );
           })}
         </div>
       </main>
     </div>
-  )
+  );
 }
