@@ -1,7 +1,9 @@
 import { ArrowUp, Droplets, Trees } from "lucide-react";
+import { useCallback } from "react";
 import { tv } from "tailwind-variants";
 
 import Navbar from "@/components/layout/Navbar";
+import { EmptyFilterResults } from "@/components/ui/EmptyFilterResults";
 import { FilterChip } from "@/components/ui/FilterChip";
 import { useWaterfallFilters, useWaterfalls } from "@/hooks/data/useWaterfalls";
 
@@ -51,8 +53,10 @@ const variants = tv({
 });
 
 export default function WaterfallsPage() {
-  const { data: waterfalls = [] } = useWaterfalls();
+  const waterfalls = useWaterfalls();
   const [{ access }, setFilters] = useWaterfallFilters();
+
+  const handleClearFilters = useCallback(() => setFilters({ access: "" }), [setFilters]);
 
   return (
     <div className="min-h-screen">
@@ -62,8 +66,9 @@ export default function WaterfallsPage() {
         <div className="mx-auto max-w-6xl">
           <h1 className="text-3xl text-white">Cachoeiras</h1>
           <p className="mt-1 text-sm text-white/65">
-            {waterfalls.length} cachoeira{waterfalls.length !== 1 ? "s" : ""} encontrada
-            {waterfalls.length !== 1 ? "s" : ""}
+            {waterfalls.data?.length ?? 0} cachoeira
+            {waterfalls.data?.length !== 1 ? "s" : ""} encontrada
+            {waterfalls.data?.length !== 1 ? "s" : ""}
           </p>
         </div>
       </div>
@@ -87,71 +92,81 @@ export default function WaterfallsPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {waterfalls.map((wf) => {
-            const classes = variants({ access: wf.access, park: wf.parkId });
+        {waterfalls.isLoading ? (
+          <p className="px-4 py-16 text-center text-sm text-gray-500">Carregando cachoeiras...</p>
+        ) : waterfalls.data?.length && waterfalls.data.length > 0 ? (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {waterfalls.data.map((wf) => {
+              const classes = variants({ access: wf.access, park: wf.parkId });
 
-            return (
-              <article key={wf.id} className={classes.base()}>
-                <div className={classes.header()}>
-                  <div className="mb-3 flex flex-wrap gap-1.5">
-                    <span className={classes.accessLabel()}>{accessLabel[wf.access]}</span>
-                    {wf.allowsBathing && (
-                      <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-0.5 text-xs text-white">
-                        <Droplets className="size-3.5" aria-hidden />
-                        Permite banho
+              return (
+                <article key={wf.id} className={classes.base()}>
+                  <div className={classes.header()}>
+                    <div className="mb-3 flex flex-wrap gap-1.5">
+                      <span className={classes.accessLabel()}>{accessLabel[wf.access]}</span>
+                      {wf.allowsBathing && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-0.5 text-xs text-white">
+                          <Droplets className="size-3.5" aria-hidden />
+                          Permite banho
+                        </span>
+                      )}
+                    </div>
+                    <h2 className="text-lg text-white">{wf.name}</h2>
+                    <p className="mt-0.5 text-xs text-white/70">{wf.parkName}</p>
+                  </div>
+
+                  <div className="flex flex-col gap-3.5 px-5 py-4">
+                    <div className="flex gap-4">
+                      <span className="flex items-center gap-1 text-sm text-gray-500">
+                        <ArrowUp className="size-3.5 shrink-0" aria-hidden />
+                        {wf.heightMeters} m
                       </span>
-                    )}
-                  </div>
-                  <h2 className="text-lg text-white">{wf.name}</h2>
-                  <p className="mt-0.5 text-xs text-white/70">{wf.parkName}</p>
-                </div>
+                      <span className="flex items-center gap-1 text-sm text-gray-500">
+                        <Trees className="size-3.5 shrink-0" aria-hidden />
+                        {wf.parkName}
+                      </span>
+                    </div>
 
-                <div className="flex flex-col gap-3.5 px-5 py-4">
-                  <div className="flex gap-4">
-                    <span className="flex items-center gap-1 text-sm text-gray-500">
-                      <ArrowUp className="size-3.5 shrink-0" aria-hidden />
-                      {wf.heightMeters} m
-                    </span>
-                    <span className="flex items-center gap-1 text-sm text-gray-500">
-                      <Trees className="size-3.5 shrink-0" aria-hidden />
-                      {wf.parkName}
-                    </span>
-                  </div>
+                    <p className="text-sm leading-relaxed text-gray-600">{wf.description}</p>
 
-                  <p className="text-sm leading-relaxed text-gray-600">{wf.description}</p>
+                    <div>
+                      <p className="mb-0.5 text-xs font-medium tracking-wider text-gray-500 uppercase">
+                        Como chegar
+                      </p>
+                      <p className="text-sm leading-normal text-gray-600">{wf.howToGet}</p>
+                    </div>
 
-                  <div>
-                    <p className="mb-0.5 text-xs font-medium tracking-wider text-gray-500 uppercase">
-                      Como chegar
-                    </p>
-                    <p className="text-sm leading-normal text-gray-600">{wf.howToGet}</p>
-                  </div>
+                    <div>
+                      <p className="mb-0.5 text-xs font-medium tracking-wider text-gray-500 uppercase">
+                        Acessibilidade
+                      </p>
+                      <p className="text-sm leading-normal text-gray-600">{wf.accessibility}</p>
+                    </div>
 
-                  <div>
-                    <p className="mb-0.5 text-xs font-medium tracking-wider text-gray-500 uppercase">
-                      Acessibilidade
-                    </p>
-                    <p className="text-sm leading-normal text-gray-600">{wf.accessibility}</p>
+                    <div>
+                      <p className="mb-1 text-xs font-medium tracking-wider text-gray-500 uppercase">
+                        Dicas
+                      </p>
+                      <ul className="flex list-none flex-col gap-0.5">
+                        {wf.tips.map((tip) => (
+                          <li key={tip} className="text-sm text-gray-600">
+                            • {tip}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
-
-                  <div>
-                    <p className="mb-1 text-xs font-medium tracking-wider text-gray-500 uppercase">
-                      Dicas
-                    </p>
-                    <ul className="flex list-none flex-col gap-0.5">
-                      {wf.tips.map((tip) => (
-                        <li key={tip} className="text-sm text-gray-600">
-                          • {tip}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </article>
-            );
-          })}
-        </div>
+                </article>
+              );
+            })}
+          </div>
+        ) : (
+          <EmptyFilterResults
+            icon={Droplets}
+            message="Nenhuma cachoeira encontrada com esses filtros."
+            onClearFilters={handleClearFilters}
+          />
+        )}
       </main>
     </div>
   );

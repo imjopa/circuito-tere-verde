@@ -50,7 +50,7 @@ export default function SearchResults({ results, isLoading = false, onClose }: S
   }, [onClose, navigate]);
 
   return (
-    <datalist
+    <output
       className="absolute top-full right-0 left-0 z-50 mt-2 max-h-96 overflow-hidden overflow-y-auto rounded-lg border border-gray-100 bg-white shadow-lg"
       aria-label="Resultados da busca"
     >
@@ -136,6 +136,6 @@ export default function SearchResults({ results, isLoading = false, onClose }: S
           {results.total !== 1 ? "s" : ""}
         </span>
       </div>
-    </datalist>
+    </output>
   );
 }

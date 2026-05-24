@@ -3,7 +3,7 @@ import { useCallback } from "react";
 
 import Navbar from "@/components/layout/Navbar";
 import TrailCard from "@/components/trails/TrailCard";
-import { Button } from "@/components/ui/Button";
+import { EmptyFilterResults } from "@/components/ui/EmptyFilterResults";
 import { FilterChip } from "@/components/ui/FilterChip";
 import { useParks } from "@/hooks/data/useParks";
 import { useTrailFilters, useTrails } from "@/hooks/data/useTrails";
@@ -115,11 +115,11 @@ export default function TrailsPage() {
             ))}
           </div>
         ) : (
-          <div className="px-4 py-16 text-center text-gray-500">
-            <Leaf className="mx-auto mb-4 size-12 text-green-600" aria-hidden />
-            <p className="mb-5 text-sm">Nenhuma trilha encontrada com esses filtros.</p>
-            <Button onClick={handleClearFilters}>Limpar filtros</Button>
-          </div>
+          <EmptyFilterResults
+            icon={Leaf}
+            message="Nenhuma trilha encontrada com esses filtros."
+            onClearFilters={handleClearFilters}
+          />
         )}
       </main>
     </div>

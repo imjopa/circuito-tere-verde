@@ -1,7 +1,9 @@
-import { Clock, Coins, MapPin, Users } from "lucide-react";
+import { Clock, Coins, Calendar, MapPin, Users } from "lucide-react";
+import { useCallback } from "react";
 import { tv } from "tailwind-variants";
 
 import Navbar from "@/components/layout/Navbar";
+import { EmptyFilterResults } from "@/components/ui/EmptyFilterResults";
 import { FilterChip } from "@/components/ui/FilterChip";
 import { useEventFilters, useEvents } from "@/hooks/data/useEvents";
 
@@ -47,6 +49,8 @@ export default function EventsPage() {
   const events = useEvents();
   const [{ category }, setFilters] = useEventFilters();
 
+  const handleClearFilters = useCallback(() => setFilters({ category: "" }), [setFilters]);
+
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -82,9 +86,11 @@ export default function EventsPage() {
         {events.isLoading ? (
           <p className="px-4 py-12 text-center text-sm text-gray-500">Carregando eventos...</p>
         ) : events.data?.length === 0 ? (
-          <p className="px-4 py-12 text-center text-sm text-gray-500">
-            Nenhum evento nessa categoria no momento.
-          </p>
+          <EmptyFilterResults
+            icon={Calendar}
+            message="Nenhum evento encontrado com esses filtros."
+            onClearFilters={handleClearFilters}
+          />
         ) : (
           <div className="flex flex-col gap-4">
             {events.data?.map((ev) => {
