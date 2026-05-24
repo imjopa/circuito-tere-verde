@@ -1,3 +1,4 @@
+import { Leaf, Search, X } from "lucide-react";
 import Navbar from "../components/layout/Navbar";
 import TrailCard from "../components/trails/TrailCard";
 import { useTrailFilters } from "../hooks/useTrailFilters";
@@ -45,7 +46,7 @@ export default function TrailsPage() {
 
       <main className="mx-auto max-w-6xl px-6 py-7">
         <div className="mb-5 flex items-center gap-3 rounded-full border border-gray-100 bg-white px-4 py-2.5 shadow-sm">
-          <span>🔍</span>
+          <Search className="size-5 shrink-0 text-gray-400" aria-hidden />
           <input
             type="text"
             placeholder="Buscar trilha ou parque..."
@@ -56,9 +57,10 @@ export default function TrailsPage() {
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
-              className="flex h-[22px] w-[22px] items-center justify-center rounded-full bg-gray-100 text-xs text-gray-500"
+              className="flex h-[22px] w-[22px] items-center justify-center rounded-full bg-gray-100 text-gray-500"
+              aria-label="Limpar busca"
             >
-              ✕
+              <X className="size-3.5" aria-hidden />
             </button>
           )}
         </div>
@@ -101,7 +103,7 @@ export default function TrailsPage() {
           </div>
         ) : (
           <div className="px-4 py-16 text-center text-gray-500">
-            <span className="mb-4 block text-[2.5rem]">🌿</span>
+            <Leaf className="mx-auto mb-4 size-12 text-green-600" aria-hidden />
             <p className="mb-5 text-[0.9375rem]">Nenhuma trilha encontrada com esses filtros.</p>
             <button
               onClick={() => {

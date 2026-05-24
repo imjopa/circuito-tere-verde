@@ -1,4 +1,13 @@
 import { useState } from "react";
+import {
+  Accessibility,
+  Backpack,
+  CircleCheck,
+  ClipboardList,
+  Clock,
+  Users,
+  type LucideIcon,
+} from "lucide-react";
 import Navbar from "../components/layout/Navbar";
 import { parks } from "../data/parks";
 import { formInput, formSelect, formTextarea } from "../lib/variants/input";
@@ -78,7 +87,7 @@ export default function SchedulePage() {
         <Navbar />
         <main className="mx-auto max-w-[1200px] px-6 py-8">
           <div className="mx-auto my-12 flex max-w-[520px] flex-col items-center gap-3 rounded-xl border border-gray-100 bg-white p-10 text-center">
-            <div className="text-5xl">✅</div>
+            <CircleCheck className="size-14 text-green-600" aria-hidden />
             <h2 className="text-2xl text-green-800">Agendamento confirmado!</h2>
             <p className="text-[0.9375rem] text-gray-500">Seu pedido foi registrado com sucesso.</p>
             <div className="my-3 grid w-full grid-cols-2 gap-3 text-left">
@@ -345,35 +354,37 @@ export default function SchedulePage() {
 
           <aside className="sticky top-20 flex flex-col gap-4 rounded-lg border border-gray-100 bg-white p-5">
             <h2 className="mb-1 text-base font-medium text-green-800">Informações importantes</h2>
-            {[
-              {
-                icon: "🕐",
-                title: "Antecedência",
-                text: "Agende com pelo menos 24h de antecedência.",
-              },
-              {
-                icon: "👥",
-                title: "Grupos",
-                text: "Grupos acima de 10 pessoas entram em contato direto.",
-              },
-              {
-                icon: "🎒",
-                title: "O que levar",
-                text: "Água, protetor solar, calçado fechado e documento com foto.",
-              },
-              {
-                icon: "📋",
-                title: "Regras gerais",
-                text: "Proibido fogueira, som alto e descarte de lixo nas trilhas.",
-              },
-              {
-                icon: "♿",
-                title: "Acessibilidade",
-                text: "Informe necessidades especiais no campo de observações.",
-              },
-            ].map((item) => (
+            {(
+              [
+                {
+                  icon: Clock,
+                  title: "Antecedência",
+                  text: "Agende com pelo menos 24h de antecedência.",
+                },
+                {
+                  icon: Users,
+                  title: "Grupos",
+                  text: "Grupos acima de 10 pessoas entram em contato direto.",
+                },
+                {
+                  icon: Backpack,
+                  title: "O que levar",
+                  text: "Água, protetor solar, calçado fechado e documento com foto.",
+                },
+                {
+                  icon: ClipboardList,
+                  title: "Regras gerais",
+                  text: "Proibido fogueira, som alto e descarte de lixo nas trilhas.",
+                },
+                {
+                  icon: Accessibility,
+                  title: "Acessibilidade",
+                  text: "Informe necessidades especiais no campo de observações.",
+                },
+              ] satisfies { icon: LucideIcon; title: string; text: string }[]
+            ).map((item) => (
               <div key={item.title} className="flex items-start gap-3">
-                <span className="mt-px shrink-0 text-lg">{item.icon}</span>
+                <item.icon className="mt-px size-5 shrink-0 text-green-700" aria-hidden />
                 <div>
                   <p className="text-[0.8125rem] font-medium text-gray-700">{item.title}</p>
                   <p className="mt-px text-[0.8125rem] leading-normal text-gray-500">{item.text}</p>

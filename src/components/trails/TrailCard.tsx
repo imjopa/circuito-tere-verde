@@ -1,3 +1,4 @@
+import { Mountain, Ruler, Timer } from "lucide-react";
 import { tv } from "tailwind-variants";
 import StatusBadge from "../ui/StatusBadge";
 import DifficultyBadge from "../ui/DifficultyBadge";
@@ -12,7 +13,7 @@ const trailCard = tv({
     body: "px-4 py-3.5",
     metaRow: "mb-2.5 flex gap-4",
     metaItem: "flex items-center gap-1 text-xs text-gray-500",
-    metaIcon: "text-xs",
+    metaIcon: "size-3.5 shrink-0",
     footer: "flex items-center justify-between",
     parkName: "text-xs text-gray-500",
     conditions: "mt-2.5 rounded-sm bg-gray-100 px-3 py-2 text-xs leading-relaxed text-gray-500",
@@ -36,15 +37,15 @@ export default function TrailCard({ trail }: TrailCardProps) {
       <div className={styles.body()}>
         <div className={styles.metaRow()}>
           <span className={styles.metaItem()}>
-            <span className={styles.metaIcon()}>📏</span>
+            <Ruler className={styles.metaIcon()} aria-hidden />
             {trail.distance} km
           </span>
           <span className={styles.metaItem()}>
-            <span className={styles.metaIcon()}>⏱️</span>
+            <Timer className={styles.metaIcon()} aria-hidden />
             {trail.duration}
           </span>
           <span className={styles.metaItem()}>
-            <span className={styles.metaIcon()}>⛰️</span>
+            <Mountain className={styles.metaIcon()} aria-hidden />
             {trail.altitude} m
           </span>
         </div>

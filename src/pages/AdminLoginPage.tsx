@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Leaf, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { btnPrimary } from "../lib/variants/button";
@@ -20,8 +21,8 @@ export default function AdminLoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-green-50 p-6">
       <div className="w-full max-w-[380px] rounded-xl border border-gray-100 bg-white p-10 px-8 shadow-lg">
         <div className="mb-8 flex items-center justify-center gap-2">
-          <div className="flex h-11 w-11 items-center justify-center rounded-md bg-green-700 text-[1.75rem]">
-            🌿
+          <div className="flex h-11 w-11 items-center justify-center rounded-md bg-green-700">
+            <Leaf className="size-6 text-white" aria-hidden />
           </div>
           <span className="font-display text-base font-semibold text-green-800">
             Circuito Terê Verde
@@ -82,8 +83,9 @@ export default function AdminLoginPage() {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-xs text-gray-500">
-          🔒 Ambiente seguro — dados criptografados
+        <p className="mt-6 flex items-center justify-center gap-1.5 text-center text-xs text-gray-500">
+          <Lock className="size-3.5 shrink-0" aria-hidden />
+          Ambiente seguro — dados criptografados
         </p>
       </div>
     </div>

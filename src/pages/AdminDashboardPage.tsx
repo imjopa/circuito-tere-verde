@@ -1,4 +1,16 @@
 import { useState } from "react";
+import {
+  AlertTriangle,
+  Calendar,
+  Footprints,
+  LayoutDashboard,
+  Leaf,
+  LogOut,
+  Pencil,
+  Trash2,
+  X,
+  type LucideIcon,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useAdminMetrics } from "../hooks/useAdminMetrics";
@@ -158,19 +170,21 @@ export default function AdminDashboardPage() {
     <div className="relative flex min-h-screen">
       {/* ── Sidebar ── */}
       <aside className="sticky top-0 flex h-screen w-16 shrink-0 flex-col items-center gap-1.5 bg-green-700 py-4">
-        <div className="mb-4 flex size-10 items-center justify-center rounded-md bg-white/12 text-2xl">
-          🌿
+        <div className="mb-4 flex size-10 items-center justify-center rounded-md bg-white/12">
+          <Leaf className="size-5 text-white" aria-hidden />
         </div>
 
         <nav
           className="flex w-full flex-col items-center gap-1"
           aria-label="Navegação administrativa"
         >
-          {[
-            { view: VIEWS.dashboard, icon: "📊", label: "Dashboard" },
-            { view: VIEWS.trails, icon: "🥾", label: "Trilhas" },
-            { view: VIEWS.events, icon: "📅", label: "Eventos" },
-          ].map((item) => (
+          {(
+            [
+              { view: VIEWS.dashboard, icon: LayoutDashboard, label: "Dashboard" },
+              { view: VIEWS.trails, icon: Footprints, label: "Trilhas" },
+              { view: VIEWS.events, icon: Calendar, label: "Eventos" },
+            ] satisfies { view: string; icon: LucideIcon; label: string }[]
+          ).map((item) => (
             <button
               key={item.view}
               className={sidebarItem({ active: activeView === item.view })}
@@ -179,7 +193,7 @@ export default function AdminDashboardPage() {
               aria-label={item.label}
               aria-pressed={activeView === item.view}
             >
-              {item.icon}
+              <item.icon className="size-5" aria-hidden />
             </button>
           ))}
         </nav>
@@ -190,7 +204,7 @@ export default function AdminDashboardPage() {
           title="Sair"
           aria-label="Sair do painel"
         >
-          🚪
+          <LogOut className="size-5" aria-hidden />
         </button>
       </aside>
 
@@ -391,18 +405,20 @@ export default function AdminDashboardPage() {
                     </div>
                     <div className={card.actions()}>
                       <button
-                        className={actionEditBtn()}
+                        className={`${actionEditBtn()} inline-flex items-center gap-1.5`}
                         onClick={() => openEditTrail(trail)}
                         aria-label={`Editar trilha ${trail.name}`}
                       >
-                        ✏️ Editar
+                        <Pencil className="size-3.5" aria-hidden />
+                        Editar
                       </button>
                       <button
-                        className={actionDeleteBtn()}
+                        className={`${actionDeleteBtn()} inline-flex items-center gap-1.5`}
                         onClick={() => confirmDeleteTrail(trail.id)}
                         aria-label={`Excluir trilha ${trail.name}`}
                       >
-                        🗑️ Excluir
+                        <Trash2 className="size-3.5" aria-hidden />
+                        Excluir
                       </button>
                     </div>
                   </div>
@@ -448,18 +464,20 @@ export default function AdminDashboardPage() {
                     </div>
                     <div className={card.actions()}>
                       <button
-                        className={actionEditBtn()}
+                        className={`${actionEditBtn()} inline-flex items-center gap-1.5`}
                         onClick={() => openEditEvent(ev)}
                         aria-label={`Editar evento ${ev.title}`}
                       >
-                        ✏️ Editar
+                        <Pencil className="size-3.5" aria-hidden />
+                        Editar
                       </button>
                       <button
-                        className={actionDeleteBtn()}
+                        className={`${actionDeleteBtn()} inline-flex items-center gap-1.5`}
                         onClick={() => confirmDeleteEvent(ev.id)}
                         aria-label={`Excluir evento ${ev.title}`}
                       >
-                        🗑️ Excluir
+                        <Trash2 className="size-3.5" aria-hidden />
+                        Excluir
                       </button>
                     </div>
                   </div>
@@ -488,7 +506,7 @@ export default function AdminDashboardPage() {
                 onClick={() => setEditingTrail(null)}
                 aria-label="Fechar"
               >
-                ✕
+                <X className="size-4" aria-hidden />
               </button>
             </div>
 
@@ -563,7 +581,7 @@ export default function AdminDashboardPage() {
                 onClick={() => setEditingEvent(null)}
                 aria-label="Fechar"
               >
-                ✕
+                <X className="size-4" aria-hidden />
               </button>
             </div>
 
@@ -638,12 +656,17 @@ export default function AdminDashboardPage() {
                 onClick={() => setDeleteTarget(null)}
                 aria-label="Fechar"
               >
-                ✕
+                <X className="size-4" aria-hidden />
               </button>
             </div>
             <p className={dangerModalStyles.deleteWarning()}>
-              ⚠️ Esta ação é <strong>irreversível</strong>. O registro será removido permanentemente
-              da listagem.
+              <span className="inline-flex items-start gap-1.5">
+                <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
+                <span>
+                  Esta ação é <strong>irreversível</strong>. O registro será removido
+                  permanentemente da listagem.
+                </span>
+              </span>
             </p>
             <p className={dangerModalStyles.deleteNote()}>
               Em produção, esta ação exigiria confirmação dupla e registro em log de auditoria.

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Leaf, Menu, X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { mobileNavLink, navLink } from "../../lib/variants/nav";
 
@@ -29,9 +30,7 @@ export default function Navbar() {
           className="flex shrink-0 items-center gap-2"
           aria-label="Circuito Terê Verde — página inicial"
         >
-          <span className="text-xl" aria-hidden="true">
-            🌿
-          </span>
+          <Leaf className="size-5 text-white" aria-hidden />
           <span className="font-display text-base font-semibold whitespace-nowrap text-white">
             Circuito Terê Verde
           </span>
@@ -60,7 +59,11 @@ export default function Navbar() {
           aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
           aria-expanded={menuOpen}
         >
-          {menuOpen ? "✕" : "☰"}
+          {menuOpen ? (
+            <X className="size-5" aria-hidden />
+          ) : (
+            <Menu className="size-5" aria-hidden />
+          )}
         </button>
       </nav>
 

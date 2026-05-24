@@ -1,4 +1,15 @@
 import { useRef, useState, useEffect } from "react";
+import {
+  Calendar,
+  Clock,
+  Droplets,
+  Footprints,
+  Map,
+  Phone,
+  Search,
+  X,
+  type LucideIcon,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/layout/Navbar";
 import ParkCard from "../components/parks/ParkCard";
@@ -7,23 +18,21 @@ import { useHomeSearch } from "../hooks/useHomeSearch";
 import { parks } from "../data/parks";
 import { events } from "../data/events";
 import { btnOutline, btnPrimary } from "../lib/variants/button";
-import { homePage } from "../lib/variants/home";
 
 // Atalhos rápidos com rotas reais
-const QUICK_ACCESS = [
-  { icon: "🥾", label: "Trilhas", to: "/trilhas" },
-  { icon: "💧", label: "Cachoeiras", to: "/cachoeiras" },
-  { icon: "📅", label: "Eventos", to: "/eventos" },
-  { icon: "🕐", label: "Horários", to: "/horarios" },
-  { icon: "🗺️", label: "Mapas", to: "/mapas" },
-  { icon: "📞", label: "Contato", to: "/contato" },
+const QUICK_ACCESS: { icon: LucideIcon; label: string; to: string }[] = [
+  { icon: Footprints, label: "Trilhas", to: "/trilhas" },
+  { icon: Droplets, label: "Cachoeiras", to: "/cachoeiras" },
+  { icon: Calendar, label: "Eventos", to: "/eventos" },
+  { icon: Clock, label: "Horários", to: "/horarios" },
+  { icon: Map, label: "Mapas", to: "/mapas" },
+  { icon: Phone, label: "Contato", to: "/contato" },
 ];
 
 export default function HomePage() {
   const { query, setQuery, clearSearch, results } = useHomeSearch();
   const [showResults, setShowResults] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
-  const styles = homePage();
 
   // Próximos 3 eventos futuros
   const upcomingEvents = events
@@ -60,24 +69,26 @@ export default function HomePage() {
   };
 
   return (
-    <div className={styles.page()}>
+    <div className="flex min-h-screen flex-col">
       <Navbar />
 
       {/* Hero */}
-      <section className={styles.hero()}>
-        <div className={styles.heroContent()}>
-          <span className={styles.heroTag()}>Teresópolis, RJ</span>
-          <h1 className={styles.heroTitle()}>
+      <section className="relative overflow-hidden bg-green-700 px-6 pb-20 pt-16">
+        <div className="mx-auto max-w-[600px]">
+          <span className="mb-4 inline-block rounded-full bg-green-400 px-3 py-1 text-xs font-medium text-green-900">
+            Teresópolis, RJ
+          </span>
+          <h1 className="mb-4 text-[clamp(1.75rem,4vw,2.5rem)] leading-tight text-white">
             Explore os parques de
             <br />
             Teresópolis com consciência
           </h1>
-          <p className={styles.heroSubtitle()}>
+          <p className="mb-7 text-base leading-relaxed text-white/75">
             Trilhas, cachoeiras, fauna e flora — tudo em um só lugar.
             <br />
             Turismo responsável começa com informação.
           </p>
-          <div className={styles.heroBtns()}>
+          <div className="flex flex-wrap gap-4">
             <Link to="/trilhas" className={btnPrimary()}>
               Explorar trilhas
             </Link>
@@ -86,27 +97,37 @@ export default function HomePage() {
             </a>
           </div>
         </div>
-        <div className={styles.heroDecoration()} aria-hidden="true" />
+        <div
+          className="pointer-events-none absolute -top-[60px] -right-[60px] size-[280px] rounded-full bg-green-400/10"
+          aria-hidden="true"
+        />
       </section>
 
       {/* Busca funcional */}
-      <div className={styles.searchWrapper()} ref={searchRef}>
-        <div className={styles.searchBar()} role="search">
-          <span aria-hidden="true">🔍</span>
+      <div className="relative z-20 mx-auto -mt-6 max-w-[680px] px-6" ref={searchRef}>
+        <div
+          className="flex items-center gap-3 rounded-full border border-gray-100 bg-white px-4 py-2.5 shadow-lg"
+          role="search"
+        >
+          <Search className="size-5 shrink-0 text-gray-400" aria-hidden />
           <input
             type="search"
             placeholder="Buscar trilhas, cachoeiras, parques..."
             value={query}
             onChange={handleQueryChange}
             onFocus={() => query.length >= 2 && setShowResults(true)}
-            className={styles.searchInput()}
+            className="flex-1 border-none bg-transparent font-body text-[0.9375rem] text-gray-700 outline-none [&::-webkit-search-cancel-button]:hidden"
             aria-label="Buscar no Circuito Terê Verde"
             aria-autocomplete="list"
             aria-expanded={showResults && !!results}
           />
           {query && (
-            <button onClick={handleClear} className={styles.clearBtn()} aria-label="Limpar busca">
-              ✕
+            <button
+              onClick={handleClear}
+              className="flex size-[22px] shrink-0 cursor-pointer items-center justify-center rounded-full border-none bg-gray-100 text-xs text-gray-500"
+              aria-label="Limpar busca"
+            >
+              <X className="size-3.5" aria-hidden />
             </button>
           )}
         </div>
@@ -115,14 +136,14 @@ export default function HomePage() {
         )}
       </div>
 
-      <main className={styles.main()}>
+      <main className="mx-auto w-full max-w-[1200px] flex-1 px-6 py-12">
         {/* Parques */}
-        <section id="parques" className={styles.section()}>
-          <h2 className={styles.sectionTitle()}>Os 3 parques</h2>
-          <p className={styles.sectionSubtitle()}>
+        <section id="parques" className="mb-14">
+          <h2 className="mb-1.5 text-[1.375rem] text-green-800">Os 3 parques</h2>
+          <p className="mb-6 text-sm text-gray-500">
             Três áreas de conservação com biodiversidade única da Mata Atlântica
           </p>
-          <div className={styles.parksGrid()}>
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-5">
             {parks.map((park) => (
               <ParkCard key={park.id} park={park} />
             ))}
@@ -130,34 +151,37 @@ export default function HomePage() {
         </section>
 
         {/* Acesso rápido */}
-        <section className={styles.section()} aria-label="Acesso rápido">
-          <h2 className={styles.sectionTitle()}>Acesso rápido</h2>
-          <div className={styles.quickAccess()}>
+        <section className="mb-14" aria-label="Acesso rápido">
+          <h2 className="mb-1.5 text-[1.375rem] text-green-800">Acesso rápido</h2>
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(90px,1fr))] gap-3">
             {QUICK_ACCESS.map((item) => (
-              <Link key={item.label} to={item.to} className={styles.qaItem()}>
-                <span className={styles.qaIcon()} aria-hidden="true">
-                  {item.icon}
-                </span>
-                <span className={styles.qaLabel()}>{item.label}</span>
+              <Link
+                key={item.label}
+                to={item.to}
+                className="flex flex-col items-center gap-2 rounded-md border border-gray-100 bg-white px-3 py-4 transition hover:-translate-y-0.5 hover:border-green-300 hover:shadow-sm"
+              >
+                <item.icon className="size-8 text-green-700" aria-hidden />
+                <span className="text-center text-[0.8125rem] text-gray-500">{item.label}</span>
               </Link>
             ))}
           </div>
         </section>
 
         {/* Próximos eventos */}
-        <section id="eventos" className={styles.section()}>
-          <div className={styles.sectionHeader()}>
+        <section id="eventos" className="mb-14">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-2">
             <div>
-              <h2 className={styles.sectionTitleInHeader()}>Próximos eventos</h2>
-              <p className={styles.sectionSubtitleInHeader()}>
-                Atividades e trilhas guiadas nos parques
-              </p>
+              <h2 className="mb-1 text-[1.375rem] text-green-800">Próximos eventos</h2>
+              <p className="text-sm text-gray-500">Atividades e trilhas guiadas nos parques</p>
             </div>
-            <Link to="/eventos" className={styles.seeAllLink()}>
+            <Link
+              to="/eventos"
+              className="whitespace-nowrap text-sm font-medium text-green-600 transition hover:text-green-700"
+            >
               Ver todos →
             </Link>
           </div>
-          <div className={styles.eventsList()}>
+          <div className="flex flex-col gap-3">
             {upcomingEvents.map((event) => {
               const evDate = new Date(event.date + "T00:00:00");
               const day = evDate.getDate().toString().padStart(2, "0");
@@ -166,18 +190,23 @@ export default function HomePage() {
                 .replace(".", "")
                 .toUpperCase();
               return (
-                <article key={event.id} className={styles.eventItem()}>
-                  <div className={styles.eventDate()}>
-                    <span className={styles.eventDay()}>{day}</span>
-                    <span className={styles.eventMonth()}>{month}</span>
+                <article
+                  key={event.id}
+                  className="flex items-center gap-4 rounded-md border border-gray-100 bg-white px-5 py-4 transition hover:shadow-sm"
+                >
+                  <div className="min-w-[44px] shrink-0 rounded-md bg-green-700 px-3 py-1.5 text-center text-white">
+                    <span className="block text-lg font-semibold leading-tight">{day}</span>
+                    <span className="text-[0.625rem] uppercase opacity-80">{month}</span>
                   </div>
-                  <div className={styles.eventInfo()}>
-                    <h3 className={styles.eventTitle()}>{event.title}</h3>
-                    <p className={styles.eventPark()}>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-[0.9375rem] font-medium text-gray-900">{event.title}</h3>
+                    <p className="mt-0.5 text-[0.8125rem] text-gray-500">
                       {event.park} · {event.price}
                     </p>
                   </div>
-                  <span className={styles.eventTag()}>{event.categoryLabel}</span>
+                  <span className="shrink-0 rounded-full bg-green-100 px-2.5 py-1 text-xs whitespace-nowrap text-green-800">
+                    {event.categoryLabel}
+                  </span>
                 </article>
               );
             })}
@@ -185,9 +214,9 @@ export default function HomePage() {
         </section>
       </main>
 
-      <footer className={styles.footer()}>
+      <footer className="flex flex-col gap-1 bg-green-800 px-6 py-6 text-center text-[0.8125rem] text-white/60">
         <p>© 2025 Circuito Terê Verde — Explore, Preserve, Conecte-se</p>
-        <p className={styles.footerSub()}>
+        <p className="text-xs opacity-70">
           Projeto acadêmico — UNIFESO · Desenvolvimento de MVP Front-End
         </p>
       </footer>

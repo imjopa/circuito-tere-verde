@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Clock, Globe, MapPin, Phone, Ticket } from "lucide-react";
 import Navbar from "../components/layout/Navbar";
 import { parks, type ParkId } from "../data/parks";
 
@@ -87,7 +88,7 @@ export default function MapsPage() {
 
             <div className="flex flex-col gap-3.5">
               <div className="flex items-start gap-2.5">
-                <span className="mt-px shrink-0 text-base">📍</span>
+                <MapPin className="mt-px size-4 shrink-0 text-green-700" aria-hidden />
                 <div>
                   <p className="mb-px text-[0.6875rem] uppercase tracking-wider text-gray-500">
                     Endereço
@@ -96,7 +97,7 @@ export default function MapsPage() {
                 </div>
               </div>
               <div className="flex items-start gap-2.5">
-                <span className="mt-px shrink-0 text-base">🌐</span>
+                <Globe className="mt-px size-4 shrink-0 text-green-700" aria-hidden />
                 <div>
                   <p className="mb-px text-[0.6875rem] uppercase tracking-wider text-gray-500">
                     Coordenadas
@@ -105,7 +106,7 @@ export default function MapsPage() {
                 </div>
               </div>
               <div className="flex items-start gap-2.5">
-                <span className="mt-px shrink-0 text-base">🕐</span>
+                <Clock className="mt-px size-4 shrink-0 text-green-700" aria-hidden />
                 <div>
                   <p className="mb-px text-[0.6875rem] uppercase tracking-wider text-gray-500">
                     Horário de funcionamento
@@ -114,7 +115,7 @@ export default function MapsPage() {
                 </div>
               </div>
               <div className="flex items-start gap-2.5">
-                <span className="mt-px shrink-0 text-base">📞</span>
+                <Phone className="mt-px size-4 shrink-0 text-green-700" aria-hidden />
                 <div>
                   <p className="mb-px text-[0.6875rem] uppercase tracking-wider text-gray-500">
                     Telefone
@@ -123,7 +124,7 @@ export default function MapsPage() {
                 </div>
               </div>
               <div className="flex items-start gap-2.5">
-                <span className="mt-px shrink-0 text-base">🎟️</span>
+                <Ticket className="mt-px size-4 shrink-0 text-green-700" aria-hidden />
                 <div>
                   <p className="mb-px text-[0.6875rem] uppercase tracking-wider text-gray-500">
                     Entrada

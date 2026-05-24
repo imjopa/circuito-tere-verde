@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Clock, Coins, MapPin, Users } from "lucide-react";
 import Navbar from "../components/layout/Navbar";
 import { events, type ParkEventStatus } from "../data/events";
 import { filterChip } from "../lib/variants/chip";
@@ -117,15 +118,25 @@ export default function EventsPage() {
                     <h2 className="font-display text-[1.0625rem] font-semibold text-gray-900">
                       {ev.title}
                     </h2>
-                    <p className="text-[0.8125rem] text-gray-500">📍 {ev.park}</p>
+                    <p className="flex items-center gap-1.5 text-[0.8125rem] text-gray-500">
+                      <MapPin className="size-3.5 shrink-0" aria-hidden />
+                      {ev.park}
+                    </p>
                     <p className="text-sm leading-relaxed text-gray-600">{ev.description}</p>
 
                     <div className="flex flex-wrap gap-3 text-[0.8125rem] text-gray-500">
-                      <span>
-                        🕐 {ev.time} · {ev.duration}
+                      <span className="inline-flex items-center gap-1">
+                        <Clock className="size-3.5 shrink-0" aria-hidden />
+                        {ev.time} · {ev.duration}
                       </span>
-                      <span>💰 {ev.price}</span>
-                      <span>👥 {ev.spotsLeft} vagas restantes</span>
+                      <span className="inline-flex items-center gap-1">
+                        <Coins className="size-3.5 shrink-0" aria-hidden />
+                        {ev.price}
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <Users className="size-3.5 shrink-0" aria-hidden />
+                        {ev.spotsLeft} vagas restantes
+                      </span>
                     </div>
 
                     <div className="flex items-center gap-3">

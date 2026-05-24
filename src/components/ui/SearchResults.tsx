@@ -1,3 +1,4 @@
+import { Droplets, Footprints, Trees } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { tv } from "tailwind-variants";
 import type { Trail } from "../../data/trails";
@@ -14,7 +15,7 @@ const searchResults = tv({
       "block px-4 pt-2.5 pb-1 text-[0.6875rem] font-medium tracking-wider text-gray-500 uppercase",
     resultItem:
       "flex w-full cursor-pointer items-center gap-3 border-none bg-transparent px-4 py-2.5 text-left transition hover:bg-green-50",
-    resultIcon: "shrink-0 text-lg",
+    resultIcon: "size-5 shrink-0 text-green-700",
     resultName: "text-sm font-medium text-gray-900",
     resultMeta: "mt-px text-xs text-gray-500",
     footer: "bg-gray-50 px-4 py-2 text-center text-[0.6875rem] text-gray-500",
@@ -60,7 +61,7 @@ export default function SearchResults({ results, onClose }: SearchResultsProps) 
           <span className={styles.groupLabel()}>Parques</span>
           {results.parks.map((park) => (
             <button key={park.id} className={styles.resultItem()} onClick={onClose} role="option">
-              <span className={styles.resultIcon()}>🏞️</span>
+              <Trees className={styles.resultIcon()} aria-hidden />
               <div>
                 <p className={styles.resultName()}>{park.name}</p>
                 <p className={styles.resultMeta()}>{park.type}</p>
@@ -80,7 +81,7 @@ export default function SearchResults({ results, onClose }: SearchResultsProps) 
               onClick={handleTrailClick}
               role="option"
             >
-              <span className={styles.resultIcon()}>🥾</span>
+              <Footprints className={styles.resultIcon()} aria-hidden />
               <div>
                 <p className={styles.resultName()}>{trail.name}</p>
                 <p className={styles.resultMeta()}>
@@ -102,7 +103,7 @@ export default function SearchResults({ results, onClose }: SearchResultsProps) 
               onClick={handleWaterfallClick}
               role="option"
             >
-              <span className={styles.resultIcon()}>💧</span>
+              <Droplets className={styles.resultIcon()} aria-hidden />
               <div>
                 <p className={styles.resultName()}>{wf.name}</p>
                 <p className={styles.resultMeta()}>

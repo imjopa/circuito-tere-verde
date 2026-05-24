@@ -1,17 +1,18 @@
 import { useState } from "react";
+import { CircleCheck, Mail, MapPin, MessageCircle, Phone, type LucideIcon } from "lucide-react";
 import Navbar from "../components/layout/Navbar";
 import { formInput, formTextarea } from "../lib/variants/input";
 
-const CONTACTS = [
-  { icon: "📞", label: "Telefone geral", value: "(21) 0000-0000", sub: "Seg–Sex, 08h às 17h" },
-  { icon: "📧", label: "E-mail", value: "contato@tereverde.com.br", sub: "Resposta em até 48h" },
+const CONTACTS: { icon: LucideIcon; label: string; value: string; sub: string }[] = [
+  { icon: Phone, label: "Telefone geral", value: "(21) 0000-0000", sub: "Seg–Sex, 08h às 17h" },
+  { icon: Mail, label: "E-mail", value: "contato@tereverde.com.br", sub: "Resposta em até 48h" },
   {
-    icon: "📍",
+    icon: MapPin,
     label: "Endereço",
     value: "Av. Alberto Torres, 111 — Alto — Teresópolis, RJ",
     sub: "CEP 25964-004",
   },
-  { icon: "📱", label: "WhatsApp", value: "(21) 00000-0000", sub: "Seg–Sex, 08h às 17h" },
+  { icon: MessageCircle, label: "WhatsApp", value: "(21) 00000-0000", sub: "Seg–Sex, 08h às 17h" },
 ];
 
 const INITIAL_FORM = { name: "", email: "", subject: "", message: "" };
@@ -71,7 +72,7 @@ export default function ContactPage() {
                 key={c.label}
                 className="flex items-start gap-3 rounded-lg border border-gray-100 bg-white p-4"
               >
-                <span className="shrink-0 text-xl">{c.icon}</span>
+                <c.icon className="size-5 shrink-0 text-green-700" aria-hidden />
                 <div>
                   <p className="text-xs uppercase tracking-wider text-gray-500">{c.label}</p>
                   <p className="mt-0.5 text-[0.9375rem] font-medium text-gray-900">{c.value}</p>
@@ -86,7 +87,7 @@ export default function ContactPage() {
 
             {submitted ? (
               <div className="flex flex-col items-center gap-3 px-4 py-10 text-center">
-                <div className="text-5xl">✅</div>
+                <CircleCheck className="size-14 text-green-600" aria-hidden />
                 <h3 className="text-xl text-green-800">Mensagem enviada!</h3>
                 <p className="max-w-[340px] text-[0.9375rem] leading-relaxed text-gray-500">
                   Obrigado, {form.name}. Retornaremos em breve para {form.email}.

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ArrowUp, Droplets, Trees } from "lucide-react";
 import Navbar from "../components/layout/Navbar";
 import { waterfalls } from "../data/waterfalls";
 import type { ParkId } from "../data/parks";
@@ -78,8 +79,9 @@ export default function WaterfallsPage() {
                       {accessCfg.label}
                     </span>
                     {wf.allowsBathing && (
-                      <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-[0.6875rem] text-white">
-                        💧 Permite banho
+                      <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-0.5 text-[0.6875rem] text-white">
+                        <Droplets className="size-3.5" aria-hidden />
+                        Permite banho
                       </span>
                     )}
                   </div>
@@ -90,10 +92,12 @@ export default function WaterfallsPage() {
                 <div className="flex flex-col gap-3.5 px-5 py-4">
                   <div className="flex gap-4">
                     <span className="flex items-center gap-1 text-[0.8125rem] text-gray-500">
-                      ⬆️ {wf.height}
+                      <ArrowUp className="size-3.5 shrink-0" aria-hidden />
+                      {wf.height}
                     </span>
                     <span className="flex items-center gap-1 text-[0.8125rem] text-gray-500">
-                      🏞️ {wf.parkName.split(" ")[0]}
+                      <Trees className="size-3.5 shrink-0" aria-hidden />
+                      {wf.parkName.split(" ")[0]}
                     </span>
                   </div>
 
