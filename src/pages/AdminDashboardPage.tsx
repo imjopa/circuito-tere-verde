@@ -17,15 +17,7 @@ import { useAdminMetrics } from "../hooks/useAdminMetrics";
 import { trails as initialTrails, type Trail, type TrailStatus } from "../data/trails";
 import { events as initialEvents, type ParkEvent, type ParkEventStatus } from "../data/events";
 import StatusBadge from "../components/ui/StatusBadge";
-import {
-  actionDeleteBtn,
-  actionEditBtn,
-  adminModal,
-  eventStatusPill,
-  manageCard,
-  metricCard,
-  sidebarItem,
-} from "../lib/variants/admin";
+import { eventStatusPill, sidebarItem } from "../lib/variants/admin";
 import { formInput, formSelect, formTextarea } from "../lib/variants/input";
 
 const DEFAULT_TRAIL_STATUS: TrailStatus = "open";
@@ -58,8 +50,6 @@ export default function AdminDashboardPage() {
   const navigate = useNavigate();
   const { logout } = useAuth();
   const metrics = useAdminMetrics();
-  const modalStyles = adminModal();
-  const dangerModalStyles = adminModal({ danger: true });
 
   // Estado da view ativa na sidebar
   const [activeView, setActiveView] = useState(VIEWS.dashboard);
@@ -268,16 +258,30 @@ export default function AdminDashboardPage() {
                     delta: metrics.activeAlerts === 0 ? "Tudo normal" : "Requer atenção",
                   },
                 ] as const
-              ).map((metric) => {
-                const card = metricCard({ alert: metric.alert });
-                return (
-                  <div key={metric.label} className={card.root()}>
-                    <p className={card.label()}>{metric.label}</p>
-                    <p className={card.value()}>{metric.value}</p>
-                    <span className={card.delta()}>{metric.delta}</span>
-                  </div>
-                );
-              })}
+              ).map((metric) => (
+                <div
+                  key={metric.label}
+                  className={`rounded-lg border px-5 py-4 ${
+                    metric.alert ? "border-red-300 bg-red-50" : "border-gray-100 bg-white"
+                  }`}
+                >
+                  <p className="mb-1.5 text-xs leading-snug text-gray-500">{metric.label}</p>
+                  <p
+                    className={`font-display text-3xl leading-none font-semibold ${
+                      metric.alert ? "text-red-700" : "text-green-800"
+                    }`}
+                  >
+                    {metric.value}
+                  </p>
+                  <span
+                    className={`mt-1.5 inline-block rounded-full px-2 py-0.5 text-[0.6875rem] ${
+                      metric.alert ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
+                    }`}
+                  >
+                    {metric.delta}
+                  </span>
+                </div>
+              ))}
             </section>
 
             <section
@@ -389,41 +393,45 @@ export default function AdminDashboardPage() {
               <p className="text-sm text-gray-500">{trailsData.length} trilhas cadastradas</p>
             </div>
             <div className="flex flex-col gap-3">
-              {trailsData.map((trail) => {
-                const card = manageCard();
-                return (
-                  <div key={trail.id} className={card.root()}>
-                    <div className={card.left()}>
-                      <StatusBadge status={trail.status} />
-                      <div className={card.info()}>
-                        <p className={card.name()}>{trail.name}</p>
-                        <p className={card.meta()}>
-                          {trail.parkName} · {trail.difficulty} · {trail.distance} km
-                        </p>
-                        <p className={card.conditions()}>{trail.conditions}</p>
-                      </div>
-                    </div>
-                    <div className={card.actions()}>
-                      <button
-                        className={`${actionEditBtn()} inline-flex items-center gap-1.5`}
-                        onClick={() => openEditTrail(trail)}
-                        aria-label={`Editar trilha ${trail.name}`}
-                      >
-                        <Pencil className="size-3.5" aria-hidden />
-                        Editar
-                      </button>
-                      <button
-                        className={`${actionDeleteBtn()} inline-flex items-center gap-1.5`}
-                        onClick={() => confirmDeleteTrail(trail.id)}
-                        aria-label={`Excluir trilha ${trail.name}`}
-                      >
-                        <Trash2 className="size-3.5" aria-hidden />
-                        Excluir
-                      </button>
+              {trailsData.map((trail) => (
+                <div
+                  key={trail.id}
+                  className="flex items-start justify-between gap-4 rounded-lg border border-gray-100 bg-white px-5 py-4 transition hover:shadow-sm"
+                >
+                  <div className="flex min-w-0 flex-1 items-start gap-3.5">
+                    <StatusBadge status={trail.status} />
+                    <div className="min-w-0 flex-1">
+                      <p className="mb-0.5 truncate text-[0.9375rem] font-medium text-gray-900">
+                        {trail.name}
+                      </p>
+                      <p className="mb-1 text-[0.8125rem] text-gray-500">
+                        {trail.parkName} · {trail.difficulty} · {trail.distance} km
+                      </p>
+                      <p className="rounded-sm border-l-[3px] border-green-300 bg-gray-50 px-2 py-1 text-[0.8125rem] leading-normal text-gray-600">
+                        {trail.conditions}
+                      </p>
                     </div>
                   </div>
-                );
-              })}
+                  <div className="flex shrink-0 flex-col gap-2">
+                    <button
+                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-green-200 bg-green-50 px-3.5 py-1.5 text-[0.8125rem] font-medium whitespace-nowrap text-green-800 transition hover:bg-green-100"
+                      onClick={() => openEditTrail(trail)}
+                      aria-label={`Editar trilha ${trail.name}`}
+                    >
+                      <Pencil className="size-3.5" aria-hidden />
+                      Editar
+                    </button>
+                    <button
+                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-red-200 bg-red-50 px-3.5 py-1.5 text-[0.8125rem] font-medium whitespace-nowrap text-red-700 transition hover:bg-red-100"
+                      onClick={() => confirmDeleteTrail(trail.id)}
+                      aria-label={`Excluir trilha ${trail.name}`}
+                    >
+                      <Trash2 className="size-3.5" aria-hidden />
+                      Excluir
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           </section>
         )}
@@ -444,27 +452,33 @@ export default function AdminDashboardPage() {
                   month: "short",
                   year: "numeric",
                 });
-                const card = manageCard({ cancelled: ev.status === "cancelled" });
                 return (
-                  <div key={ev.id} className={card.root()}>
-                    <div className={card.left()}>
+                  <div
+                    key={ev.id}
+                    className={`flex items-start justify-between gap-4 rounded-lg border border-gray-100 bg-white px-5 py-4 transition hover:shadow-sm${
+                      ev.status === "cancelled" ? " opacity-55" : ""
+                    }`}
+                  >
+                    <div className="flex min-w-0 flex-1 items-start gap-3.5">
                       <div className={eventStatusPill({ status: ev.status })}>
                         {EVENT_STATUS_OPTIONS.find((o) => o.value === ev.status)?.label ??
                           ev.status}
                       </div>
-                      <div className={card.info()}>
-                        <p className={card.name()}>{ev.title}</p>
-                        <p className={card.meta()}>
+                      <div className="min-w-0 flex-1">
+                        <p className="mb-0.5 truncate text-[0.9375rem] font-medium text-gray-900">
+                          {ev.title}
+                        </p>
+                        <p className="mb-1 text-[0.8125rem] text-gray-500">
                           {ev.park} · {dateStr} · {ev.time}
                         </p>
-                        <p className={card.conditions()}>
+                        <p className="rounded-sm border-l-[3px] border-green-300 bg-gray-50 px-2 py-1 text-[0.8125rem] leading-normal text-gray-600">
                           {ev.spotsLeft} vagas restantes de {ev.spots} · {ev.price}
                         </p>
                       </div>
                     </div>
-                    <div className={card.actions()}>
+                    <div className="flex shrink-0 flex-col gap-2">
                       <button
-                        className={`${actionEditBtn()} inline-flex items-center gap-1.5`}
+                        className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-green-200 bg-green-50 px-3.5 py-1.5 text-[0.8125rem] font-medium whitespace-nowrap text-green-800 transition hover:bg-green-100"
                         onClick={() => openEditEvent(ev)}
                         aria-label={`Editar evento ${ev.title}`}
                       >
@@ -472,7 +486,7 @@ export default function AdminDashboardPage() {
                         Editar
                       </button>
                       <button
-                        className={`${actionDeleteBtn()} inline-flex items-center gap-1.5`}
+                        className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-red-200 bg-red-50 px-3.5 py-1.5 text-[0.8125rem] font-medium whitespace-nowrap text-red-700 transition hover:bg-red-100"
                         onClick={() => confirmDeleteEvent(ev.id)}
                         aria-label={`Excluir evento ${ev.title}`}
                       >
@@ -493,16 +507,16 @@ export default function AdminDashboardPage() {
       ══════════════════════════════ */}
       {editingTrail && (
         <div
-          className={modalStyles.overlay()}
+          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/45 p-4"
           role="dialog"
           aria-modal="true"
           aria-label="Editar trilha"
         >
-          <div className={modalStyles.panel()}>
-            <div className={modalStyles.header()}>
-              <h2 className={modalStyles.title()}>Editar trilha</h2>
+          <div className="flex w-full max-w-[440px] flex-col gap-4 rounded-xl bg-white p-7 shadow-lg">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-green-800">Editar trilha</h2>
               <button
-                className={modalStyles.close()}
+                className="flex size-7 cursor-pointer items-center justify-center rounded-full border-none bg-gray-100 text-sm text-gray-500 transition hover:bg-gray-200"
                 onClick={() => setEditingTrail(null)}
                 aria-label="Fechar"
               >
@@ -510,13 +524,13 @@ export default function AdminDashboardPage() {
               </button>
             </div>
 
-            <p className={modalStyles.subject()}>{editingTrail.name}</p>
-            <p className={modalStyles.meta()}>
+            <p className="text-[0.9375rem] font-medium text-gray-900">{editingTrail.name}</p>
+            <p className="-mt-1.5 text-[0.8125rem] text-gray-500">
               {editingTrail.parkName} · {editingTrail.difficulty}
             </p>
 
-            <div className={modalStyles.field()}>
-              <label htmlFor="trailStatus" className={modalStyles.label()}>
+            <div className="flex flex-col gap-[5px]">
+              <label htmlFor="trailStatus" className="text-[0.8125rem] font-medium text-gray-600">
                 Status da trilha
               </label>
               <select
@@ -531,14 +545,14 @@ export default function AdminDashboardPage() {
                   </option>
                 ))}
               </select>
-              <div className={modalStyles.preview()}>
-                <span className={modalStyles.previewLabel()}>Pré-visualização:</span>
+              <div className="mt-1 flex items-center gap-2">
+                <span className="text-xs text-gray-500">Pré-visualização:</span>
                 <StatusBadge status={trailStatusDraft ?? DEFAULT_TRAIL_STATUS} />
               </div>
             </div>
 
-            <div className={modalStyles.field()}>
-              <label htmlFor="trailCond" className={modalStyles.label()}>
+            <div className="flex flex-col gap-[5px]">
+              <label htmlFor="trailCond" className="text-[0.8125rem] font-medium text-gray-600">
                 Condições atuais
               </label>
               <textarea
@@ -551,11 +565,17 @@ export default function AdminDashboardPage() {
               />
             </div>
 
-            <div className={modalStyles.actions()}>
-              <button className={modalStyles.cancelBtn()} onClick={() => setEditingTrail(null)}>
+            <div className="mt-1 flex justify-end gap-3">
+              <button
+                className="cursor-pointer rounded-md border-none bg-gray-100 px-5 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-200"
+                onClick={() => setEditingTrail(null)}
+              >
                 Cancelar
               </button>
-              <button className={modalStyles.saveBtn()} onClick={saveTrail}>
+              <button
+                className="cursor-pointer rounded-md border-none bg-green-700 px-5 py-2 text-sm font-medium text-white transition hover:bg-green-800"
+                onClick={saveTrail}
+              >
                 Salvar alterações
               </button>
             </div>
@@ -568,16 +588,16 @@ export default function AdminDashboardPage() {
       ══════════════════════════════ */}
       {editingEvent && (
         <div
-          className={modalStyles.overlay()}
+          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/45 p-4"
           role="dialog"
           aria-modal="true"
           aria-label="Editar evento"
         >
-          <div className={modalStyles.panel()}>
-            <div className={modalStyles.header()}>
-              <h2 className={modalStyles.title()}>Editar evento</h2>
+          <div className="flex w-full max-w-[440px] flex-col gap-4 rounded-xl bg-white p-7 shadow-lg">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-green-800">Editar evento</h2>
               <button
-                className={modalStyles.close()}
+                className="flex size-7 cursor-pointer items-center justify-center rounded-full border-none bg-gray-100 text-sm text-gray-500 transition hover:bg-gray-200"
                 onClick={() => setEditingEvent(null)}
                 aria-label="Fechar"
               >
@@ -585,13 +605,13 @@ export default function AdminDashboardPage() {
               </button>
             </div>
 
-            <p className={modalStyles.subject()}>{editingEvent.title}</p>
-            <p className={modalStyles.meta()}>
+            <p className="text-[0.9375rem] font-medium text-gray-900">{editingEvent.title}</p>
+            <p className="-mt-1.5 text-[0.8125rem] text-gray-500">
               {editingEvent.park} · {editingEvent.date} · {editingEvent.time}
             </p>
 
-            <div className={modalStyles.field()}>
-              <label htmlFor="eventStatus" className={modalStyles.label()}>
+            <div className="flex flex-col gap-[5px]">
+              <label htmlFor="eventStatus" className="text-[0.8125rem] font-medium text-gray-600">
                 Status do evento
               </label>
               <select
@@ -608,8 +628,8 @@ export default function AdminDashboardPage() {
               </select>
             </div>
 
-            <div className={modalStyles.field()}>
-              <label htmlFor="eventSpots" className={modalStyles.label()}>
+            <div className="flex flex-col gap-[5px]">
+              <label htmlFor="eventSpots" className="text-[0.8125rem] font-medium text-gray-600">
                 Vagas restantes
               </label>
               <input
@@ -621,16 +641,22 @@ export default function AdminDashboardPage() {
                 onChange={(e) => setEventSpotsDraft(e.target.value)}
                 className={formInput()}
               />
-              <p className={modalStyles.hint()}>
+              <p className="mt-0.5 text-xs text-gray-500">
                 Capacidade total do evento: {editingEvent.spots} vagas
               </p>
             </div>
 
-            <div className={modalStyles.actions()}>
-              <button className={modalStyles.cancelBtn()} onClick={() => setEditingEvent(null)}>
+            <div className="mt-1 flex justify-end gap-3">
+              <button
+                className="cursor-pointer rounded-md border-none bg-gray-100 px-5 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-200"
+                onClick={() => setEditingEvent(null)}
+              >
                 Cancelar
               </button>
-              <button className={modalStyles.saveBtn()} onClick={saveEvent}>
+              <button
+                className="cursor-pointer rounded-md border-none bg-green-700 px-5 py-2 text-sm font-medium text-white transition hover:bg-green-800"
+                onClick={saveEvent}
+              >
                 Salvar alterações
               </button>
             </div>
@@ -643,23 +669,23 @@ export default function AdminDashboardPage() {
       ══════════════════════════════ */}
       {deleteTarget && (
         <div
-          className={dangerModalStyles.overlay()}
+          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/45 p-4"
           role="dialog"
           aria-modal="true"
           aria-label="Confirmar exclusão"
         >
-          <div className={dangerModalStyles.panel()}>
-            <div className={dangerModalStyles.header()}>
-              <h2 className={dangerModalStyles.title()}>Confirmar exclusão</h2>
+          <div className="flex w-full max-w-[440px] flex-col gap-4 rounded-xl border-t-4 border-red-400 bg-white p-7 shadow-lg">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-green-800">Confirmar exclusão</h2>
               <button
-                className={dangerModalStyles.close()}
+                className="flex size-7 cursor-pointer items-center justify-center rounded-full border-none bg-gray-100 text-sm text-gray-500 transition hover:bg-gray-200"
                 onClick={() => setDeleteTarget(null)}
                 aria-label="Fechar"
               >
                 <X className="size-4" aria-hidden />
               </button>
             </div>
-            <p className={dangerModalStyles.deleteWarning()}>
+            <p className="rounded-md border border-red-200 bg-red-50 px-4 py-3.5 text-[0.9375rem] leading-relaxed text-gray-700">
               <span className="inline-flex items-start gap-1.5">
                 <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
                 <span>
@@ -668,17 +694,20 @@ export default function AdminDashboardPage() {
                 </span>
               </span>
             </p>
-            <p className={dangerModalStyles.deleteNote()}>
+            <p className="text-[0.8125rem] leading-normal text-gray-500 italic">
               Em produção, esta ação exigiria confirmação dupla e registro em log de auditoria.
             </p>
-            <div className={dangerModalStyles.actions()}>
+            <div className="mt-1 flex justify-end gap-3">
               <button
-                className={dangerModalStyles.cancelBtn()}
+                className="cursor-pointer rounded-md border-none bg-gray-100 px-5 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-200"
                 onClick={() => setDeleteTarget(null)}
               >
                 Cancelar
               </button>
-              <button className={dangerModalStyles.deleteConfirmBtn()} onClick={executeDelete}>
+              <button
+                className="cursor-pointer rounded-md border-none bg-red-600 px-5 py-2 text-sm font-medium text-white transition hover:bg-red-700"
+                onClick={executeDelete}
+              >
                 Sim, excluir
               </button>
             </div>
