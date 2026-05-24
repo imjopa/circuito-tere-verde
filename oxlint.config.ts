@@ -1,7 +1,18 @@
 import { defineConfig } from "oxlint";
 
 const config = defineConfig({
-  plugins: ["typescript", "oxc", "react", "react-perf", "promise", "jsx-a11y"],
+  plugins: [
+    "typescript",
+    "oxc",
+    "react",
+    "react-perf",
+    "promise",
+    "jsx-a11y",
+    "unicorn",
+    "node",
+    "jsdoc",
+    "eslint",
+  ],
   categories: {
     correctness: "error",
     perf: "warn",

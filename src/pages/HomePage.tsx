@@ -38,7 +38,7 @@ export default function HomePage() {
   // Próximos 3 eventos futuros
   const upcomingEvents = events
     .filter((ev) => new Date(ev.date) >= new Date())
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .toSorted((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     .slice(0, 3);
 
   // Fecha dropdown ao clicar fora

@@ -52,7 +52,7 @@ export default function EventsPage() {
 
   const filtered = events
     .filter((ev) => activeCategory === "all" || ev.category === activeCategory)
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    .toSorted((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   return (
     <div className="min-h-screen">

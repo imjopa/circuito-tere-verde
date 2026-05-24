@@ -12,7 +12,7 @@ export default function AdminDashboardPage() {
 
   const upcomingEvents = eventsData
     .filter((ev) => new Date(ev.date) >= new Date())
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .toSorted((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
     .slice(0, 3);
 
   return (
