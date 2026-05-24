@@ -6,3 +6,7 @@ dist/
 .vscode/
 *.swp
 *.swo
+.turbo/
+.env
+.env.local
+.pnpm-store

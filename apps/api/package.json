@@ -1,0 +1,23 @@
+{
+  "name": "@circuito/api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "typecheck": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@circuito/db": "workspace:*",
+    "@hono/node-server": "^2.0.3",
+    "drizzle-orm": "^0.45.2",
+    "hono": "^4.7.11"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "tsx": "^4.19.4",
+    "typescript": "^6.0.3"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "allowUnreachableCode": false,
+    "esModuleInterop": true,
+    "exactOptionalPropertyTypes": true,
+    "lib": ["esnext"],
+    "module": "NodeNext",
+    "moduleDetection": "force",
+    "moduleResolution": "NodeNext",
+    "noUncheckedIndexedAccess": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "rootDir": "src",
+    "outDir": "dist",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "esnext",
+    "verbatimModuleSyntax": true,
+    "types": ["node"]
+  },
+  "include": ["src"]
+}
