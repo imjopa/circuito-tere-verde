@@ -51,17 +51,20 @@ export default function SearchResults({ results, onClose }: SearchResultsProps) 
             Parques
           </span>
           {results.parks.map((park) => (
-            <option
+            <button
               key={park.id}
               className="flex w-full cursor-pointer items-center gap-3 border-none bg-transparent px-4 py-2.5 text-left transition hover:bg-green-50"
               onClick={onClose}
+              aria-selected={false}
+              // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
+              role="option"
             >
               <Trees className="size-5 shrink-0 text-green-700" aria-hidden />
               <div>
                 <p className="text-sm font-medium text-gray-900">{park.name}</p>
                 <p className="mt-px text-xs text-gray-500">{park.type}</p>
               </div>
-            </option>
+            </button>
           ))}
         </div>
       )}
@@ -72,10 +75,13 @@ export default function SearchResults({ results, onClose }: SearchResultsProps) 
             Trilhas
           </span>
           {results.trails.map((trail) => (
-            <option
+            <button
               key={trail.id}
               className="flex w-full cursor-pointer items-center gap-3 border-none bg-transparent px-4 py-2.5 text-left transition hover:bg-green-50"
               onClick={handleTrailClick}
+              aria-selected={false}
+              // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
+              role="option"
             >
               <Footprints className="size-5 shrink-0 text-green-700" aria-hidden />
               <div>
@@ -84,7 +90,7 @@ export default function SearchResults({ results, onClose }: SearchResultsProps) 
                   {trail.parkName} · {trail.difficulty}
                 </p>
               </div>
-            </option>
+            </button>
           ))}
         </div>
       )}
@@ -95,10 +101,13 @@ export default function SearchResults({ results, onClose }: SearchResultsProps) 
             Cachoeiras
           </span>
           {results.waterfalls.map((wf) => (
-            <option
+            <button
               key={wf.id}
               className="flex w-full cursor-pointer items-center gap-3 border-none bg-transparent px-4 py-2.5 text-left transition hover:bg-green-50"
               onClick={handleWaterfallClick}
+              aria-selected={false}
+              // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
+              role="option"
             >
               <Droplets className="size-5 shrink-0 text-green-700" aria-hidden />
               <div>
@@ -107,7 +116,7 @@ export default function SearchResults({ results, onClose }: SearchResultsProps) 
                   {wf.parkName} · {wf.access}
                 </p>
               </div>
-            </option>
+            </button>
           ))}
         </div>
       )}

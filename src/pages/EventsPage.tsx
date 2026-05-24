@@ -1,12 +1,11 @@
 import { Clock, Coins, MapPin, Users } from "lucide-react";
-import { useCallback, useState } from "react";
+import { parseAsStringEnum, useQueryState } from "nuqs";
+import { useCallback } from "react";
 import { tv } from "tailwind-variants";
 
 import Navbar from "@/components/layout/Navbar";
 import { FilterChip } from "@/components/ui/FilterChip";
 import { events } from "@/data/events";
-
-type EventCategory = "guided_trail" | "education" | "volunteer" | "workshop";
 
 const categoryLabels = {
   all: "Todos",
@@ -47,8 +46,13 @@ const statusVariants = tv({
   },
 });
 
+const categoryFilters = ["all", "guided_trail", "education", "volunteer", "workshop"];
+
 export default function EventsPage() {
-  const [activeCategory, setActiveCategory] = useState<EventCategory | "all">("all");
+  const [activeCategory, setActiveCategory] = useQueryState(
+    "category",
+    parseAsStringEnum(categoryFilters).withDefault("all"),
+  );
 
   const filtered = events
     .filter((ev) => activeCategory === "all" || ev.category === activeCategory)
@@ -72,9 +76,7 @@ export default function EventsPage() {
           <span className="text-sm whitespace-nowrap text-gray-500">Categoria:</span>
           <div className="flex flex-wrap gap-2">
             {Object.entries(categoryLabels).map(([value, label]) => {
-              const handleClick = useCallback(() => {
-                setActiveCategory(value as EventCategory);
-              }, [value]);
+              const handleClick = useCallback(() => setActiveCategory(value), [value]);
 
               return (
                 <FilterChip key={value} active={activeCategory === value} onClick={handleClick}>

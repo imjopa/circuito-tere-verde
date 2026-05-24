@@ -33,34 +33,16 @@ export default function TrailsPage() {
   } = useTrailFilters();
 
   const handleSearch = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setSearchQuery(e.target.value);
-    },
+    (e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value),
     [setSearchQuery],
   );
 
-  const handleClearSearch = useCallback(() => {
-    setSearchQuery("");
-  }, [setSearchQuery]);
-
-  const handleDifficultyClick = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
-      setActiveDifficulty(e.currentTarget.value);
-    },
-    [setActiveDifficulty],
-  );
-
-  const handleParkClick = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
-      setActivePark(e.currentTarget.value);
-    },
-    [setActivePark],
-  );
+  const handleClearSearch = useCallback(() => setSearchQuery(""), [setSearchQuery]);
 
   const handleClearFilters = useCallback(() => {
-    setSearchQuery("");
-    setActiveDifficulty("all");
-    setActivePark("all");
+    void setSearchQuery("");
+    void setActiveDifficulty("all");
+    void setActivePark("all");
   }, [setSearchQuery, setActiveDifficulty, setActivePark]);
 
   return (
@@ -102,30 +84,41 @@ export default function TrailsPage() {
         <div className="mb-3.5 flex flex-wrap items-center gap-3">
           <span className="text-sm whitespace-nowrap text-gray-500">Dificuldade:</span>
           <div className="flex flex-wrap gap-2">
-            {difficultyFilters.map((filter) => (
-              <FilterChip
-                key={filter.value}
-                active={activeDifficulty === filter.value}
-                onClick={handleDifficultyClick}
-              >
-                {filter.label}
-              </FilterChip>
-            ))}
+            {difficultyFilters.map((filter) => {
+              const handleClick = useCallback(
+                () => setActiveDifficulty(filter.value),
+                [filter.value],
+              );
+
+              return (
+                <FilterChip
+                  key={filter.value}
+                  active={activeDifficulty === filter.value}
+                  onClick={handleClick}
+                >
+                  {filter.label}
+                </FilterChip>
+              );
+            })}
           </div>
         </div>
 
         <div className="mb-3.5 flex flex-wrap items-center gap-3">
           <span className="text-sm whitespace-nowrap text-gray-500">Parque:</span>
           <div className="flex flex-wrap gap-2">
-            {parkFilters.map((filter) => (
-              <FilterChip
-                key={filter.value}
-                active={activePark === filter.value}
-                onClick={handleParkClick}
-              >
-                {filter.label}
-              </FilterChip>
-            ))}
+            {parkFilters.map((filter) => {
+              const handleClick = useCallback(() => setActivePark(filter.value), [filter.value]);
+
+              return (
+                <FilterChip
+                  key={filter.value}
+                  active={activePark === filter.value}
+                  onClick={handleClick}
+                >
+                  {filter.label}
+                </FilterChip>
+              );
+            })}
           </div>
         </div>
 

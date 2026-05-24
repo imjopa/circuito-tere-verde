@@ -1,4 +1,5 @@
-import { useState, useMemo } from "react";
+import { parseAsString, useQueryState } from "nuqs";
+import { useMemo, useCallback } from "react";
 
 import { parks } from "@/data/parks";
 import { trails } from "@/data/trails";
@@ -10,7 +11,7 @@ import { waterfalls } from "@/data/waterfalls";
  * Retorna resultados categorizados e paginados.
  */
 export function useHomeSearch() {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useQueryState("q", parseAsString.withDefault(""));
 
   const results = useMemo(() => {
     const term = query.trim().toLowerCase();
@@ -42,9 +43,7 @@ export function useHomeSearch() {
     };
   }, [query]);
 
-  const clearSearch = () => {
-    setQuery("");
-  };
+  const clearSearch = useCallback(() => setQuery(""), [setQuery]);
 
   return { query, setQuery, clearSearch, results };
 }

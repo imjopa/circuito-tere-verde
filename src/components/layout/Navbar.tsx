@@ -1,6 +1,7 @@
 import { Leaf, Menu, X } from "lucide-react";
-import { useCallback, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { parseAsBoolean, useQueryState } from "nuqs";
+import { useCallback } from "react";
+import { Link, NavLink } from "react-router-dom";
 import { tv } from "tailwind-variants";
 
 const NAV_LINKS = [
@@ -14,7 +15,7 @@ const NAV_LINKS = [
 const variants = tv({
   base: "pb-0.5 text-sm text-white/75 transition hover:text-green-300",
   variants: {
-    active: {
+    isActive: {
       true: "border-b-2 border-green-400 text-green-400",
       false: "",
     },
@@ -24,7 +25,7 @@ const variants = tv({
 const mobileNavLinkVariants = tv({
   base: "border-b border-white/10 py-3 text-sm text-white/80 transition hover:text-green-400",
   variants: {
-    active: {
+    isActive: {
       true: "text-green-400",
       false: "",
     },
@@ -32,20 +33,10 @@ const mobileNavLinkVariants = tv({
 });
 
 export default function Navbar() {
-  const { pathname } = useLocation();
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useQueryState("menuOpen", parseAsBoolean.withDefault(false));
 
-  const isActive = (to: string) => {
-    return to === "/" ? pathname === "/" : pathname.startsWith(to);
-  };
-
-  const handleMenuOpen = useCallback(() => {
-    setMenuOpen((prev) => !prev);
-  }, []);
-
-  const handleMenuClose = useCallback(() => {
-    setMenuOpen(false);
-  }, []);
+  const handleMenuOpen = useCallback(() => setMenuOpen((prev) => !prev), [setMenuOpen]);
+  const handleMenuClose = useCallback(() => setMenuOpen(false), [setMenuOpen]);
 
   return (
     <header className="sticky top-0 z-100 bg-green-700 shadow-md">
@@ -67,9 +58,9 @@ export default function Navbar() {
         <ul className="ml-auto hidden list-none gap-5 md:flex">
           {NAV_LINKS.map((link) => (
             <li key={link.to}>
-              <Link to={link.to} className={variants({ active: isActive(link.to) })}>
+              <NavLink to={link.to} className={variants}>
                 {link.label}
-              </Link>
+              </NavLink>
             </li>
           ))}
         </ul>
@@ -101,14 +92,14 @@ export default function Navbar() {
           aria-label="Menu mobile"
         >
           {NAV_LINKS.map((link) => (
-            <Link
+            <NavLink
               key={link.to}
               to={link.to}
-              className={mobileNavLinkVariants({ active: isActive(link.to) })}
+              className={mobileNavLinkVariants}
               onClick={handleMenuClose}
             >
               {link.label}
-            </Link>
+            </NavLink>
           ))}
           <Link
             to="/admin"

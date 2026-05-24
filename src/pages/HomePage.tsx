@@ -61,15 +61,15 @@ export default function HomePage() {
 
   const handleQueryChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      setQuery(e.target.value);
       setShowResults(true);
+      return setQuery(e.target.value);
     },
     [setQuery],
   );
 
   const handleClear = useCallback(() => {
-    clearSearch();
     setShowResults(false);
+    return clearSearch();
   }, [clearSearch]);
 
   const handleCloseResults = useCallback(() => {

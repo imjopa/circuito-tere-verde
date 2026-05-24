@@ -1,11 +1,22 @@
-import { useState, useMemo } from "react";
+import { parseAsString, parseAsStringEnum, useQueryState } from "nuqs";
+import { useMemo } from "react";
 
+import { parks } from "@/data/parks";
 import { trails } from "@/data/trails";
 
+const difficultyFilters = ["all", "easy", "medium", "hard"];
+const parkFilters = ["all", ...parks.map((park) => park.id)];
+
 export function useTrailFilters() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeDifficulty, setActiveDifficulty] = useState("all");
-  const [activePark, setActivePark] = useState("all");
+  const [searchQuery, setSearchQuery] = useQueryState("q", parseAsString.withDefault(""));
+  const [activeDifficulty, setActiveDifficulty] = useQueryState(
+    "difficulty",
+    parseAsStringEnum(difficultyFilters).withDefault("all"),
+  );
+  const [activePark, setActivePark] = useQueryState(
+    "park",
+    parseAsStringEnum(parkFilters).withDefault("all"),
+  );
 
   const filteredTrails = useMemo(() => {
     return trails.filter((trail) => {

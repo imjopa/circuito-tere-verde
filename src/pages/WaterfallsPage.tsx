@@ -1,5 +1,6 @@
 import { ArrowUp, Droplets, Trees } from "lucide-react";
-import { useCallback, useState } from "react";
+import { parseAsStringEnum, useQueryState } from "nuqs";
+import { useCallback } from "react";
 import { tv } from "tailwind-variants";
 
 import Navbar from "@/components/layout/Navbar";
@@ -52,8 +53,13 @@ const variants = tv({
   defaultVariants: { access: "easy", park: "serra-dos-orgaos" },
 });
 
+const accessFilters = ["all", "easy", "medium", "hard"];
+
 export default function WaterfallsPage() {
-  const [activeAccess, setActiveAccess] = useState("all");
+  const [activeAccess, setActiveAccess] = useQueryState(
+    "access",
+    parseAsStringEnum(accessFilters).withDefault("all"),
+  );
 
   const filtered = waterfalls.filter((wf) => activeAccess === "all" || wf.access === activeAccess);
 
@@ -76,9 +82,7 @@ export default function WaterfallsPage() {
           <span className="text-sm whitespace-nowrap text-gray-500">Dificuldade de acesso:</span>
           <div className="flex flex-wrap gap-2">
             {Object.entries(accessFilterLabels).map(([value, label]) => {
-              const handleClick = useCallback(() => {
-                setActiveAccess(value);
-              }, [value]);
+              const handleClick = useCallback(() => setActiveAccess(value), [value]);
 
               return (
                 <FilterChip key={value} active={activeAccess === value} onClick={handleClick}>
