@@ -1,4 +1,11 @@
-import { useState } from "react";
+import { Input } from "@/components/ui/Input";
+import { Select } from "@/components/ui/Select";
+import StatusBadge from "@/components/ui/StatusBadge";
+import { TextArea } from "@/components/ui/TextArea";
+import { events as initialEvents, type ParkEvent, type ParkEventStatus } from "@/data/events";
+import { trails as initialTrails, type Trail, type TrailStatus } from "@/data/trails";
+import { useAdminMetrics } from "@/hooks/useAdminMetrics";
+import { useAuth } from "@/hooks/useAuth";
 import {
   AlertTriangle,
   Calendar,
@@ -11,14 +18,9 @@ import {
   X,
   type LucideIcon,
 } from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
-import { useAdminMetrics } from "../hooks/useAdminMetrics";
-import { trails as initialTrails, type Trail, type TrailStatus } from "../data/trails";
-import { events as initialEvents, type ParkEvent, type ParkEventStatus } from "../data/events";
-import StatusBadge from "../components/ui/StatusBadge";
-import { eventStatusPill, sidebarItem } from "../lib/variants/admin";
-import { formInput, formSelect, formTextarea } from "../lib/variants/input";
+import { tv } from "tailwind-variants";
 
 const DEFAULT_TRAIL_STATUS: TrailStatus = "open";
 const DEFAULT_EVENT_STATUS: ParkEventStatus = "open";
@@ -45,6 +47,29 @@ const VIEWS = {
   trails: "trails",
   events: "events",
 };
+
+const sidebarItemVariants = tv({
+  base: "flex size-11 cursor-pointer items-center justify-center rounded-md border-none bg-transparent text-xl transition hover:bg-white/10",
+  variants: {
+    active: {
+      true: "bg-white/20 opacity-100 hover:opacity-100",
+      false: "opacity-55 hover:opacity-90",
+    },
+  },
+  defaultVariants: { active: false },
+});
+
+const eventStatusPillVariants = tv({
+  base: "shrink-0 self-start rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap",
+  variants: {
+    status: {
+      open: "bg-green-100 text-green-900",
+      few_spots: "bg-orange-100 text-orange-900",
+      full: "bg-red-100 text-red-900",
+      cancelled: "bg-gray-100 text-gray-500",
+    },
+  },
+});
 
 export default function AdminDashboardPage() {
   const navigate = useNavigate();
@@ -177,7 +202,7 @@ export default function AdminDashboardPage() {
           ).map((item) => (
             <button
               key={item.view}
-              className={sidebarItem({ active: activeView === item.view })}
+              className={sidebarItemVariants({ active: activeView === item.view })}
               onClick={() => setActiveView(item.view)}
               title={item.label}
               aria-label={item.label}
@@ -208,11 +233,11 @@ export default function AdminDashboardPage() {
               {activeView === VIEWS.trails && "Gestão de Trilhas"}
               {activeView === VIEWS.events && "Gestão de Eventos"}
             </h1>
-            <p className="mt-0.5 text-[0.8125rem] text-gray-500">{todayFormatted}</p>
+            <p className="mt-0.5 text-sm text-gray-500">{todayFormatted}</p>
           </div>
           <div className="flex items-center gap-3">
             <div
-              className="flex size-9 shrink-0 items-center justify-center rounded-full bg-green-600 text-[0.8125rem] font-semibold text-white"
+              className="flex size-9 shrink-0 items-center justify-center rounded-full bg-green-600 text-sm font-semibold text-white"
               aria-hidden="true"
             >
               AD
@@ -228,7 +253,7 @@ export default function AdminDashboardPage() {
           <>
             <section
               aria-label="Resumo de métricas"
-              className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-4"
+              className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4"
             >
               {(
                 [
@@ -274,7 +299,7 @@ export default function AdminDashboardPage() {
                     {metric.value}
                   </p>
                   <span
-                    className={`mt-1.5 inline-block rounded-full px-2 py-0.5 text-[0.6875rem] ${
+                    className={`mt-1.5 inline-block rounded-full px-2 py-0.5 text-xs ${
                       metric.alert ? "bg-red-100 text-red-800" : "bg-green-100 text-green-800"
                     }`}
                   >
@@ -285,16 +310,14 @@ export default function AdminDashboardPage() {
             </section>
 
             <section
-              className="grid grid-cols-2 items-start gap-4 max-[900px]:grid-cols-1"
+              className="grid grid-cols-1 items-start gap-4 lg:grid-cols-2"
               aria-label="Detalhes operacionais"
             >
               <div className="rounded-lg border border-gray-100 bg-white p-5">
                 <div className="mb-4 flex items-center justify-between">
-                  <h2 className="text-[0.9375rem] font-medium text-green-800">
-                    Status das trilhas
-                  </h2>
+                  <h2 className="text-sm font-medium text-green-800">Status das trilhas</h2>
                   <button
-                    className="cursor-pointer border-none bg-transparent p-0 text-[0.8125rem] font-medium text-green-600 transition hover:text-green-800"
+                    className="cursor-pointer border-none bg-transparent p-0 text-sm font-medium text-green-600 transition hover:text-green-800"
                     onClick={() => setActiveView(VIEWS.trails)}
                   >
                     Gerenciar →
@@ -307,10 +330,10 @@ export default function AdminDashboardPage() {
                       className="flex items-center gap-2.5 border-b border-gray-100 py-2 last:border-b-0"
                     >
                       <StatusBadge status={trail.status} />
-                      <span className="min-w-0 flex-1 truncate text-[0.8125rem] text-gray-700">
+                      <span className="min-w-0 flex-1 truncate text-sm text-gray-700">
                         {trail.name}
                       </span>
-                      <span className="text-[0.6875rem] whitespace-nowrap text-gray-500">
+                      <span className="text-xs whitespace-nowrap text-gray-500">
                         {trail.parkName.split(" ")[0]}
                       </span>
                     </li>
@@ -321,11 +344,9 @@ export default function AdminDashboardPage() {
               <div className="flex flex-col gap-4">
                 <div className="rounded-lg border border-gray-100 bg-white p-5">
                   <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-[0.9375rem] font-medium text-green-800">
-                      Próximos eventos
-                    </h2>
+                    <h2 className="text-sm font-medium text-green-800">Próximos eventos</h2>
                     <button
-                      className="cursor-pointer border-none bg-transparent p-0 text-[0.8125rem] font-medium text-green-600 transition hover:text-green-800"
+                      className="cursor-pointer border-none bg-transparent p-0 text-sm font-medium text-green-600 transition hover:text-green-800"
                       onClick={() => setActiveView(VIEWS.events)}
                     >
                       Gerenciar →
@@ -348,15 +369,13 @@ export default function AdminDashboardPage() {
                             <span className="block text-base leading-tight font-semibold">
                               {day}
                             </span>
-                            <span className="text-[0.5625rem] tracking-wide uppercase opacity-80">
+                            <span className="text-xs tracking-wide uppercase opacity-80">
                               {month}
                             </span>
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="truncate text-[0.8125rem] font-medium text-gray-800">
-                              {ev.title}
-                            </p>
-                            <p className="mt-px text-[0.6875rem] text-gray-500">
+                            <p className="truncate text-sm font-medium text-gray-800">{ev.title}</p>
+                            <p className="mt-px text-xs text-gray-500">
                               {ev.park} · {ev.spotsLeft} vagas
                             </p>
                           </div>
@@ -367,7 +386,7 @@ export default function AdminDashboardPage() {
                 </div>
 
                 <div className="flex flex-col items-center gap-2.5 rounded-lg border border-gray-100 bg-white p-5">
-                  <p className="text-[0.6875rem] font-medium tracking-wider text-gray-500 uppercase">
+                  <p className="text-xs font-medium tracking-wider text-gray-500 uppercase">
                     Projeto acadêmico
                   </p>
                   <img
@@ -375,7 +394,7 @@ export default function AdminDashboardPage() {
                     alt="Logotipo da UNIFESO"
                     className="w-full max-w-40 object-contain opacity-90"
                   />
-                  <p className="text-center text-[0.6875rem] text-gray-500">
+                  <p className="text-center text-xs text-gray-500">
                     Desenvolvimento de MVP Front-End · 2025
                   </p>
                 </div>
@@ -401,20 +420,20 @@ export default function AdminDashboardPage() {
                   <div className="flex min-w-0 flex-1 items-start gap-3.5">
                     <StatusBadge status={trail.status} />
                     <div className="min-w-0 flex-1">
-                      <p className="mb-0.5 truncate text-[0.9375rem] font-medium text-gray-900">
+                      <p className="mb-0.5 truncate text-sm font-medium text-gray-900">
                         {trail.name}
                       </p>
-                      <p className="mb-1 text-[0.8125rem] text-gray-500">
+                      <p className="mb-1 text-sm text-gray-500">
                         {trail.parkName} · {trail.difficulty} · {trail.distance} km
                       </p>
-                      <p className="rounded-sm border-l-[3px] border-green-300 bg-gray-50 px-2 py-1 text-[0.8125rem] leading-normal text-gray-600">
+                      <p className="rounded-sm border-l-4 border-green-300 bg-gray-50 px-2 py-1 text-sm leading-normal text-gray-600">
                         {trail.conditions}
                       </p>
                     </div>
                   </div>
                   <div className="flex shrink-0 flex-col gap-2">
                     <button
-                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-green-200 bg-green-50 px-3.5 py-1.5 text-[0.8125rem] font-medium whitespace-nowrap text-green-800 transition hover:bg-green-100"
+                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-green-200 bg-green-50 px-3.5 py-1.5 text-sm font-medium whitespace-nowrap text-green-800 transition hover:bg-green-100"
                       onClick={() => openEditTrail(trail)}
                       aria-label={`Editar trilha ${trail.name}`}
                     >
@@ -422,7 +441,7 @@ export default function AdminDashboardPage() {
                       Editar
                     </button>
                     <button
-                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-red-200 bg-red-50 px-3.5 py-1.5 text-[0.8125rem] font-medium whitespace-nowrap text-red-700 transition hover:bg-red-100"
+                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-red-200 bg-red-50 px-3.5 py-1.5 text-sm font-medium whitespace-nowrap text-red-700 transition hover:bg-red-100"
                       onClick={() => confirmDeleteTrail(trail.id)}
                       aria-label={`Excluir trilha ${trail.name}`}
                     >
@@ -460,25 +479,25 @@ export default function AdminDashboardPage() {
                     }`}
                   >
                     <div className="flex min-w-0 flex-1 items-start gap-3.5">
-                      <div className={eventStatusPill({ status: ev.status })}>
+                      <div className={eventStatusPillVariants({ status: ev.status })}>
                         {EVENT_STATUS_OPTIONS.find((o) => o.value === ev.status)?.label ??
                           ev.status}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="mb-0.5 truncate text-[0.9375rem] font-medium text-gray-900">
+                        <p className="mb-0.5 truncate text-sm font-medium text-gray-900">
                           {ev.title}
                         </p>
-                        <p className="mb-1 text-[0.8125rem] text-gray-500">
+                        <p className="mb-1 text-sm text-gray-500">
                           {ev.park} · {dateStr} · {ev.time}
                         </p>
-                        <p className="rounded-sm border-l-[3px] border-green-300 bg-gray-50 px-2 py-1 text-[0.8125rem] leading-normal text-gray-600">
+                        <p className="rounded-sm border-l-4 border-green-300 bg-gray-50 px-2 py-1 text-sm leading-normal text-gray-600">
                           {ev.spotsLeft} vagas restantes de {ev.spots} · {ev.price}
                         </p>
                       </div>
                     </div>
                     <div className="flex shrink-0 flex-col gap-2">
                       <button
-                        className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-green-200 bg-green-50 px-3.5 py-1.5 text-[0.8125rem] font-medium whitespace-nowrap text-green-800 transition hover:bg-green-100"
+                        className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-green-200 bg-green-50 px-3.5 py-1.5 text-sm font-medium whitespace-nowrap text-green-800 transition hover:bg-green-100"
                         onClick={() => openEditEvent(ev)}
                         aria-label={`Editar evento ${ev.title}`}
                       >
@@ -486,7 +505,7 @@ export default function AdminDashboardPage() {
                         Editar
                       </button>
                       <button
-                        className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-red-200 bg-red-50 px-3.5 py-1.5 text-[0.8125rem] font-medium whitespace-nowrap text-red-700 transition hover:bg-red-100"
+                        className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-red-200 bg-red-50 px-3.5 py-1.5 text-sm font-medium whitespace-nowrap text-red-700 transition hover:bg-red-100"
                         onClick={() => confirmDeleteEvent(ev.id)}
                         aria-label={`Excluir evento ${ev.title}`}
                       >
@@ -507,12 +526,12 @@ export default function AdminDashboardPage() {
       ══════════════════════════════ */}
       {editingTrail && (
         <div
-          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/45 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
           role="dialog"
           aria-modal="true"
           aria-label="Editar trilha"
         >
-          <div className="flex w-full max-w-[440px] flex-col gap-4 rounded-xl bg-white p-7 shadow-lg">
+          <div className="flex w-full max-w-md flex-col gap-4 rounded-xl bg-white p-7 shadow-lg">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-green-800">Editar trilha</h2>
               <button
@@ -524,43 +543,41 @@ export default function AdminDashboardPage() {
               </button>
             </div>
 
-            <p className="text-[0.9375rem] font-medium text-gray-900">{editingTrail.name}</p>
-            <p className="-mt-1.5 text-[0.8125rem] text-gray-500">
+            <p className="text-sm font-medium text-gray-900">{editingTrail.name}</p>
+            <p className="-mt-1.5 text-sm text-gray-500">
               {editingTrail.parkName} · {editingTrail.difficulty}
             </p>
 
-            <div className="flex flex-col gap-[5px]">
-              <label htmlFor="trailStatus" className="text-[0.8125rem] font-medium text-gray-600">
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="trailStatus" className="text-sm font-medium text-gray-600">
                 Status da trilha
               </label>
-              <select
+              <Select
                 id="trailStatus"
                 value={trailStatusDraft ?? ""}
                 onChange={(e) => setTrailStatusDraft(e.target.value as TrailStatus)}
-                className={formSelect()}
               >
                 {TRAIL_STATUS_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>
                     {opt.label}
                   </option>
                 ))}
-              </select>
+              </Select>
               <div className="mt-1 flex items-center gap-2">
                 <span className="text-xs text-gray-500">Pré-visualização:</span>
                 <StatusBadge status={trailStatusDraft ?? DEFAULT_TRAIL_STATUS} />
               </div>
             </div>
 
-            <div className="flex flex-col gap-[5px]">
-              <label htmlFor="trailCond" className="text-[0.8125rem] font-medium text-gray-600">
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="trailCond" className="text-sm font-medium text-gray-600">
                 Condições atuais
               </label>
-              <textarea
+              <TextArea
                 id="trailCond"
                 value={trailCondDraft}
                 onChange={(e) => setTrailCondDraft(e.target.value)}
                 rows={3}
-                className={formTextarea()}
                 placeholder="Descreva as condições atuais da trilha..."
               />
             </div>
@@ -588,12 +605,12 @@ export default function AdminDashboardPage() {
       ══════════════════════════════ */}
       {editingEvent && (
         <div
-          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/45 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
           role="dialog"
           aria-modal="true"
           aria-label="Editar evento"
         >
-          <div className="flex w-full max-w-[440px] flex-col gap-4 rounded-xl bg-white p-7 shadow-lg">
+          <div className="flex w-full max-w-md flex-col gap-4 rounded-xl bg-white p-7 shadow-lg">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-green-800">Editar evento</h2>
               <button
@@ -605,41 +622,39 @@ export default function AdminDashboardPage() {
               </button>
             </div>
 
-            <p className="text-[0.9375rem] font-medium text-gray-900">{editingEvent.title}</p>
-            <p className="-mt-1.5 text-[0.8125rem] text-gray-500">
+            <p className="text-sm font-medium text-gray-900">{editingEvent.title}</p>
+            <p className="-mt-1.5 text-sm text-gray-500">
               {editingEvent.park} · {editingEvent.date} · {editingEvent.time}
             </p>
 
-            <div className="flex flex-col gap-[5px]">
-              <label htmlFor="eventStatus" className="text-[0.8125rem] font-medium text-gray-600">
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="eventStatus" className="text-sm font-medium text-gray-600">
                 Status do evento
               </label>
-              <select
+              <Select
                 id="eventStatus"
                 value={eventStatusDraft ?? ""}
                 onChange={(e) => setEventStatusDraft(e.target.value as ParkEventStatus)}
-                className={formSelect()}
               >
                 {EVENT_STATUS_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>
                     {opt.label}
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
 
-            <div className="flex flex-col gap-[5px]">
-              <label htmlFor="eventSpots" className="text-[0.8125rem] font-medium text-gray-600">
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="eventSpots" className="text-sm font-medium text-gray-600">
                 Vagas restantes
               </label>
-              <input
+              <Input
                 id="eventSpots"
                 type="number"
                 min={0}
                 max={editingEvent.spots}
                 value={eventSpotsDraft}
                 onChange={(e) => setEventSpotsDraft(e.target.value)}
-                className={formInput()}
               />
               <p className="mt-0.5 text-xs text-gray-500">
                 Capacidade total do evento: {editingEvent.spots} vagas
@@ -669,12 +684,12 @@ export default function AdminDashboardPage() {
       ══════════════════════════════ */}
       {deleteTarget && (
         <div
-          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/45 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
           role="dialog"
           aria-modal="true"
           aria-label="Confirmar exclusão"
         >
-          <div className="flex w-full max-w-[440px] flex-col gap-4 rounded-xl border-t-4 border-red-400 bg-white p-7 shadow-lg">
+          <div className="flex w-full max-w-md flex-col gap-4 rounded-xl border-t-4 border-red-400 bg-white p-7 shadow-lg">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold text-green-800">Confirmar exclusão</h2>
               <button
@@ -685,7 +700,7 @@ export default function AdminDashboardPage() {
                 <X className="size-4" aria-hidden />
               </button>
             </div>
-            <p className="rounded-md border border-red-200 bg-red-50 px-4 py-3.5 text-[0.9375rem] leading-relaxed text-gray-700">
+            <p className="rounded-md border border-red-200 bg-red-50 px-4 py-3.5 text-sm leading-relaxed text-gray-700">
               <span className="inline-flex items-start gap-1.5">
                 <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
                 <span>
@@ -694,7 +709,7 @@ export default function AdminDashboardPage() {
                 </span>
               </span>
             </p>
-            <p className="text-[0.8125rem] leading-normal text-gray-500 italic">
+            <p className="text-sm leading-normal text-gray-500 italic">
               Em produção, esta ação exigiria confirmação dupla e registro em log de auditoria.
             </p>
             <div className="mt-1 flex justify-end gap-3">

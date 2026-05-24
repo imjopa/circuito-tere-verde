@@ -1,4 +1,4 @@
-import type { Park } from "../../data/parks";
+import type { Park } from "@/data/parks";
 
 export interface ParkCardProps {
   park: Park;
@@ -11,7 +11,7 @@ export default function ParkCard({ park }: ParkCardProps) {
       style={{ borderTopColor: park.colorAccent }}
     >
       <div className="mb-3 flex items-center justify-between">
-        <span className="text-[0.6875rem] font-medium tracking-wide text-gray-500 uppercase">
+        <span className="text-xs font-medium tracking-wide text-gray-500 uppercase">
           {park.type}
         </span>
         <span
@@ -46,7 +46,7 @@ export default function ParkCard({ park }: ParkCardProps) {
         {park.biodiversity.map((item) => (
           <span
             key={item}
-            className="rounded-full bg-green-100 px-2.5 py-0.5 text-[0.6875rem] text-green-800"
+            className="rounded-full bg-green-100 px-2.5 py-0.5 text-xs text-green-800"
           >
             {item}
           </span>

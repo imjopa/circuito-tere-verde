@@ -1,35 +1,32 @@
-import type { ParkEventStatus } from "../../data/events";
-import type { TrailStatus } from "../../data/trails";
-import { statusBadge } from "../../lib/variants/badge";
+import { tv, type VariantProps } from "tailwind-variants";
 
-type StatusVariant =
-  | "open"
-  | "closed"
-  | "maintenance"
-  | "climate_risk"
-  | "full"
-  | "cancelled"
-  | "few_spots";
+export const variants = tv({
+  base: "inline-flex items-center whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs font-medium",
+  variants: {
+    status: {
+      open: "bg-green-100 text-green-900",
+      closed: "bg-red-100 text-red-900",
+      maintenance: "bg-yellow-100 text-yellow-900",
+      climate_risk: "bg-orange-100 text-orange-900",
+      full: "bg-blue-100 text-blue-900",
+      cancelled: "bg-gray-100 text-gray-700",
+      few_spots: "bg-amber-100 text-amber-900",
+    },
+  },
+});
 
-const STATUS_CONFIG: Record<
-  TrailStatus | ParkEventStatus,
-  { label: string; status: StatusVariant }
-> = {
-  open: { label: "Aberta", status: "open" },
-  closed: { label: "Fechada", status: "closed" },
-  maintenance: { label: "Manutenção", status: "maintenance" },
-  climate_risk: { label: "Risco Climático", status: "climate_risk" },
-  full: { label: "Lotada", status: "full" },
-  cancelled: { label: "Cancelada", status: "cancelled" },
-  few_spots: { label: "Poucas Vagas", status: "few_spots" },
+const statusLabel = {
+  open: "Aberta",
+  closed: "Fechada",
+  maintenance: "Manutenção",
+  climate_risk: "Risco Climático",
+  full: "Lotada",
+  cancelled: "Cancelada",
+  few_spots: "Poucas Vagas",
 };
 
-export interface StatusBadgeProps {
-  status: TrailStatus | ParkEventStatus;
-}
+export type StatusBadgeProps = VariantProps<typeof variants>;
 
 export default function StatusBadge({ status }: StatusBadgeProps) {
-  const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.open;
-
-  return <span className={statusBadge({ status: config.status })}>{config.label}</span>;
+  return <span className={variants({ status })}>{statusLabel[status ?? "open"]}</span>;
 }

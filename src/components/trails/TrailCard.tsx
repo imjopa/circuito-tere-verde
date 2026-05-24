@@ -1,19 +1,32 @@
+import DifficultyBadge from "@/components/ui/DifficultyBadge";
+import StatusBadge from "@/components/ui/StatusBadge";
+import type { ParkId } from "@/data/parks";
+import type { Trail } from "@/data/trails";
 import { Mountain, Ruler, Timer } from "lucide-react";
-import StatusBadge from "../ui/StatusBadge";
-import DifficultyBadge from "../ui/DifficultyBadge";
-import type { Trail } from "../../data/trails";
+import { tv } from "tailwind-variants";
 
 export interface TrailCardProps {
   trail: Trail;
 }
 
+const trailCardHeader = tv({
+  base: "relative flex h-24 flex-col justify-end bg-green-700 p-3 px-4 [&>:first-child]:absolute [&>:first-child]:top-2.5 [&>:first-child]:right-3",
+  variants: {
+    park: {
+      "serra-dos-orgaos": "bg-linear-to-br from-green-900 to-green-800",
+      "tres-picos": "bg-linear-to-br from-green-800 to-green-700",
+      "montanhas-teresopolis": "bg-linear-to-br from-green-700 to-green-600",
+    } satisfies Record<ParkId, string>,
+  },
+  defaultVariants: {
+    park: "serra-dos-orgaos",
+  },
+});
+
 export default function TrailCard({ trail }: TrailCardProps) {
   return (
     <article className="overflow-hidden rounded-lg border border-gray-100 bg-white transition hover:-translate-y-0.5 hover:shadow-md">
-      <div
-        className="relative flex h-[100px] flex-col justify-end bg-green-700 p-3 px-4 data-[park=serra-dos-orgaos]:bg-linear-to-br data-[park=serra-dos-orgaos]:from-green-900 data-[park=serra-dos-orgaos]:to-green-800 data-[park=tres-picos]:bg-linear-to-br data-[park=tres-picos]:from-green-800 data-[park=tres-picos]:to-green-700 data-[park=montanhas-teresopolis]:bg-linear-to-br data-[park=montanhas-teresopolis]:from-green-700 data-[park=montanhas-teresopolis]:to-green-600 [&>:first-child]:absolute [&>:first-child]:top-2.5 [&>:first-child]:right-3"
-        data-park={trail.parkId}
-      >
+      <div className={trailCardHeader({ park: trail.parkId })}>
         <StatusBadge status={trail.status} />
         <h3 className="font-display text-base text-white">{trail.name}</h3>
       </div>

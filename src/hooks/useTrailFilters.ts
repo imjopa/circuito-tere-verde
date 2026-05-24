@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { trails } from "../data/trails";
+import { trails } from "@/data/trails";
 
 export function useTrailFilters() {
   const [searchQuery, setSearchQuery] = useState("");

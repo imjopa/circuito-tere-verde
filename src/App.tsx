@@ -1,15 +1,15 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import HomePage from "./pages/HomePage";
-import TrailsPage from "./pages/TrailsPage";
-import WaterfallsPage from "./pages/WaterfallsPage";
-import EventsPage from "./pages/EventsPage";
-import SchedulePage from "./pages/SchedulePage";
-import MapsPage from "./pages/MapsPage";
-import ContactPage from "./pages/ContactPage";
-import AboutPage from "./pages/AboutPage";
-import AdminLoginPage from "./pages/AdminLoginPage";
-import AdminDashboardPage from "./pages/AdminDashboardPage";
-import ProtectedRoute from "./components/admin/ProtectedRoute";
+import ProtectedRoute from "@/components/admin/ProtectedRoute";
+import AboutPage from "@/pages/AboutPage";
+import AdminDashboardPage from "@/pages/AdminDashboardPage";
+import AdminLoginPage from "@/pages/AdminLoginPage";
+import ContactPage from "@/pages/ContactPage";
+import EventsPage from "@/pages/EventsPage";
+import HomePage from "@/pages/HomePage";
+import MapsPage from "@/pages/MapsPage";
+import SchedulePage from "@/pages/SchedulePage";
+import TrailsPage from "@/pages/TrailsPage";
+import WaterfallsPage from "@/pages/WaterfallsPage";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 export default function App() {
   return (

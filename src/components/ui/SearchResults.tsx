@@ -1,8 +1,8 @@
+import type { Park } from "@/data/parks";
+import type { Trail } from "@/data/trails";
+import type { Waterfall } from "@/data/waterfalls";
 import { Droplets, Footprints, Trees } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import type { Trail } from "../../data/trails";
-import type { Waterfall } from "../../data/waterfalls";
-import type { Park } from "../../data/parks";
 
 export interface SearchResultsProps {
   results: {
@@ -20,7 +20,7 @@ export default function SearchResults({ results, onClose }: SearchResultsProps) 
   if (!results || results.total === 0) {
     return (
       <div
-        className="absolute top-[calc(100%+8px)] right-0 left-0 z-50 max-h-[360px] overflow-hidden overflow-y-auto rounded-lg border border-gray-100 bg-white shadow-lg"
+        className="absolute top-full right-0 left-0 z-50 mt-2 max-h-96 overflow-hidden overflow-y-auto rounded-lg border border-gray-100 bg-white shadow-lg"
         role="status"
         aria-live="polite"
       >
@@ -41,13 +41,13 @@ export default function SearchResults({ results, onClose }: SearchResultsProps) 
 
   return (
     <div
-      className="absolute top-[calc(100%+8px)] right-0 left-0 z-50 max-h-[360px] overflow-hidden overflow-y-auto rounded-lg border border-gray-100 bg-white shadow-lg"
+      className="absolute top-full right-0 left-0 z-50 mt-2 max-h-96 overflow-hidden overflow-y-auto rounded-lg border border-gray-100 bg-white shadow-lg"
       role="listbox"
       aria-label="Resultados da busca"
     >
       {results.parks.length > 0 && (
         <div className="border-b border-gray-100 last:border-b-0">
-          <span className="block px-4 pt-2.5 pb-1 text-[0.6875rem] font-medium tracking-wider text-gray-500 uppercase">
+          <span className="block px-4 pt-2.5 pb-1 text-xs font-medium tracking-wider text-gray-500 uppercase">
             Parques
           </span>
           {results.parks.map((park) => (
@@ -69,7 +69,7 @@ export default function SearchResults({ results, onClose }: SearchResultsProps) 
 
       {results.trails.length > 0 && (
         <div className="border-b border-gray-100 last:border-b-0">
-          <span className="block px-4 pt-2.5 pb-1 text-[0.6875rem] font-medium tracking-wider text-gray-500 uppercase">
+          <span className="block px-4 pt-2.5 pb-1 text-xs font-medium tracking-wider text-gray-500 uppercase">
             Trilhas
           </span>
           {results.trails.map((trail) => (
@@ -93,7 +93,7 @@ export default function SearchResults({ results, onClose }: SearchResultsProps) 
 
       {results.waterfalls.length > 0 && (
         <div className="border-b border-gray-100 last:border-b-0">
-          <span className="block px-4 pt-2.5 pb-1 text-[0.6875rem] font-medium tracking-wider text-gray-500 uppercase">
+          <span className="block px-4 pt-2.5 pb-1 text-xs font-medium tracking-wider text-gray-500 uppercase">
             Cachoeiras
           </span>
           {results.waterfalls.map((wf) => (
@@ -115,7 +115,7 @@ export default function SearchResults({ results, onClose }: SearchResultsProps) 
         </div>
       )}
 
-      <div className="bg-gray-50 px-4 py-2 text-center text-[0.6875rem] text-gray-500">
+      <div className="bg-gray-50 px-4 py-2 text-center text-xs text-gray-500">
         <span>
           {results.total} resultado{results.total !== 1 ? "s" : ""} encontrado
           {results.total !== 1 ? "s" : ""}

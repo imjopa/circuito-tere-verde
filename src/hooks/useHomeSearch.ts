@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
-import { parks } from "../data/parks";
-import { trails } from "../data/trails";
-import { waterfalls } from "../data/waterfalls";
+import { parks } from "@/data/parks";
+import { trails } from "@/data/trails";
+import { waterfalls } from "@/data/waterfalls";
 
 /**
  * useHomeSearch

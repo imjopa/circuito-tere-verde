@@ -1,10 +1,12 @@
+import type { ParkId } from "@/data/parks";
+
 export type TrailDifficulty = "easy" | "medium" | "hard";
 export type TrailStatus = "open" | "closed" | "maintenance" | "climate_risk" | "full";
 
 export interface Trail {
   id: string;
   name: string;
-  parkId: string;
+  parkId: ParkId;
   parkName: string;
   difficulty: TrailDifficulty;
   distance: number;

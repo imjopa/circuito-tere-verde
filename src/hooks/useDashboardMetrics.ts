@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { trails } from "../data/trails";
-import { parks } from "../data/parks";
+import { trails } from "@/data/trails";
+import { parks } from "@/data/parks";
 
 // Simula histórico de acessos dos últimos 7 dias
 // derivado do número de trilhas abertas como fator multiplicador

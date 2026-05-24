@@ -1,9 +1,9 @@
+import Navbar from "@/components/layout/Navbar";
+import TrailCard from "@/components/trails/TrailCard";
+import { Button } from "@/components/ui/Button";
+import { FilterChip } from "@/components/ui/FilterChip";
+import { useTrailFilters } from "@/hooks/useTrailFilters";
 import { Leaf, Search, X } from "lucide-react";
-import Navbar from "../components/layout/Navbar";
-import TrailCard from "../components/trails/TrailCard";
-import { useTrailFilters } from "../hooks/useTrailFilters";
-import { filterChip } from "../lib/variants/chip";
-import { btnPrimary } from "../lib/variants/button";
 
 const difficultyFilters = [
   { value: "all", label: "Todas" },
@@ -36,7 +36,7 @@ export default function TrailsPage() {
 
       <div className="bg-green-700 px-6 py-8">
         <div className="mx-auto max-w-6xl">
-          <h1 className="text-[1.75rem] text-white">Trilhas</h1>
+          <h1 className="text-3xl text-white">Trilhas</h1>
           <p className="mt-1 text-sm text-white/65">
             {filteredTrails.length} trilha{filteredTrails.length !== 1 ? "s" : ""} encontrada
             {filteredTrails.length !== 1 ? "s" : ""}
@@ -52,12 +52,12 @@ export default function TrailsPage() {
             placeholder="Buscar trilha ou parque..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1 border-none bg-transparent font-body text-[0.9375rem] outline-none"
+            className="flex-1 border-none bg-transparent font-body text-sm outline-none"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
-              className="flex h-[22px] w-[22px] items-center justify-center rounded-full bg-gray-100 text-gray-500"
+              className="flex size-5 items-center justify-center rounded-full bg-gray-100 text-gray-500"
               aria-label="Limpar busca"
             >
               <X className="size-3.5" aria-hidden />
@@ -66,37 +66,37 @@ export default function TrailsPage() {
         </div>
 
         <div className="mb-3.5 flex flex-wrap items-center gap-3">
-          <span className="whitespace-nowrap text-[0.8125rem] text-gray-500">Dificuldade:</span>
+          <span className="whitespace-nowrap text-sm text-gray-500">Dificuldade:</span>
           <div className="flex flex-wrap gap-2">
             {difficultyFilters.map((filter) => (
-              <button
+              <FilterChip
                 key={filter.value}
-                className={filterChip({ active: activeDifficulty === filter.value })}
+                active={activeDifficulty === filter.value}
                 onClick={() => setActiveDifficulty(filter.value)}
               >
                 {filter.label}
-              </button>
+              </FilterChip>
             ))}
           </div>
         </div>
 
         <div className="mb-3.5 flex flex-wrap items-center gap-3">
-          <span className="whitespace-nowrap text-[0.8125rem] text-gray-500">Parque:</span>
+          <span className="whitespace-nowrap text-sm text-gray-500">Parque:</span>
           <div className="flex flex-wrap gap-2">
             {parkFilters.map((filter) => (
-              <button
+              <FilterChip
                 key={filter.value}
-                className={filterChip({ active: activePark === filter.value })}
+                active={activePark === filter.value}
                 onClick={() => setActivePark(filter.value)}
               >
                 {filter.label}
-              </button>
+              </FilterChip>
             ))}
           </div>
         </div>
 
         {filteredTrails.length > 0 ? (
-          <div className="mt-6 grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-5">
+          <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {filteredTrails.map((trail) => (
               <TrailCard key={trail.id} trail={trail} />
             ))}
@@ -104,17 +104,16 @@ export default function TrailsPage() {
         ) : (
           <div className="px-4 py-16 text-center text-gray-500">
             <Leaf className="mx-auto mb-4 size-12 text-green-600" aria-hidden />
-            <p className="mb-5 text-[0.9375rem]">Nenhuma trilha encontrada com esses filtros.</p>
-            <button
+            <p className="mb-5 text-sm">Nenhuma trilha encontrada com esses filtros.</p>
+            <Button
               onClick={() => {
                 setSearchQuery("");
                 setActiveDifficulty("all");
                 setActivePark("all");
               }}
-              className={btnPrimary()}
             >
               Limpar filtros
-            </button>
+            </Button>
           </div>
         )}
       </main>

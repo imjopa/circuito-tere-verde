@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { trails } from "../data/trails";
-import { events } from "../data/events";
+import { events } from "@/data/events";
+import { trails } from "@/data/trails";
 
 /**
  * useAdminMetrics

@@ -1,4 +1,9 @@
-import { useState } from "react";
+import Navbar from "@/components/layout/Navbar";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
+import { Select } from "@/components/ui/Select";
+import { TextArea } from "@/components/ui/TextArea";
+import { parks } from "@/data/parks";
 import {
   Accessibility,
   Backpack,
@@ -8,9 +13,7 @@ import {
   Users,
   type LucideIcon,
 } from "lucide-react";
-import Navbar from "../components/layout/Navbar";
-import { parks } from "../data/parks";
-import { formInput, formSelect, formTextarea } from "../lib/variants/input";
+import { useState } from "react";
 
 const VISIT_TIMES = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00"];
 
@@ -24,8 +27,6 @@ const INITIAL_FORM = {
   visitors: 1,
   notes: "",
 };
-
-const labelClass = "text-[0.8125rem] font-medium text-gray-600";
 
 function getTodayString() {
   return new Date().toISOString().split("T")[0];
@@ -85,58 +86,46 @@ export default function SchedulePage() {
     return (
       <div className="min-h-screen">
         <Navbar />
-        <main className="mx-auto max-w-[1200px] px-6 py-8">
-          <div className="mx-auto my-12 flex max-w-[520px] flex-col items-center gap-3 rounded-xl border border-gray-100 bg-white p-10 text-center">
+        <main className="mx-auto max-w-6xl px-6 py-8">
+          <div className="mx-auto my-12 flex max-w-lg flex-col items-center gap-3 rounded-xl border border-gray-100 bg-white p-10 text-center">
             <CircleCheck className="size-14 text-green-600" aria-hidden />
             <h2 className="text-2xl text-green-800">Agendamento confirmado!</h2>
-            <p className="text-[0.9375rem] text-gray-500">Seu pedido foi registrado com sucesso.</p>
+            <p className="text-sm text-gray-500">Seu pedido foi registrado com sucesso.</p>
             <div className="my-3 grid w-full grid-cols-2 gap-3 text-left">
               <div className="flex flex-col gap-0.5 rounded-lg bg-green-50 px-3.5 py-2.5">
-                <span className="text-[0.6875rem] uppercase tracking-wider text-gray-500">
-                  Visitante
-                </span>
+                <span className="text-xs uppercase tracking-wider text-gray-500">Visitante</span>
                 <strong className="text-sm text-gray-900">{form.name}</strong>
               </div>
               <div className="flex flex-col gap-0.5 rounded-lg bg-green-50 px-3.5 py-2.5">
-                <span className="text-[0.6875rem] uppercase tracking-wider text-gray-500">
-                  Parque
-                </span>
+                <span className="text-xs uppercase tracking-wider text-gray-500">Parque</span>
                 <strong className="text-sm text-gray-900">{selectedPark?.name}</strong>
               </div>
               <div className="flex flex-col gap-0.5 rounded-lg bg-green-50 px-3.5 py-2.5">
-                <span className="text-[0.6875rem] uppercase tracking-wider text-gray-500">
-                  Data
-                </span>
+                <span className="text-xs uppercase tracking-wider text-gray-500">Data</span>
                 <strong className="text-sm text-gray-900">{formattedDate}</strong>
               </div>
               <div className="flex flex-col gap-0.5 rounded-lg bg-green-50 px-3.5 py-2.5">
-                <span className="text-[0.6875rem] uppercase tracking-wider text-gray-500">
-                  Horário
-                </span>
+                <span className="text-xs uppercase tracking-wider text-gray-500">Horário</span>
                 <strong className="text-sm text-gray-900">{form.time}</strong>
               </div>
               <div className="flex flex-col gap-0.5 rounded-lg bg-green-50 px-3.5 py-2.5">
-                <span className="text-[0.6875rem] uppercase tracking-wider text-gray-500">
-                  Visitantes
-                </span>
+                <span className="text-xs uppercase tracking-wider text-gray-500">Visitantes</span>
                 <strong className="text-sm text-gray-900">
                   {form.visitors} pessoa{form.visitors > 1 ? "s" : ""}
                 </strong>
               </div>
               <div className="flex flex-col gap-0.5 rounded-lg bg-green-50 px-3.5 py-2.5">
-                <span className="text-[0.6875rem] uppercase tracking-wider text-gray-500">
-                  Confirmação
-                </span>
+                <span className="text-xs uppercase tracking-wider text-gray-500">Confirmação</span>
                 <strong className="text-sm text-gray-900">{form.email}</strong>
               </div>
             </div>
-            <p className="max-w-[380px] text-center text-[0.8125rem] leading-relaxed text-gray-500">
+            <p className="max-w-sm text-center text-sm leading-relaxed text-gray-500">
               Uma confirmação será enviada para <strong>{form.email}</strong>. Apresente este
               agendamento na entrada do parque.
             </p>
             <button
               onClick={handleReset}
-              className="mt-2 rounded-lg bg-green-700 px-7 py-3 text-[0.9375rem] font-medium text-white transition hover:bg-green-800"
+              className="mt-2 rounded-lg bg-green-700 px-7 py-3 text-sm font-medium text-white transition hover:bg-green-800"
             >
               Fazer novo agendamento
             </button>
@@ -150,33 +139,31 @@ export default function SchedulePage() {
     <div className="min-h-screen">
       <Navbar />
       <div className="bg-green-700 px-6 py-8">
-        <div className="mx-auto max-w-[1200px]">
-          <h1 className="text-[1.75rem] text-white">Agendamento de visita</h1>
+        <div className="mx-auto max-w-6xl">
+          <h1 className="text-3xl text-white">Agendamento de visita</h1>
           <p className="mt-1 text-sm text-white/65">
             Reserve sua entrada com antecedência e garanta sua vaga
           </p>
         </div>
       </div>
 
-      <main className="mx-auto max-w-[1200px] px-6 py-8">
-        <div className="grid grid-cols-[1fr_320px] items-start gap-8">
-          <form onSubmit={handleSubmit} className="flex flex-col gap-6" noValidate>
+      <main className="mx-auto max-w-6xl px-6 py-8">
+        <div className="flex flex-col items-start gap-8 lg:flex-row">
+          <form onSubmit={handleSubmit} className="flex min-w-0 flex-1 flex-col gap-6" noValidate>
             <fieldset className="flex flex-col gap-4 rounded-lg border border-gray-100 bg-white p-5">
               <legend className="px-2 font-display text-sm font-medium text-green-800">
                 Dados do visitante
               </legend>
               <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-[5px]">
-                  <label htmlFor="name" className={labelClass}>
-                    Nome completo *
-                  </label>
-                  <input
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="name">Nome completo *</Label>
+                  <Input
                     id="name"
                     name="name"
                     type="text"
                     value={form.name}
                     onChange={handleChange}
-                    className={formInput({ error: !!errors.name })}
+                    error={!!errors.name}
                     placeholder="Seu nome"
                   />
                   {errors.name && (
@@ -187,17 +174,15 @@ export default function SchedulePage() {
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-[5px]">
-                  <label htmlFor="email" className={labelClass}>
-                    E-mail *
-                  </label>
-                  <input
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="email">E-mail *</Label>
+                  <Input
                     id="email"
                     name="email"
                     type="email"
                     value={form.email}
                     onChange={handleChange}
-                    className={formInput({ error: !!errors.email })}
+                    error={!!errors.email}
                     placeholder="seu@email.com"
                   />
                   {errors.email && (
@@ -206,17 +191,15 @@ export default function SchedulePage() {
                     </span>
                   )}
                 </div>
-                <div className="flex flex-col gap-[5px]">
-                  <label htmlFor="phone" className={labelClass}>
-                    Telefone
-                  </label>
-                  <input
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="phone">Telefone</Label>
+                  <Input
                     id="phone"
                     name="phone"
                     type="tel"
                     value={form.phone}
                     onChange={handleChange}
-                    className={formInput()}
+                    error={!!errors.phone}
                     placeholder="(21) 00000-0000"
                   />
                 </div>
@@ -227,16 +210,14 @@ export default function SchedulePage() {
               <legend className="px-2 font-display text-sm font-medium text-green-800">
                 Detalhes da visita
               </legend>
-              <div className="flex flex-col gap-[5px]">
-                <label htmlFor="parkId" className={labelClass}>
-                  Parque *
-                </label>
-                <select
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="parkId">Parque *</Label>
+                <Select
                   id="parkId"
                   name="parkId"
                   value={form.parkId}
                   onChange={handleChange}
-                  className={formSelect({ error: !!errors.parkId })}
+                  error={!!errors.parkId}
                 >
                   <option value="">Selecione o parque</option>
                   {parks.map((p) => (
@@ -244,7 +225,7 @@ export default function SchedulePage() {
                       {p.name} — {p.type}
                     </option>
                   ))}
-                </select>
+                </Select>
                 {errors.parkId && (
                   <span className="mt-0.5 text-xs text-red-600" role="alert">
                     {errors.parkId}
@@ -253,18 +234,16 @@ export default function SchedulePage() {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-[5px]">
-                  <label htmlFor="date" className={labelClass}>
-                    Data *
-                  </label>
-                  <input
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="date">Data *</Label>
+                  <Input
                     id="date"
                     name="date"
                     type="date"
                     value={form.date}
                     onChange={handleChange}
                     min={getTodayString()}
-                    className={formInput({ error: !!errors.date })}
+                    error={!!errors.date}
                   />
                   {errors.date && (
                     <span className="mt-0.5 text-xs text-red-600" role="alert">
@@ -272,16 +251,14 @@ export default function SchedulePage() {
                     </span>
                   )}
                 </div>
-                <div className="flex flex-col gap-[5px]">
-                  <label htmlFor="time" className={labelClass}>
-                    Horário *
-                  </label>
-                  <select
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="time">Horário *</Label>
+                  <Select
                     id="time"
                     name="time"
                     value={form.time}
                     onChange={handleChange}
-                    className={formSelect({ error: !!errors.time })}
+                    error={!!errors.time}
                   >
                     <option value="">Selecione</option>
                     {VISIT_TIMES.map((t) => (
@@ -289,7 +266,7 @@ export default function SchedulePage() {
                         {t}
                       </option>
                     ))}
-                  </select>
+                  </Select>
                   {errors.time && (
                     <span className="mt-0.5 text-xs text-red-600" role="alert">
                       {errors.time}
@@ -298,11 +275,9 @@ export default function SchedulePage() {
                 </div>
               </div>
 
-              <div className="flex flex-col gap-[5px]">
-                <label htmlFor="visitors" className={labelClass}>
-                  Número de visitantes *
-                </label>
-                <input
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="visitors">Número de visitantes *</Label>
+                <Input
                   id="visitors"
                   name="visitors"
                   type="number"
@@ -310,7 +285,7 @@ export default function SchedulePage() {
                   max={20}
                   value={form.visitors}
                   onChange={handleChange}
-                  className={formInput({ error: !!errors.visitors })}
+                  error={!!errors.visitors}
                 />
                 {errors.visitors && (
                   <span className="mt-0.5 text-xs text-red-600" role="alert">
@@ -319,17 +294,15 @@ export default function SchedulePage() {
                 )}
               </div>
 
-              <div className="flex flex-col gap-[5px]">
-                <label htmlFor="notes" className={labelClass}>
-                  Observações
-                </label>
-                <textarea
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="notes">Observações</Label>
+                <TextArea
                   id="notes"
                   name="notes"
                   value={form.notes}
                   onChange={handleChange}
                   rows={3}
-                  className={formTextarea()}
+                  error={!!errors.notes}
                   placeholder="Necessidades especiais, grupo escolar, etc."
                 />
               </div>
@@ -337,8 +310,8 @@ export default function SchedulePage() {
 
             {selectedPark && (
               <div className="rounded-lg border border-green-100 bg-green-50 px-4 py-3.5">
-                <p className="text-[0.9375rem] font-medium text-green-800">{selectedPark.name}</p>
-                <p className="mt-0.5 text-[0.8125rem] text-gray-500">
+                <p className="text-sm font-medium text-green-800">{selectedPark.name}</p>
+                <p className="mt-0.5 text-sm text-gray-500">
                   {selectedPark.openingHours} · Entrada: {selectedPark.entranceFee}
                 </p>
               </div>
@@ -352,7 +325,7 @@ export default function SchedulePage() {
             </button>
           </form>
 
-          <aside className="sticky top-20 flex flex-col gap-4 rounded-lg border border-gray-100 bg-white p-5">
+          <aside className="sticky top-20 flex w-full shrink-0 flex-col gap-4 rounded-lg border border-gray-100 bg-white p-5 lg:w-80 lg:order-last">
             <h2 className="mb-1 text-base font-medium text-green-800">Informações importantes</h2>
             {(
               [
@@ -386,8 +359,8 @@ export default function SchedulePage() {
               <div key={item.title} className="flex items-start gap-3">
                 <item.icon className="mt-px size-5 shrink-0 text-green-700" aria-hidden />
                 <div>
-                  <p className="text-[0.8125rem] font-medium text-gray-700">{item.title}</p>
-                  <p className="mt-px text-[0.8125rem] leading-normal text-gray-500">{item.text}</p>
+                  <p className="text-sm font-medium text-gray-700">{item.title}</p>
+                  <p className="mt-px text-sm leading-normal text-gray-500">{item.text}</p>
                 </div>
               </div>
             ))}

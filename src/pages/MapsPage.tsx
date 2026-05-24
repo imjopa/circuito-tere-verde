@@ -1,7 +1,7 @@
-import { useState } from "react";
+import Navbar from "@/components/layout/Navbar";
+import { parks, type ParkId } from "@/data/parks";
 import { Clock, Globe, MapPin, Phone, Ticket } from "lucide-react";
-import Navbar from "../components/layout/Navbar";
-import { parks, type ParkId } from "../data/parks";
+import { useState } from "react";
 
 interface ParkMap {
   embedUrl: string;
@@ -45,7 +45,7 @@ export default function MapsPage() {
 
       <div className="bg-green-700 px-6 py-8">
         <div className="mx-auto max-w-6xl">
-          <h1 className="text-[1.75rem] text-white">Mapas dos parques</h1>
+          <h1 className="text-3xl text-white">Mapas dos parques</h1>
           <p className="mt-1 text-sm text-white/65">Localize os parques e planeje sua visita</p>
         </div>
       </div>
@@ -64,13 +64,13 @@ export default function MapsPage() {
               aria-pressed={activeParkId === park.id}
             >
               <span className="text-sm font-medium text-gray-900">{park.name}</span>
-              <span className="text-[0.6875rem] text-gray-500">{park.type}</span>
+              <span className="text-xs text-gray-500">{park.type}</span>
             </button>
           ))}
         </div>
 
-        <div className="grid items-start gap-6 lg:grid-cols-[1fr_300px]">
-          <div className="aspect-16/10 overflow-hidden rounded-lg border border-gray-100">
+        <div className="grid items-start gap-6 lg:grid-cols-3">
+          <div className="aspect-16/10 overflow-hidden rounded-lg border border-gray-100 lg:col-span-2">
             <iframe
               src={activeMapData.embedUrl}
               className="block h-full w-full border-none"
@@ -83,23 +83,21 @@ export default function MapsPage() {
           </div>
 
           <aside className="sticky top-20 flex flex-col gap-4 rounded-lg border border-gray-100 bg-white p-5">
-            <h2 className="text-[1.0625rem] font-semibold text-green-800">{activePark?.name}</h2>
+            <h2 className="text-lg font-semibold text-green-800">{activePark?.name}</h2>
             <p className="-mt-1.5 text-xs text-gray-500">{activePark?.type}</p>
 
             <div className="flex flex-col gap-3.5">
               <div className="flex items-start gap-2.5">
                 <MapPin className="mt-px size-4 shrink-0 text-green-700" aria-hidden />
                 <div>
-                  <p className="mb-px text-[0.6875rem] uppercase tracking-wider text-gray-500">
-                    Endereço
-                  </p>
+                  <p className="mb-px text-xs uppercase tracking-wider text-gray-500">Endereço</p>
                   <p className="text-sm leading-snug text-gray-800">{activeMapData.address}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2.5">
                 <Globe className="mt-px size-4 shrink-0 text-green-700" aria-hidden />
                 <div>
-                  <p className="mb-px text-[0.6875rem] uppercase tracking-wider text-gray-500">
+                  <p className="mb-px text-xs uppercase tracking-wider text-gray-500">
                     Coordenadas
                   </p>
                   <p className="text-sm leading-snug text-gray-800">{activeMapData.coordinates}</p>
@@ -108,7 +106,7 @@ export default function MapsPage() {
               <div className="flex items-start gap-2.5">
                 <Clock className="mt-px size-4 shrink-0 text-green-700" aria-hidden />
                 <div>
-                  <p className="mb-px text-[0.6875rem] uppercase tracking-wider text-gray-500">
+                  <p className="mb-px text-xs uppercase tracking-wider text-gray-500">
                     Horário de funcionamento
                   </p>
                   <p className="text-sm leading-snug text-gray-800">{activePark?.openingHours}</p>
@@ -117,18 +115,14 @@ export default function MapsPage() {
               <div className="flex items-start gap-2.5">
                 <Phone className="mt-px size-4 shrink-0 text-green-700" aria-hidden />
                 <div>
-                  <p className="mb-px text-[0.6875rem] uppercase tracking-wider text-gray-500">
-                    Telefone
-                  </p>
+                  <p className="mb-px text-xs uppercase tracking-wider text-gray-500">Telefone</p>
                   <p className="text-sm leading-snug text-gray-800">{activeMapData.phone}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2.5">
                 <Ticket className="mt-px size-4 shrink-0 text-green-700" aria-hidden />
                 <div>
-                  <p className="mb-px text-[0.6875rem] uppercase tracking-wider text-gray-500">
-                    Entrada
-                  </p>
+                  <p className="mb-px text-xs uppercase tracking-wider text-gray-500">Entrada</p>
                   <p className="text-sm leading-snug text-gray-800">{activePark?.entranceFee}</p>
                 </div>
               </div>

@@ -1,18 +1,30 @@
-import type { TrailDifficulty } from "../../data/trails";
-import { difficultyBadge } from "../../lib/variants/badge";
+import { tv, type VariantProps } from "tailwind-variants";
 
-const difficultyConfig = {
-  easy: { label: "Fácil", difficulty: "easy" as const },
-  medium: { label: "Moderado", difficulty: "medium" as const },
-  hard: { label: "Difícil", difficulty: "hard" as const },
+const difficultyLabel = {
+  easy: "Fácil",
+  medium: "Moderado",
+  hard: "Difícil",
 };
 
-export interface DifficultyBadgeProps {
-  difficulty: TrailDifficulty;
-}
+const variants = tv({
+  base: "rounded-full px-3 py-1 text-xs font-medium",
+  variants: {
+    difficulty: {
+      easy: "bg-green-100 text-green-900",
+      medium: "bg-yellow-100 text-yellow-900",
+      hard: "bg-red-100 text-red-900",
+    },
+  },
+  defaultVariants: { difficulty: "easy" },
+});
 
-export default function DifficultyBadge({ difficulty }: DifficultyBadgeProps) {
-  const config = difficultyConfig[difficulty] ?? difficultyConfig.easy;
+export type DifficultyBadgeProps = Omit<React.ComponentProps<"span">, "children"> &
+  VariantProps<typeof variants>;
 
-  return <span className={difficultyBadge({ difficulty: config.difficulty })}>{config.label}</span>;
+export default function DifficultyBadge({ difficulty, className, ...props }: DifficultyBadgeProps) {
+  return (
+    <span className={variants({ difficulty, className })} {...props}>
+      {difficultyLabel[difficulty ?? "easy"]}
+    </span>
+  );
 }

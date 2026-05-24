@@ -1,7 +1,10 @@
-import { useState } from "react";
+import Navbar from "@/components/layout/Navbar";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
+import { TextArea } from "@/components/ui/TextArea";
 import { CircleCheck, Mail, MapPin, MessageCircle, Phone, type LucideIcon } from "lucide-react";
-import Navbar from "../components/layout/Navbar";
-import { formInput, formTextarea } from "../lib/variants/input";
+import { useState } from "react";
 
 const CONTACTS: { icon: LucideIcon; label: string; value: string; sub: string }[] = [
   { icon: Phone, label: "Telefone geral", value: "(21) 0000-0000", sub: "Seg–Sex, 08h às 17h" },
@@ -16,8 +19,6 @@ const CONTACTS: { icon: LucideIcon; label: string; value: string; sub: string }[
 ];
 
 const INITIAL_FORM = { name: "", email: "", subject: "", message: "" };
-
-const labelClass = "text-[0.8125rem] font-medium text-gray-600";
 
 export default function ContactPage() {
   const [form, setForm] = useState(INITIAL_FORM);
@@ -55,18 +56,16 @@ export default function ContactPage() {
     <div className="min-h-screen">
       <Navbar />
       <div className="bg-green-700 px-6 py-8">
-        <div className="mx-auto max-w-[1200px]">
-          <h1 className="text-[1.75rem] text-white">Contato</h1>
+        <div className="mx-auto max-w-6xl">
+          <h1 className="text-3xl text-white">Contato</h1>
           <p className="mt-1 text-sm text-white/65">Fale conosco — estamos aqui para ajudar</p>
         </div>
       </div>
 
-      <main className="mx-auto max-w-[1200px] px-6 py-8">
-        <div className="grid grid-cols-[320px_1fr] items-start gap-8">
-          <aside className="flex flex-col gap-3">
-            <h2 className="mb-4 text-[1.0625rem] font-medium text-green-800">
-              Canais de atendimento
-            </h2>
+      <main className="mx-auto max-w-6xl px-6 py-8">
+        <div className="flex flex-col items-start gap-8 lg:flex-row">
+          <aside className="flex w-full shrink-0 flex-col gap-3 lg:w-80">
+            <h2 className="mb-4 text-lg font-medium text-green-800">Canais de atendimento</h2>
             {CONTACTS.map((c) => (
               <div
                 key={c.label}
@@ -75,21 +74,21 @@ export default function ContactPage() {
                 <c.icon className="size-5 shrink-0 text-green-700" aria-hidden />
                 <div>
                   <p className="text-xs uppercase tracking-wider text-gray-500">{c.label}</p>
-                  <p className="mt-0.5 text-[0.9375rem] font-medium text-gray-900">{c.value}</p>
+                  <p className="mt-0.5 text-sm font-medium text-gray-900">{c.value}</p>
                   <p className="mt-px text-xs text-gray-500">{c.sub}</p>
                 </div>
               </div>
             ))}
           </aside>
 
-          <div className="rounded-lg border border-gray-100 bg-white p-6">
-            <h2 className="mb-4 text-[1.0625rem] font-medium text-green-800">Envie uma mensagem</h2>
+          <div className="min-w-0 flex-1 rounded-lg border border-gray-100 bg-white p-6">
+            <h2 className="mb-4 text-lg font-medium text-green-800">Envie uma mensagem</h2>
 
             {submitted ? (
               <div className="flex flex-col items-center gap-3 px-4 py-10 text-center">
                 <CircleCheck className="size-14 text-green-600" aria-hidden />
                 <h3 className="text-xl text-green-800">Mensagem enviada!</h3>
-                <p className="max-w-[340px] text-[0.9375rem] leading-relaxed text-gray-500">
+                <p className="max-w-sm text-sm leading-relaxed text-gray-500">
                   Obrigado, {form.name}. Retornaremos em breve para {form.email}.
                 </p>
                 <button
@@ -105,17 +104,15 @@ export default function ContactPage() {
             ) : (
               <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="flex flex-col gap-[5px]">
-                    <label htmlFor="name" className={labelClass}>
-                      Nome *
-                    </label>
-                    <input
+                  <div className="flex flex-col gap-1.5">
+                    <Label htmlFor="name">Nome *</Label>
+                    <Input
                       id="name"
                       name="name"
                       type="text"
                       value={form.name}
                       onChange={handleChange}
-                      className={formInput({ error: !!errors.name })}
+                      error={!!errors.name}
                       placeholder="Seu nome"
                     />
                     {errors.name && (
@@ -124,17 +121,15 @@ export default function ContactPage() {
                       </span>
                     )}
                   </div>
-                  <div className="flex flex-col gap-[5px]">
-                    <label htmlFor="email" className={labelClass}>
-                      E-mail *
-                    </label>
-                    <input
+                  <div className="flex flex-col gap-1.5">
+                    <Label htmlFor="email">E-mail *</Label>
+                    <Input
                       id="email"
                       name="email"
                       type="email"
                       value={form.email}
                       onChange={handleChange}
-                      className={formInput({ error: !!errors.email })}
+                      error={!!errors.email}
                       placeholder="seu@email.com"
                     />
                     {errors.email && (
@@ -144,17 +139,15 @@ export default function ContactPage() {
                     )}
                   </div>
                 </div>
-                <div className="flex flex-col gap-[5px]">
-                  <label htmlFor="subject" className={labelClass}>
-                    Assunto *
-                  </label>
-                  <input
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="subject">Assunto *</Label>
+                  <Input
                     id="subject"
                     name="subject"
                     type="text"
                     value={form.subject}
                     onChange={handleChange}
-                    className={formInput({ error: !!errors.subject })}
+                    error={!!errors.subject}
                     placeholder="Sobre o que você quer falar?"
                   />
                   {errors.subject && (
@@ -163,17 +156,15 @@ export default function ContactPage() {
                     </span>
                   )}
                 </div>
-                <div className="flex flex-col gap-[5px]">
-                  <label htmlFor="message" className={labelClass}>
-                    Mensagem *
-                  </label>
-                  <textarea
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="message">Mensagem *</Label>
+                  <TextArea
                     id="message"
                     name="message"
                     rows={5}
                     value={form.message}
                     onChange={handleChange}
-                    className={formTextarea({ error: !!errors.message })}
+                    error={!!errors.message}
                     placeholder="Escreva sua mensagem aqui..."
                   />
                   {errors.message && (
@@ -182,12 +173,12 @@ export default function ContactPage() {
                     </span>
                   )}
                 </div>
-                <button
+                <Button
                   type="submit"
-                  className="rounded-lg bg-green-700 py-3 text-[0.9375rem] font-medium text-white transition hover:bg-green-800"
+                  className="rounded-lg bg-green-700 py-3 text-sm font-medium text-white transition hover:bg-green-800"
                 >
                   Enviar mensagem
-                </button>
+                </Button>
               </form>
             )}
           </div>

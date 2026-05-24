@@ -1,4 +1,10 @@
-import { useRef, useState, useEffect } from "react";
+import Navbar from "@/components/layout/Navbar";
+import ParkCard from "@/components/parks/ParkCard";
+import { Link } from "@/components/ui/Link";
+import SearchResults from "@/components/ui/SearchResults";
+import { events } from "@/data/events";
+import { parks } from "@/data/parks";
+import { useHomeSearch } from "@/hooks/useHomeSearch";
 import {
   Calendar,
   Clock,
@@ -10,14 +16,7 @@ import {
   X,
   type LucideIcon,
 } from "lucide-react";
-import { Link } from "react-router-dom";
-import Navbar from "../components/layout/Navbar";
-import ParkCard from "../components/parks/ParkCard";
-import SearchResults from "../components/ui/SearchResults";
-import { useHomeSearch } from "../hooks/useHomeSearch";
-import { parks } from "../data/parks";
-import { events } from "../data/events";
-import { btnOutline, btnPrimary } from "../lib/variants/button";
+import { useEffect, useRef, useState } from "react";
 
 // Atalhos rápidos com rotas reais
 const QUICK_ACCESS: { icon: LucideIcon; label: string; to: string }[] = [
@@ -74,11 +73,11 @@ export default function HomePage() {
 
       {/* Hero */}
       <section className="relative overflow-hidden bg-green-700 px-6 pb-20 pt-16">
-        <div className="mx-auto max-w-[600px]">
+        <div className="mx-auto max-w-xl">
           <span className="mb-4 inline-block rounded-full bg-green-400 px-3 py-1 text-xs font-medium text-green-900">
             Teresópolis, RJ
           </span>
-          <h1 className="mb-4 text-[clamp(1.75rem,4vw,2.5rem)] leading-tight text-white">
+          <h1 className="mb-4 text-3xl leading-tight text-white sm:text-4xl">
             Explore os parques de
             <br />
             Teresópolis com consciência
@@ -89,22 +88,20 @@ export default function HomePage() {
             Turismo responsável começa com informação.
           </p>
           <div className="flex flex-wrap gap-4">
-            <Link to="/trilhas" className={btnPrimary()}>
-              Explorar trilhas
-            </Link>
-            <a href="#parques" className={btnOutline()}>
+            <Link to="/trilhas">Explorar trilhas</Link>
+            <Link to="#parques" variant="outline">
               Ver parques
-            </a>
+            </Link>
           </div>
         </div>
         <div
-          className="pointer-events-none absolute -top-[60px] -right-[60px] size-[280px] rounded-full bg-green-400/10"
+          className="pointer-events-none absolute -top-16 -right-16 size-72 rounded-full bg-green-400/10"
           aria-hidden="true"
         />
       </section>
 
       {/* Busca funcional */}
-      <div className="relative z-20 mx-auto -mt-6 max-w-[680px] px-6" ref={searchRef}>
+      <div className="relative z-20 mx-auto -mt-6 max-w-2xl px-6" ref={searchRef}>
         <div
           className="flex items-center gap-3 rounded-full border border-gray-100 bg-white px-4 py-2.5 shadow-lg"
           role="search"
@@ -116,7 +113,7 @@ export default function HomePage() {
             value={query}
             onChange={handleQueryChange}
             onFocus={() => query.length >= 2 && setShowResults(true)}
-            className="flex-1 border-none bg-transparent font-body text-[0.9375rem] text-gray-700 outline-none [&::-webkit-search-cancel-button]:hidden"
+            className="flex-1 border-none bg-transparent font-body text-sm text-gray-700 outline-none [&::-webkit-search-cancel-button]:hidden"
             aria-label="Buscar no Circuito Terê Verde"
             aria-autocomplete="list"
             aria-expanded={showResults && !!results}
@@ -124,7 +121,7 @@ export default function HomePage() {
           {query && (
             <button
               onClick={handleClear}
-              className="flex size-[22px] shrink-0 cursor-pointer items-center justify-center rounded-full border-none bg-gray-100 text-xs text-gray-500"
+              className="flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-full border-none bg-gray-100 text-xs text-gray-500"
               aria-label="Limpar busca"
             >
               <X className="size-3.5" aria-hidden />
@@ -136,14 +133,14 @@ export default function HomePage() {
         )}
       </div>
 
-      <main className="mx-auto w-full max-w-[1200px] flex-1 px-6 py-12">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-12">
         {/* Parques */}
         <section id="parques" className="mb-14">
-          <h2 className="mb-1.5 text-[1.375rem] text-green-800">Os 3 parques</h2>
+          <h2 className="mb-1.5 text-xl text-green-800">Os 3 parques</h2>
           <p className="mb-6 text-sm text-gray-500">
             Três áreas de conservação com biodiversidade única da Mata Atlântica
           </p>
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-5">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {parks.map((park) => (
               <ParkCard key={park.id} park={park} />
             ))}
@@ -152,8 +149,8 @@ export default function HomePage() {
 
         {/* Acesso rápido */}
         <section className="mb-14" aria-label="Acesso rápido">
-          <h2 className="mb-1.5 text-[1.375rem] text-green-800">Acesso rápido</h2>
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(90px,1fr))] gap-3">
+          <h2 className="mb-1.5 text-xl text-green-800">Acesso rápido</h2>
+          <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
             {QUICK_ACCESS.map((item) => (
               <Link
                 key={item.label}
@@ -161,7 +158,7 @@ export default function HomePage() {
                 className="flex flex-col items-center gap-2 rounded-md border border-gray-100 bg-white px-3 py-4 transition hover:-translate-y-0.5 hover:border-green-300 hover:shadow-sm"
               >
                 <item.icon className="size-8 text-green-700" aria-hidden />
-                <span className="text-center text-[0.8125rem] text-gray-500">{item.label}</span>
+                <span className="text-center text-sm text-gray-500">{item.label}</span>
               </Link>
             ))}
           </div>
@@ -171,7 +168,7 @@ export default function HomePage() {
         <section id="eventos" className="mb-14">
           <div className="mb-6 flex flex-wrap items-end justify-between gap-2">
             <div>
-              <h2 className="mb-1 text-[1.375rem] text-green-800">Próximos eventos</h2>
+              <h2 className="mb-1 text-xl text-green-800">Próximos eventos</h2>
               <p className="text-sm text-gray-500">Atividades e trilhas guiadas nos parques</p>
             </div>
             <Link
@@ -194,13 +191,13 @@ export default function HomePage() {
                   key={event.id}
                   className="flex items-center gap-4 rounded-md border border-gray-100 bg-white px-5 py-4 transition hover:shadow-sm"
                 >
-                  <div className="min-w-[44px] shrink-0 rounded-md bg-green-700 px-3 py-1.5 text-center text-white">
+                  <div className="min-w-11 shrink-0 rounded-md bg-green-700 px-3 py-1.5 text-center text-white">
                     <span className="block text-lg font-semibold leading-tight">{day}</span>
-                    <span className="text-[0.625rem] uppercase opacity-80">{month}</span>
+                    <span className="text-xs uppercase opacity-80">{month}</span>
                   </div>
                   <div className="min-w-0 flex-1">
-                    <h3 className="text-[0.9375rem] font-medium text-gray-900">{event.title}</h3>
-                    <p className="mt-0.5 text-[0.8125rem] text-gray-500">
+                    <h3 className="text-sm font-medium text-gray-900">{event.title}</h3>
+                    <p className="mt-0.5 text-sm text-gray-500">
                       {event.park} · {event.price}
                     </p>
                   </div>
@@ -214,7 +211,7 @@ export default function HomePage() {
         </section>
       </main>
 
-      <footer className="flex flex-col gap-1 bg-green-800 px-6 py-6 text-center text-[0.8125rem] text-white/60">
+      <footer className="flex flex-col gap-1 bg-green-800 px-6 py-6 text-center text-sm text-white/60">
         <p>© 2025 Circuito Terê Verde — Explore, Preserve, Conecte-se</p>
         <p className="text-xs opacity-70">
           Projeto acadêmico — UNIFESO · Desenvolvimento de MVP Front-End

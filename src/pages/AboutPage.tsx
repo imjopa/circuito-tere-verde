@@ -1,7 +1,6 @@
+import Navbar from "@/components/layout/Navbar";
+import { Link } from "@/components/ui/Link";
 import { BookOpen, Footprints, Handshake, Leaf, type LucideIcon } from "lucide-react";
-import { Link } from "react-router-dom";
-import Navbar from "../components/layout/Navbar";
-import { btnOutline, btnPrimary } from "../lib/variants/button";
 
 const PILLARS: { icon: LucideIcon; title: string; text: string }[] = [
   {
@@ -37,14 +36,14 @@ export default function AboutPage() {
       <Navbar />
 
       <section className="bg-green-700 px-6 py-14">
-        <div className="mx-auto max-w-[700px]">
+        <div className="mx-auto max-w-3xl">
           <span className="mb-4 inline-block rounded-full bg-green-400 px-3 py-1 text-xs font-medium text-green-900">
             Sobre o projeto
           </span>
-          <h1 className="mb-4 text-[clamp(1.5rem,3vw,2.25rem)] text-white">
+          <h1 className="mb-4 text-2xl text-white sm:text-4xl">
             Uma ponte entre a cidade e a natureza
           </h1>
-          <p className="max-w-[600px] text-base leading-relaxed text-white/80">
+          <p className="max-w-xl text-base leading-relaxed text-white/80">
             O Circuito Terê Verde é uma plataforma digital criada para democratizar o acesso a
             informações sobre os parques naturais de Teresópolis, promovendo turismo responsável e
             educação ambiental para visitantes, moradores e pesquisadores.
@@ -52,8 +51,8 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <main className="mx-auto flex w-full max-w-[1200px] flex-1 flex-col gap-14 px-6 py-12">
-        <section className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-5">
+      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-14 px-6 py-12">
+        <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {[
             {
               title: "Missão",
@@ -79,8 +78,8 @@ export default function AboutPage() {
         </section>
 
         <section>
-          <h2 className="mb-6 text-[1.375rem] text-green-800">Nossos pilares</h2>
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-5">
+          <h2 className="mb-6 text-xl text-green-800">Nossos pilares</h2>
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {PILLARS.map((p) => (
               <article
                 key={p.title}
@@ -95,19 +94,19 @@ export default function AboutPage() {
         </section>
 
         <section>
-          <div className="grid grid-cols-[1fr_auto] items-start gap-8 rounded-lg border border-gray-100 bg-white p-8">
+          <div className="flex flex-col items-start gap-8 rounded-lg border border-gray-100 bg-white p-8 md:flex-row">
             <div className="flex flex-col">
               <span className="w-fit mb-3 inline-block rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800">
                 Contexto acadêmico
               </span>
               <h2 className="mb-3.5 text-xl text-green-800">MVP desenvolvido na UNIFESO</h2>
-              <p className="mb-3 text-[0.9rem] leading-relaxed text-gray-600">
+              <p className="mb-3 text-sm leading-relaxed text-gray-600">
                 Este projeto foi desenvolvido como Trabalho de Conclusão da disciplina de
                 <strong> Desenvolvimento de MVP Front-End</strong> do Curso Superior de Tecnologia
                 em Análise e Desenvolvimento de Sistemas da UNIFESO (Centro Universitário Serra dos
                 Órgãos), Teresópolis — RJ.
               </p>
-              <p className="mb-3 text-[0.9rem] leading-relaxed text-gray-600">
+              <p className="mb-3 text-sm leading-relaxed text-gray-600">
                 A escolha da situação-problema foi motivada pela ausência de uma plataforma digital
                 unificada para os parques da região, um problema real identificado no cotidiano da
                 cidade onde a UNIFESO está inserida.
@@ -119,19 +118,19 @@ export default function AboutPage() {
                       {member.name.charAt(0)}
                     </div>
                     <div>
-                      <p className="text-[0.9375rem] font-medium text-gray-900">{member.name}</p>
+                      <p className="text-sm font-medium text-gray-900">{member.name}</p>
                       <p className="text-xs text-gray-500">Matrícula: {member.ra}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
-            <div className="flex min-w-[160px] flex-col items-center gap-2">
-              <img src="/unifeso-logo.png" alt="UNIFESO" className="max-w-[140px] object-contain" />
-              <p className="text-center text-[0.6875rem] text-gray-500">
+            <div className="flex min-w-40 shrink-0 flex-col items-center gap-2">
+              <img src="/unifeso-logo.png" alt="UNIFESO" className="max-w-36 object-contain" />
+              <p className="text-center text-xs text-gray-500">
                 Centro Universitário Serra dos Órgãos
               </p>
-              <p className="text-center text-[0.6875rem] text-gray-500">Teresópolis, RJ — 2026</p>
+              <p className="text-center text-xs text-gray-500">Teresópolis, RJ — 2026</p>
             </div>
           </div>
         </section>
@@ -142,17 +141,15 @@ export default function AboutPage() {
             Descubra trilhas, cachoeiras e eventos nos parques de Teresópolis.
           </p>
           <div className="mt-2 flex flex-wrap justify-center gap-3.5">
-            <Link to="/trilhas" className={btnPrimary()}>
-              Ver trilhas
-            </Link>
-            <Link to="/cachoeiras" className={btnOutline()}>
+            <Link to="/trilhas">Ver trilhas</Link>
+            <Link to="/cachoeiras" variant="outline">
               Ver cachoeiras
             </Link>
           </div>
         </section>
       </main>
 
-      <footer className="flex flex-col gap-1 bg-green-800 p-6 text-center text-[0.8125rem] text-white/60">
+      <footer className="flex flex-col gap-1 bg-green-800 p-6 text-center text-sm text-white/60">
         <p>© 2026 Circuito Terê Verde — Explore, Preserve, Conecte-se</p>
         <p className="text-xs opacity-70">
           Projeto acadêmico — UNIFESO · Desenvolvimento de MVP Front-End

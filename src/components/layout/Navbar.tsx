@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Leaf, Menu, X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { mobileNavLink, navLink } from "../../lib/variants/nav";
+import { tv } from "tailwind-variants";
 
 const NAV_LINKS = [
   { to: "/", label: "Parques" },
@@ -10,6 +10,26 @@ const NAV_LINKS = [
   { to: "/eventos", label: "Eventos" },
   { to: "/sobre", label: "Sobre" },
 ];
+
+const variants = tv({
+  base: "pb-0.5 text-sm text-white/75 transition hover:text-green-300",
+  variants: {
+    active: {
+      true: "border-b-2 border-green-400 text-green-400",
+      false: "",
+    },
+  },
+});
+
+const mobileNavLinkVariants = tv({
+  base: "border-b border-white/10 py-3 text-sm text-white/80 transition hover:text-green-400",
+  variants: {
+    active: {
+      true: "text-green-400",
+      false: "",
+    },
+  },
+});
 
 export default function Navbar() {
   const { pathname } = useLocation();
@@ -22,7 +42,7 @@ export default function Navbar() {
   return (
     <header className="sticky top-0 z-100 bg-green-700 shadow-md">
       <nav
-        className="mx-auto flex h-[60px] max-w-6xl items-center gap-6 px-6"
+        className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-6"
         aria-label="Navegação principal"
       >
         <Link
@@ -39,7 +59,7 @@ export default function Navbar() {
         <ul className="ml-auto hidden list-none gap-5 md:flex" role="list">
           {NAV_LINKS.map((link) => (
             <li key={link.to}>
-              <Link to={link.to} className={navLink({ active: isActive(link.to) })}>
+              <Link to={link.to} className={variants({ active: isActive(link.to) })}>
                 {link.label}
               </Link>
             </li>
@@ -48,7 +68,7 @@ export default function Navbar() {
 
         <Link
           to="/admin"
-          className="hidden shrink-0 rounded-full bg-green-400 px-4 py-1.5 text-[0.8125rem] font-medium whitespace-nowrap text-green-900 transition hover:bg-green-300 md:inline-block"
+          className="hidden shrink-0 rounded-full bg-green-400 px-4 py-1.5 text-sm font-medium whitespace-nowrap text-green-900 transition hover:bg-green-300 md:inline-block"
         >
           Área Admin
         </Link>
@@ -77,7 +97,7 @@ export default function Navbar() {
             <Link
               key={link.to}
               to={link.to}
-              className={mobileNavLink({ active: isActive(link.to) })}
+              className={mobileNavLinkVariants({ active: isActive(link.to) })}
               onClick={() => setMenuOpen(false)}
             >
               {link.label}
