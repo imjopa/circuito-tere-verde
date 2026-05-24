@@ -1,15 +1,36 @@
-import { events, type NewEvent } from "@circuito/db";
-import { eq } from "drizzle-orm";
+import { events, parks, type NewParkEvent } from "@circuito/db";
+import type { Db, ParkEventCategory } from "@circuito/db";
+import { and, desc, eq, SQL } from "drizzle-orm";
 import { Hono } from "hono";
-
-import type { Db } from "../types.js";
 
 export function createEventsRoutes(db: Db) {
   const app = new Hono();
 
   app.get("/", async (c) => {
-    const result = await db.select().from(events);
-    return c.json(result);
+    const parkId = c.req.query("park");
+    const category = c.req.query("category");
+
+    const filters = [
+      parkId && eq(events.parkId, parkId),
+      category && eq(events.category, category as ParkEventCategory),
+    ].filter((f): f is SQL => Boolean(f));
+
+    const query = db
+      .select()
+      .from(events)
+      .leftJoin(parks, eq(events.parkId, parks.id))
+      .orderBy(desc(events.date));
+
+    if (filters.length > 0) {
+      query.where(and(...filters));
+    }
+
+    return c.json(
+      (await query).map((r) => ({
+        ...r.events,
+        park: r.parks,
+      })),
+    );
   });
 
   app.get("/:id", async (c) => {
@@ -20,14 +41,14 @@ export function createEventsRoutes(db: Db) {
   });
 
   app.post("/", async (c) => {
-    const body = (await c.req.json()) as NewEvent;
+    const body = await c.req.json<NewParkEvent>();
     await db.insert(events).values(body);
     return c.json(body, 201);
   });
 
   app.patch("/:id", async (c) => {
     const id = c.req.param("id");
-    const body = (await c.req.json()) as Partial<NewEvent>;
+    const body = await c.req.json<NewParkEvent>();
     const [updated] = await db.update(events).set(body).where(eq(events.id, id)).returning();
     if (!updated) return c.json({ error: "Evento não encontrado" }, 404);
     return c.json(updated);

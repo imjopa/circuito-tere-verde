@@ -1,6 +1,5 @@
+import type { Park } from "@circuito/db/client";
 import { tv } from "tailwind-variants";
-
-import type { Park } from "@/data/parks";
 
 const variants = tv({
   base: "rounded-lg border border-t-4 border-gray-100 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-md",
@@ -9,7 +8,7 @@ const variants = tv({
       "serra-dos-orgaos": "border-green-900",
       "tres-picos": "border-green-800",
       "montanhas-teresopolis": "border-green-700",
-    },
+    } as Record<string, string>,
   },
 });
 
@@ -36,11 +35,11 @@ export default function ParkCard({ park }: ParkCardProps) {
       <ul className="mb-4 flex list-none flex-col gap-1.5 rounded-md bg-green-50 p-3">
         <li className="flex justify-between text-xs">
           <span className="text-gray-500">Área</span>
-          <span>{park.area}</span>
+          <span>{park.areaHectares.toLocaleString("pt-BR")} ha</span>
         </li>
         <li className="flex justify-between text-xs">
           <span className="text-gray-500">Altitude máx.</span>
-          <span>{park.altitude}</span>
+          <span>{park.altitudeMeters.toLocaleString("pt-BR")} m</span>
         </li>
         <li className="flex justify-between text-xs">
           <span className="text-gray-500">Horários</span>
@@ -48,7 +47,12 @@ export default function ParkCard({ park }: ParkCardProps) {
         </li>
         <li className="flex justify-between text-xs">
           <span className="text-gray-500">Entrada</span>
-          <span>{park.entranceFee}</span>
+          <span>
+            {(park.entranceFeeCents / 100).toLocaleString("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            })}
+          </span>
         </li>
       </ul>
 

@@ -1,14 +1,11 @@
 import { ArrowUp, Droplets, Trees } from "lucide-react";
-import { parseAsStringEnum, useQueryState } from "nuqs";
-import { useCallback } from "react";
 import { tv } from "tailwind-variants";
 
 import Navbar from "@/components/layout/Navbar";
 import { FilterChip } from "@/components/ui/FilterChip";
-import { waterfalls } from "@/data/waterfalls";
+import { useWaterfallFilters, useWaterfalls } from "@/hooks/data/useWaterfalls";
 
 const accessFilterLabels = {
-  all: "Todas",
   easy: "Fácil",
   medium: "Moderado",
   hard: "Difícil",
@@ -37,7 +34,7 @@ const variants = tv({
       "montanhas-teresopolis": {
         header: "bg-linear-to-br from-green-700 to-green-600",
       },
-    },
+    } as Record<string, { header: string }>,
     access: {
       easy: {
         accessLabel: "bg-green-100 text-green-900",
@@ -53,15 +50,9 @@ const variants = tv({
   defaultVariants: { access: "easy", park: "serra-dos-orgaos" },
 });
 
-const accessFilters = ["all", "easy", "medium", "hard"];
-
 export default function WaterfallsPage() {
-  const [activeAccess, setActiveAccess] = useQueryState(
-    "access",
-    parseAsStringEnum(accessFilters).withDefault("all"),
-  );
-
-  const filtered = waterfalls.filter((wf) => activeAccess === "all" || wf.access === activeAccess);
+  const { data: waterfalls = [] } = useWaterfalls();
+  const [{ access }, setFilters] = useWaterfallFilters();
 
   return (
     <div className="min-h-screen">
@@ -71,8 +62,8 @@ export default function WaterfallsPage() {
         <div className="mx-auto max-w-6xl">
           <h1 className="text-3xl text-white">Cachoeiras</h1>
           <p className="mt-1 text-sm text-white/65">
-            {filtered.length} cachoeira{filtered.length !== 1 ? "s" : ""} encontrada
-            {filtered.length !== 1 ? "s" : ""}
+            {waterfalls.length} cachoeira{waterfalls.length !== 1 ? "s" : ""} encontrada
+            {waterfalls.length !== 1 ? "s" : ""}
           </p>
         </div>
       </div>
@@ -81,20 +72,23 @@ export default function WaterfallsPage() {
         <div className="mb-6 flex flex-wrap items-center gap-3">
           <span className="text-sm whitespace-nowrap text-gray-500">Dificuldade de acesso:</span>
           <div className="flex flex-wrap gap-2">
-            {Object.entries(accessFilterLabels).map(([value, label]) => {
-              const handleClick = useCallback(() => setActiveAccess(value), [value]);
-
-              return (
-                <FilterChip key={value} active={activeAccess === value} onClick={handleClick}>
-                  {label}
-                </FilterChip>
-              );
-            })}
+            <FilterChip active={access === ""} onClick={() => setFilters({ access: "" })}>
+              Todas
+            </FilterChip>
+            {Object.entries(accessFilterLabels).map(([value, label]) => (
+              <FilterChip
+                key={value}
+                active={access === value}
+                onClick={() => setFilters({ access: value })}
+              >
+                {label}
+              </FilterChip>
+            ))}
           </div>
         </div>
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((wf) => {
+          {waterfalls.map((wf) => {
             const classes = variants({ access: wf.access, park: wf.parkId });
 
             return (
@@ -117,11 +111,11 @@ export default function WaterfallsPage() {
                   <div className="flex gap-4">
                     <span className="flex items-center gap-1 text-sm text-gray-500">
                       <ArrowUp className="size-3.5 shrink-0" aria-hidden />
-                      {wf.height}
+                      {wf.heightMeters} m
                     </span>
                     <span className="flex items-center gap-1 text-sm text-gray-500">
                       <Trees className="size-3.5 shrink-0" aria-hidden />
-                      {wf.parkName.split(" ")[0]}
+                      {wf.parkName}
                     </span>
                   </div>
 

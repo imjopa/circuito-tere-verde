@@ -1,19 +1,26 @@
 import { ArrowRight } from "lucide-react";
+import { useMemo } from "react";
 import { Link as RouterLink } from "react-router-dom";
 
 import { Link } from "@/components/ui/Link";
 import StatusBadge from "@/components/ui/StatusBadge";
-import { useAdminData } from "@/contexts/AdminDataContext";
+import { useEvents } from "@/hooks/data/useEvents";
+import { useTrails } from "@/hooks/data/useTrails";
 import { useAdminMetrics } from "@/hooks/useAdminMetrics";
 
 export default function AdminDashboardPage() {
-  const { trailsData, eventsData } = useAdminData();
-  const metrics = useAdminMetrics(trailsData, eventsData);
+  const trails = useTrails();
+  const events = useEvents();
+  const metrics = useAdminMetrics(trails.data, events.data);
 
-  const upcomingEvents = eventsData
-    .filter((ev) => new Date(ev.date) >= new Date())
-    .toSorted((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-    .slice(0, 3);
+  const upcomingEvents = useMemo(() => {
+    return (
+      events.data
+        ?.filter((ev) => new Date(ev.date) >= new Date())
+        .toSorted((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+        .slice(0, 3) ?? []
+    );
+  }, [events.data]);
 
   return (
     <>
@@ -32,8 +39,9 @@ export default function AdminDashboardPage() {
             {
               alert: false,
               label: "Trilhas abertas",
-              value: trailsData.filter((t) => t.status === "open" || t.status === "full").length,
-              delta: `de ${trailsData.length} cadastradas`,
+              value:
+                trails.data?.filter((t) => t.status === "open" || t.status === "full").length ?? 0,
+              delta: `de ${trails.data?.length ?? 0} cadastradas`,
             },
             {
               alert: false,
@@ -86,7 +94,7 @@ export default function AdminDashboardPage() {
             </Link>
           </div>
           <ul className="flex list-none flex-col">
-            {trailsData.slice(0, 5).map((trail) => (
+            {trails.data?.slice(0, 5).map((trail) => (
               <li
                 key={trail.id}
                 className="flex items-center gap-2.5 border-b border-gray-100 py-2 last:border-b-0"
@@ -107,9 +115,9 @@ export default function AdminDashboardPage() {
               <h2 className="text-sm font-medium text-green-800">Próximos eventos</h2>
               <RouterLink
                 to="/admin/eventos"
-                className="text-sm font-medium text-green-600 transition hover:text-green-800"
+                className="flex items-center gap-1 text-sm font-medium text-green-600 transition hover:text-green-800"
               >
-                Gerenciar →
+                Gerenciar <ArrowRight className="size-4" />
               </RouterLink>
             </div>
             <ul className="flex list-none flex-col">
@@ -132,7 +140,7 @@ export default function AdminDashboardPage() {
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-gray-800">{ev.title}</p>
                       <p className="mt-px text-xs text-gray-500">
-                        {ev.park} · {ev.spotsLeft} vagas
+                        {ev.park.name} · {ev.spotsLeft} vagas
                       </p>
                     </div>
                   </li>

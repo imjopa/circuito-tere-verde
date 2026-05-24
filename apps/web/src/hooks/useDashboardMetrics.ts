@@ -1,6 +1,5 @@
+import type { Park, Trail } from "@circuito/db/client";
 import { useMemo } from "react";
-
-import type { Park, Trail } from "@/types";
 
 function generateWeeklyAccess(openTrailCount: number) {
   const base = openTrailCount * 40;

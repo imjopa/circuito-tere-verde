@@ -1,14 +1,11 @@
 import { Clock, Coins, MapPin, Users } from "lucide-react";
-import { parseAsStringEnum, useQueryState } from "nuqs";
-import { useCallback } from "react";
 import { tv } from "tailwind-variants";
 
 import Navbar from "@/components/layout/Navbar";
 import { FilterChip } from "@/components/ui/FilterChip";
-import { useEvents } from "@/hooks/useEvents";
+import { useEventFilters, useEvents } from "@/hooks/data/useEvents";
 
 const categoryLabels = {
-  all: "Todos",
   guided_trail: "Trilha Guiada",
   education: "Educativo",
   volunteer: "Voluntário",
@@ -46,18 +43,9 @@ const statusVariants = tv({
   },
 });
 
-const categoryFilters = ["all", "guided_trail", "education", "volunteer", "workshop"];
-
 export default function EventsPage() {
-  const { events, loading } = useEvents();
-  const [activeCategory, setActiveCategory] = useQueryState(
-    "category",
-    parseAsStringEnum(categoryFilters).withDefault("all"),
-  );
-
-  const filtered = events
-    .filter((ev) => activeCategory === "all" || ev.category === activeCategory)
-    .toSorted((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const events = useEvents();
+  const [{ category }, setFilters] = useEventFilters();
 
   return (
     <div className="min-h-screen">
@@ -76,27 +64,30 @@ export default function EventsPage() {
         <div className="mb-6 flex flex-wrap items-center gap-3">
           <span className="text-sm whitespace-nowrap text-gray-500">Categoria:</span>
           <div className="flex flex-wrap gap-2">
-            {Object.entries(categoryLabels).map(([value, label]) => {
-              const handleClick = useCallback(() => setActiveCategory(value), [value]);
-
-              return (
-                <FilterChip key={value} active={activeCategory === value} onClick={handleClick}>
-                  {label}
-                </FilterChip>
-              );
-            })}
+            <FilterChip active={category === ""} onClick={() => setFilters({ category: "" })}>
+              Todas
+            </FilterChip>
+            {Object.entries(categoryLabels).map(([value, label]) => (
+              <FilterChip
+                key={value}
+                active={category === value}
+                onClick={() => setFilters({ category: value })}
+              >
+                {label}
+              </FilterChip>
+            ))}
           </div>
         </div>
 
-        {loading ? (
+        {events.isLoading ? (
           <p className="px-4 py-12 text-center text-sm text-gray-500">Carregando eventos...</p>
-        ) : filtered.length === 0 ? (
+        ) : events.data?.length === 0 ? (
           <p className="px-4 py-12 text-center text-sm text-gray-500">
             Nenhum evento nessa categoria no momento.
           </p>
         ) : (
           <div className="flex flex-col gap-4">
-            {filtered.map((ev) => {
+            {events.data?.map((ev) => {
               const evDate = new Date(ev.date + "T00:00:00");
               const day = evDate.getDate().toString().padStart(2, "0");
               const month = evDate
@@ -120,7 +111,7 @@ export default function EventsPage() {
                   <div className="flex min-w-0 flex-1 flex-col gap-2.5 p-5">
                     <div className="flex flex-wrap gap-1.5">
                       <span className={categoryVariants({ category: ev.category })}>
-                        {ev.categoryLabel}
+                        {categoryLabels[ev.category]}
                       </span>
                       <span className={statusVariants({ status: ev.status })}>
                         {statusLabels[ev.status]}
@@ -130,18 +121,21 @@ export default function EventsPage() {
                     <h2 className="font-display text-lg font-semibold text-gray-900">{ev.title}</h2>
                     <p className="flex items-center gap-1.5 text-sm text-gray-500">
                       <MapPin className="size-3.5 shrink-0" aria-hidden />
-                      {ev.park}
+                      {ev.park.name}
                     </p>
                     <p className="text-sm leading-relaxed text-gray-600">{ev.description}</p>
 
                     <div className="flex flex-wrap gap-3 text-sm text-gray-500">
                       <span className="inline-flex items-center gap-1">
                         <Clock className="size-3.5 shrink-0" aria-hidden />
-                        {ev.time} · {ev.duration}
+                        {ev.date} · {ev.duration}
                       </span>
                       <span className="inline-flex items-center gap-1">
                         <Coins className="size-3.5 shrink-0" aria-hidden />
-                        {ev.price}
+                        {(ev.priceCents / 100).toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
                       </span>
                       <span className="inline-flex items-center gap-1">
                         <Users className="size-3.5 shrink-0" aria-hidden />

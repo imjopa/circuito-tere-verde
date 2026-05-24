@@ -1,9 +1,9 @@
 import { Clock, Globe, MapPin, Phone, Ticket } from "lucide-react";
-import { useCallback, useState } from "react";
+import { parseAsString, useQueryState } from "nuqs";
+import { useCallback } from "react";
 
 import Navbar from "@/components/layout/Navbar";
-import type { ParkId } from "@/data/parks";
-import { useParks } from "@/hooks/useParks";
+import { useParks } from "@/hooks/data/useParks";
 
 interface ParkMap {
   embedUrl: string;
@@ -12,7 +12,7 @@ interface ParkMap {
   phone: string;
 }
 
-const PARK_MAPS: Record<ParkId, ParkMap> = {
+const PARK_MAPS: Record<string, ParkMap | undefined> = {
   "serra-dos-orgaos": {
     embedUrl:
       "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14893.84!2d-43.0!3d-22.45!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9f2b35ef2a5b5f%3A0x1a2b3c4d5e6f7a8b!2sParque%20Nacional%20Serra%20dos%20%C3%93rg%C3%A3os!5e0!3m2!1spt-BR!2sbr!4v1620000000000!5m2!1spt-BR!2sbr",
@@ -37,16 +37,25 @@ const PARK_MAPS: Record<ParkId, ParkMap> = {
 };
 
 export default function MapsPage() {
-  const { parks, loading } = useParks();
-  const [activeParkId, setActiveParkId] = useState<ParkId>("serra-dos-orgaos");
-  const activePark = parks.find((p) => p.id === activeParkId);
-  const activeMapData = PARK_MAPS[activeParkId];
+  const parks = useParks();
+  const [parkId, setParkId] = useQueryState("park", parseAsString.withDefault(""));
+  const activePark = parks.data?.find((p) => p.id === parkId);
+  const activeMapData = PARK_MAPS[parkId ?? ""] ?? PARK_MAPS["serra-dos-orgaos"]!;
 
-  if (loading) {
+  if (parks.isLoading) {
     return (
       <div className="min-h-screen">
         <Navbar />
         <p className="px-6 py-12 text-center text-sm text-gray-500">Carregando mapas...</p>
+      </div>
+    );
+  }
+
+  if (parks.error) {
+    return (
+      <div className="min-h-screen">
+        <Navbar />
+        <p className="px-6 py-12 text-center text-sm text-gray-500">Erro ao carregar mapas</p>
       </div>
     );
   }
@@ -64,21 +73,19 @@ export default function MapsPage() {
 
       <main className="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-8">
         <div className="flex flex-wrap gap-3">
-          {parks.map((park) => {
-            const handleParkClick = useCallback(() => {
-              setActiveParkId(park.id);
-            }, [park.id]);
+          {parks.data?.map((park) => {
+            const handleParkClick = useCallback(() => setParkId(park.id), [park.id]);
 
             return (
               <button
                 key={park.id}
                 className={`flex min-w-40 cursor-pointer flex-col gap-0.5 rounded-lg border px-5 py-3 text-left transition-colors ${
-                  activeParkId === park.id
+                  parkId === park.id
                     ? "border-green-700 bg-green-50"
                     : "border-gray-200 bg-white hover:border-green-400"
                 }`}
                 onClick={handleParkClick}
-                aria-pressed={activeParkId === park.id}
+                aria-pressed={parkId === park.id}
               >
                 <span className="text-sm font-medium text-gray-900">{park.name}</span>
                 <span className="text-xs text-gray-500">{park.type}</span>
@@ -143,7 +150,12 @@ export default function MapsPage() {
                 <Ticket className="mt-px size-4 shrink-0 text-green-700" aria-hidden />
                 <div>
                   <p className="mb-px text-xs tracking-wider text-gray-500 uppercase">Entrada</p>
-                  <p className="text-sm leading-snug text-gray-800">{activePark?.entranceFee}</p>
+                  <p className="text-sm leading-snug text-gray-800">
+                    {((activePark?.entranceFeeCents ?? 0) / 100).toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })}
+                  </p>
                 </div>
               </div>
             </div>

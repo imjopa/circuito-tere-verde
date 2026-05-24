@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { Select } from "@/components/ui/Select";
 import { TextArea } from "@/components/ui/TextArea";
-import { useParks } from "@/hooks/useParks";
+import { useParks } from "@/hooks/data/useParks";
 
 const VISIT_TIMES = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00"];
 
@@ -34,7 +34,7 @@ function getTodayString() {
 }
 
 export default function SchedulePage() {
-  const { parks } = useParks();
+  const parks = useParks();
   const [form, setForm] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
@@ -79,7 +79,7 @@ export default function SchedulePage() {
     setSubmitted(false);
   }, []);
 
-  const selectedPark = parks.find((p) => p.id === form.parkId);
+  const selectedPark = parks.data?.find((p) => p.id === form.parkId);
 
   if (submitted) {
     const evDate = new Date(form.date + "T00:00:00");
@@ -226,7 +226,7 @@ export default function SchedulePage() {
                   error={!!errors.parkId}
                 >
                   <option value="">Selecione o parque</option>
-                  {parks.map((p) => (
+                  {parks.data?.map((p) => (
                     <option key={p.id} value={p.id}>
                       {p.name} — {p.type}
                     </option>
@@ -318,7 +318,11 @@ export default function SchedulePage() {
               <div className="rounded-lg border border-green-100 bg-green-50 px-4 py-3.5">
                 <p className="text-sm font-medium text-green-800">{selectedPark.name}</p>
                 <p className="mt-0.5 text-sm text-gray-500">
-                  {selectedPark.openingHours} · Entrada: {selectedPark.entranceFee}
+                  {selectedPark.openingHours} · Entrada:{" "}
+                  {(selectedPark.entranceFeeCents / 100).toLocaleString("pt-BR", {
+                    style: "currency",
+                    currency: "BRL",
+                  })}
                 </p>
               </div>
             )}

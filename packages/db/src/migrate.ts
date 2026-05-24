@@ -13,3 +13,4 @@ await migrate(db, { migrationsFolder: new URL("../drizzle", import.meta.url).pat
 await migrationClient.end();
 
 console.log("Migrations applied successfully.");
+process.exit(0);

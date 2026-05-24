@@ -28,7 +28,9 @@ const config = defineConfig({
     typeCheck: true,
   },
   rules: {
+    "oxc/no-map-spread": "off",
     "react/react-in-jsx-scope": "off",
+    "react-perf/jsx-no-new-function-as-prop": "off",
     "typescript/explicit-function-return-type": "off",
     "typescript/explicit-module-boundary-types": "off",
     "typescript/no-unsafe-type-assertion": "off",

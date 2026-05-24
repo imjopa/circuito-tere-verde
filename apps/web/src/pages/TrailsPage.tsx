@@ -5,45 +5,32 @@ import Navbar from "@/components/layout/Navbar";
 import TrailCard from "@/components/trails/TrailCard";
 import { Button } from "@/components/ui/Button";
 import { FilterChip } from "@/components/ui/FilterChip";
-import { useTrailFilters } from "@/hooks/useTrailFilters";
+import { useParks } from "@/hooks/data/useParks";
+import { useTrailFilters, useTrails } from "@/hooks/data/useTrails";
 
-const difficultyFilters = [
-  { value: "all", label: "Todas" },
-  { value: "easy", label: "Fácil" },
-  { value: "medium", label: "Moderado" },
-  { value: "hard", label: "Difícil" },
-];
+const difficultyLabels = {
+  easy: "Fácil",
+  medium: "Moderado",
+  hard: "Difícil",
+} as const;
 
 export default function TrailsPage() {
-  const {
-    searchQuery,
-    setSearchQuery,
-    activeDifficulty,
-    setActiveDifficulty,
-    activePark,
-    setActivePark,
-    filteredTrails,
-    parks,
-    loading,
-  } = useTrailFilters();
+  const parks = useParks();
+  const trails = useTrails();
 
-  const parkFilters = [
-    { value: "all", label: "Todos os parques" },
-    ...parks.map((park) => ({ value: park.id, label: park.name })),
-  ];
+  const [{ q, difficulty, park }, setFilters] = useTrailFilters();
 
   const handleSearch = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value),
-    [setSearchQuery],
+    (e: React.ChangeEvent<HTMLInputElement>) => setFilters({ q: e.target.value }),
+    [setFilters],
   );
 
-  const handleClearSearch = useCallback(() => setSearchQuery(""), [setSearchQuery]);
+  const handleClearSearch = useCallback(() => setFilters({ q: "" }), [setFilters]);
 
-  const handleClearFilters = useCallback(() => {
-    void setSearchQuery("");
-    void setActiveDifficulty("all");
-    void setActivePark("all");
-  }, [setSearchQuery, setActiveDifficulty, setActivePark]);
+  const handleClearFilters = useCallback(
+    () => setFilters({ q: "", difficulty: "", park: "" }),
+    [setFilters],
+  );
 
   return (
     <div className="min-h-screen">
@@ -53,8 +40,8 @@ export default function TrailsPage() {
         <div className="mx-auto max-w-6xl">
           <h1 className="text-3xl text-white">Trilhas</h1>
           <p className="mt-1 text-sm text-white/65">
-            {filteredTrails.length} trilha{filteredTrails.length !== 1 ? "s" : ""} encontrada
-            {filteredTrails.length !== 1 ? "s" : ""}
+            {trails.data?.length ?? 0} trilha{trails.data?.length !== 1 ? "s" : ""} encontrada
+            {trails.data?.length !== 1 ? "s" : ""}
           </p>
         </div>
       </div>
@@ -66,11 +53,11 @@ export default function TrailsPage() {
             type="text"
             aria-label="Buscar trilha ou parque..."
             placeholder="Buscar trilha ou parque..."
-            value={searchQuery}
+            value={q}
             onChange={handleSearch}
             className="font-body flex-1 border-none bg-transparent text-sm outline-none"
           />
-          {searchQuery && (
+          {q && (
             <button
               onClick={handleClearSearch}
               className="flex size-5 items-center justify-center rounded-full bg-gray-100 text-gray-500"
@@ -84,49 +71,46 @@ export default function TrailsPage() {
         <div className="mb-3.5 flex flex-wrap items-center gap-3">
           <span className="text-sm whitespace-nowrap text-gray-500">Dificuldade:</span>
           <div className="flex flex-wrap gap-2">
-            {difficultyFilters.map((filter) => {
-              const handleClick = useCallback(
-                () => setActiveDifficulty(filter.value),
-                [filter.value],
-              );
-
-              return (
-                <FilterChip
-                  key={filter.value}
-                  active={activeDifficulty === filter.value}
-                  onClick={handleClick}
-                >
-                  {filter.label}
-                </FilterChip>
-              );
-            })}
+            <FilterChip active={difficulty === ""} onClick={() => setFilters({ difficulty: "" })}>
+              Todas
+            </FilterChip>
+            {Object.entries(difficultyLabels).map(([value, label]) => (
+              <FilterChip
+                key={value}
+                active={difficulty === value}
+                // oxlint-disable-next-line react-perf/jsx-no-new-function-as-prop
+                onClick={() => setFilters({ difficulty: value })}
+              >
+                {label}
+              </FilterChip>
+            ))}
           </div>
         </div>
 
         <div className="mb-3.5 flex flex-wrap items-center gap-3">
           <span className="text-sm whitespace-nowrap text-gray-500">Parque:</span>
           <div className="flex flex-wrap gap-2">
-            {parkFilters.map((filter) => {
-              const handleClick = useCallback(() => setActivePark(filter.value), [filter.value]);
-
-              return (
-                <FilterChip
-                  key={filter.value}
-                  active={activePark === filter.value}
-                  onClick={handleClick}
-                >
-                  {filter.label}
-                </FilterChip>
-              );
-            })}
+            <FilterChip active={park === ""} onClick={() => setFilters({ park: "" })}>
+              Todos
+            </FilterChip>
+            {parks.data?.map((filter) => (
+              <FilterChip
+                key={filter.id}
+                active={park === filter.id}
+                // oxlint-disable-next-line react-perf/jsx-no-new-function-as-prop
+                onClick={() => setFilters({ park: filter.id })}
+              >
+                {filter.name}
+              </FilterChip>
+            ))}
           </div>
         </div>
 
-        {loading ? (
+        {trails.isLoading ? (
           <p className="px-4 py-16 text-center text-sm text-gray-500">Carregando trilhas...</p>
-        ) : filteredTrails.length > 0 ? (
+        ) : trails.data?.length && trails.data.length > 0 ? (
           <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredTrails.map((trail) => (
+            {trails.data.map((trail) => (
               <TrailCard key={trail.id} trail={trail} />
             ))}
           </div>

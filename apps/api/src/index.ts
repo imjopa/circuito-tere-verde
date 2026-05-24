@@ -5,18 +5,22 @@ import { cors } from "hono/cors";
 
 import { createEventsRoutes } from "./routes/events.js";
 import { createParksRoutes } from "./routes/parks.js";
+import { createSearchRoutes } from "./routes/search.js";
 import { createTrailsRoutes } from "./routes/trails.js";
+import { createWaterfallsRoutes } from "./routes/waterfalls.js";
 
 const db = createDb();
 const app = new Hono();
 
-app.use("/api/*", cors());
+app.use("/*", cors());
 
-app.get("/api/health", (c) => c.json({ status: "ok" }));
+app.get("/health", (c) => c.json({ status: "ok" }));
 
-app.route("/api/parks", createParksRoutes(db));
-app.route("/api/trails", createTrailsRoutes(db));
-app.route("/api/events", createEventsRoutes(db));
+app.route("/parks", createParksRoutes(db));
+app.route("/search", createSearchRoutes(db));
+app.route("/trails", createTrailsRoutes(db));
+app.route("/events", createEventsRoutes(db));
+app.route("/waterfalls", createWaterfallsRoutes(db));
 
 const port = Number(process.env["PORT"] ?? 3001);
 

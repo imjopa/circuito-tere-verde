@@ -22,7 +22,8 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "es2023",
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "types": ["node"]
   },
   "include": ["src"]
 }

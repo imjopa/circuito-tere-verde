@@ -2,7 +2,6 @@ import { Navigate, Route, Routes } from "react-router-dom";
 
 import AdminLayout from "@/components/admin/AdminLayout";
 import ProtectedRoute from "@/components/admin/ProtectedRoute";
-import { AdminDataProvider } from "@/contexts/AdminDataContext";
 import AboutPage from "@/pages/AboutPage";
 import AdminDashboardPage from "@/pages/admin/AdminDashboardPage";
 import AdminEventsPage from "@/pages/admin/AdminEventsPage";
@@ -46,9 +45,7 @@ export default function App() {
 function PrivateLayout() {
   return (
     <ProtectedRoute>
-      <AdminDataProvider>
-        <AdminLayout />
-      </AdminDataProvider>
+      <AdminLayout />
     </ProtectedRoute>
   );
 }

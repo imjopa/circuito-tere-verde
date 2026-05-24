@@ -1,14 +1,13 @@
 import { parks, type NewPark } from "@circuito/db";
-import { eq } from "drizzle-orm";
+import type { Db } from "@circuito/db";
+import { desc, eq } from "drizzle-orm";
 import { Hono } from "hono";
-
-import type { Db } from "../types.js";
 
 export function createParksRoutes(db: Db) {
   const app = new Hono();
 
   app.get("/", async (c) => {
-    const result = await db.select().from(parks);
+    const result = await db.select().from(parks).orderBy(desc(parks.name));
     return c.json(result);
   });
 
@@ -20,14 +19,14 @@ export function createParksRoutes(db: Db) {
   });
 
   app.post("/", async (c) => {
-    const body = (await c.req.json()) as NewPark;
+    const body = await c.req.json<NewPark>();
     await db.insert(parks).values(body);
     return c.json(body, 201);
   });
 
   app.patch("/:id", async (c) => {
     const id = c.req.param("id");
-    const body = (await c.req.json()) as Partial<NewPark>;
+    const body = await c.req.json<Partial<NewPark>>();
     const [updated] = await db.update(parks).set(body).where(eq(parks.id, id)).returning();
     if (!updated) return c.json({ error: "Parque não encontrado" }, 404);
     return c.json(updated);

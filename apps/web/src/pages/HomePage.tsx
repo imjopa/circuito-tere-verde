@@ -16,9 +16,9 @@ import Navbar from "@/components/layout/Navbar";
 import ParkCard from "@/components/parks/ParkCard";
 import { Link } from "@/components/ui/Link";
 import SearchResults from "@/components/ui/SearchResults";
-import { useEvents } from "@/hooks/useEvents";
-import { useHomeSearch } from "@/hooks/useHomeSearch";
-import { useParks } from "@/hooks/useParks";
+import { useEvents } from "@/hooks/data/useEvents";
+import { useParks } from "@/hooks/data/useParks";
+import { useSearch, useSearchFilters } from "@/hooks/data/useSearch";
 
 // Atalhos rápidos com rotas reais
 const QUICK_ACCESS: { icon: LucideIcon; label: string; to: string }[] = [
@@ -30,17 +30,31 @@ const QUICK_ACCESS: { icon: LucideIcon; label: string; to: string }[] = [
   { icon: Phone, label: "Contato", to: "/contato" },
 ];
 
+const categoryLabels = {
+  education: "Educação",
+  guided_trail: "Trilha guiada",
+  volunteer: "Voluntariado",
+  workshop: "Workshop",
+} as const;
+
 export default function HomePage() {
-  const { query, setQuery, clearSearch, results } = useHomeSearch();
-  const { parks, loading: parksLoading } = useParks();
-  const { events, loading: eventsLoading } = useEvents();
+  const parks = useParks();
+  const events = useEvents();
+
+  const [{ q }, setFilters] = useSearchFilters();
+  const search = useSearch();
   const [showResults, setShowResults] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
 
-  const upcomingEvents = events
-    .filter((ev) => new Date(ev.date) >= new Date())
-    .toSorted((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-    .slice(0, 3);
+  const results = q.trim().length >= 2 ? (search.data ?? null) : null;
+
+  const clearSearch = useCallback(() => setFilters({ q: "" }), [setFilters]);
+
+  const upcomingEvents =
+    events.data
+      ?.filter((ev) => new Date(ev.date) >= new Date())
+      .toSorted((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .slice(0, 3) ?? [];
 
   // Fecha dropdown ao clicar fora
   useEffect(() => {
@@ -63,9 +77,9 @@ export default function HomePage() {
   const handleQueryChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setShowResults(true);
-      return setQuery(e.target.value);
+      return setFilters({ q: e.target.value });
     },
-    [setQuery],
+    [setFilters],
   );
 
   const handleClear = useCallback(() => {
@@ -78,9 +92,9 @@ export default function HomePage() {
   }, []);
 
   const handleFocus = useCallback(() => {
-    if (query.length < 2) return;
+    if (q.length < 2) return;
     setShowResults(true);
-  }, [query]);
+  }, [q]);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -125,14 +139,14 @@ export default function HomePage() {
           <input
             type="search"
             placeholder="Buscar trilhas, cachoeiras, parques..."
-            value={query}
+            value={q}
             onChange={handleQueryChange}
             onFocus={handleFocus}
             className="font-body flex-1 border-none bg-transparent text-sm text-gray-700 outline-none [&::-webkit-search-cancel-button]:hidden"
             aria-label="Buscar no Circuito Terê Verde"
             aria-autocomplete="list"
           />
-          {query && (
+          {q && (
             <button
               onClick={handleClear}
               className="flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-full border-none bg-gray-100 text-xs text-gray-500"
@@ -142,8 +156,12 @@ export default function HomePage() {
             </button>
           )}
         </search>
-        {showResults && results !== null && (
-          <SearchResults results={results} onClose={handleCloseResults} />
+        {results && showResults && (
+          <SearchResults
+            results={results}
+            isLoading={search.isLoading}
+            onClose={handleCloseResults}
+          />
         )}
       </div>
 
@@ -155,10 +173,10 @@ export default function HomePage() {
             Três áreas de conservação com biodiversidade única da Mata Atlântica
           </p>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {parksLoading ? (
+            {parks.isLoading ? (
               <p className="text-sm text-gray-500">Carregando parques...</p>
             ) : (
-              parks.map((park) => <ParkCard key={park.id} park={park} />)
+              (parks.data?.map((park) => <ParkCard key={park.id} park={park} />) ?? [])
             )}
           </div>
         </section>
@@ -194,7 +212,7 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="flex flex-col gap-3">
-            {eventsLoading ? (
+            {events.isLoading ? (
               <p className="text-sm text-gray-500">Carregando eventos...</p>
             ) : (
               upcomingEvents.map((event) => {
@@ -216,11 +234,15 @@ export default function HomePage() {
                     <div className="min-w-0 flex-1">
                       <h3 className="text-sm font-medium text-gray-900">{event.title}</h3>
                       <p className="mt-0.5 text-sm text-gray-500">
-                        {event.park} · {event.price}
+                        {event.park.name} ·{" "}
+                        {(event.priceCents / 100).toLocaleString("pt-BR", {
+                          style: "currency",
+                          currency: "BRL",
+                        })}
                       </p>
                     </div>
                     <span className="shrink-0 rounded-full bg-green-100 px-2.5 py-1 text-xs whitespace-nowrap text-green-800">
-                      {event.categoryLabel}
+                      {categoryLabels[event.category]}
                     </span>
                   </article>
                 );

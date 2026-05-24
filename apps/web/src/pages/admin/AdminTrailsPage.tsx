@@ -1,11 +1,14 @@
+import type { Park, Trail, TrailStatus } from "@circuito/db/client";
+import { useMutation } from "@tanstack/react-query";
+import ky from "ky";
 import { AlertTriangle, Pencil, Trash2, X } from "lucide-react";
 import { useCallback, useState } from "react";
 
 import { Select } from "@/components/ui/Select";
 import StatusBadge from "@/components/ui/StatusBadge";
 import { TextArea } from "@/components/ui/TextArea";
-import { useAdminData } from "@/contexts/AdminDataContext";
-import { type Trail, type TrailStatus } from "@/data/trails";
+import { useTrails } from "@/hooks/data/useTrails";
+import { queryClient } from "@/lib/query-client";
 
 const DEFAULT_TRAIL_STATUS: TrailStatus = "open";
 
@@ -18,14 +21,25 @@ const TRAIL_STATUS_OPTIONS = [
 ] as const;
 
 export default function AdminTrailsPage() {
-  const { trailsData, loading, updateTrail, deleteTrail } = useAdminData();
+  const trails = useTrails();
+
+  const updateTrail = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: { status: TrailStatus; conditions: string } }) =>
+      ky.patch(`/api/trails/${id}`, { json: data }).json<Trail>(),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["trails"] }),
+  });
+
+  const deleteTrail = useMutation({
+    mutationFn: (id: string) => ky.delete(`/api/trails/${id}`).json<Trail>(),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["trails"] }),
+  });
 
   const [editingTrail, setEditingTrail] = useState<Trail | null>(null);
   const [trailStatusDraft, setTrailStatusDraft] = useState<TrailStatus | null>(null);
   const [trailCondDraft, setTrailCondDraft] = useState("");
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
-  const openEditTrail = useCallback(
+  const handleOpenEdit = useCallback(
     (trail: Trail) => {
       setEditingTrail(trail);
       setTrailStatusDraft(trail.status);
@@ -37,16 +51,19 @@ export default function AdminTrailsPage() {
   const saveTrail = useCallback(async () => {
     if (!editingTrail) return;
 
-    await updateTrail(editingTrail.id, {
-      status: trailStatusDraft ?? DEFAULT_TRAIL_STATUS,
-      conditions: trailCondDraft,
+    await updateTrail.mutateAsync({
+      id: editingTrail.id,
+      data: {
+        status: trailStatusDraft ?? DEFAULT_TRAIL_STATUS,
+        conditions: trailCondDraft,
+      },
     });
     setEditingTrail(null);
   }, [editingTrail, trailStatusDraft, trailCondDraft, updateTrail]);
 
   const executeDelete = useCallback(async () => {
     if (!deleteTargetId) return;
-    await deleteTrail(deleteTargetId);
+    await deleteTrail.mutateAsync(deleteTargetId);
     setDeleteTargetId(null);
   }, [deleteTargetId, deleteTrail]);
 
@@ -74,75 +91,34 @@ export default function AdminTrailsPage() {
 
   return (
     <>
-      {loading ? (
+      {trails.isLoading ? (
         <p className="text-sm text-gray-500">Carregando trilhas...</p>
       ) : (
         <section className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-500">{trailsData.length} trilhas cadastradas</p>
+            <p className="text-sm text-gray-500">{trails.data?.length ?? 0} trilhas cadastradas</p>
           </div>
           <div className="flex flex-col gap-3">
-            {trailsData.map((trail) => {
-              const handleEditTrail = useCallback(() => {
-                openEditTrail(trail);
-              }, [trail]);
-
-              const handleDeleteTrail = useCallback(() => {
-                setDeleteTargetId(trail.id);
-              }, [trail.id]);
-
-              return (
-                <div
-                  key={trail.id}
-                  className="flex items-start justify-between gap-4 rounded-lg border border-gray-100 bg-white px-5 py-4 transition hover:shadow-sm"
-                >
-                  <div className="flex min-w-0 flex-1 items-start gap-3.5">
-                    <StatusBadge status={trail.status} />
-                    <div className="min-w-0 flex-1">
-                      <p className="mb-0.5 truncate text-sm font-medium text-gray-900">
-                        {trail.name}
-                      </p>
-                      <p className="mb-1 text-sm text-gray-500">
-                        {trail.parkName} · {trail.difficulty} · {trail.distance} km
-                      </p>
-                      <p className="rounded-sm border-l-4 border-green-300 bg-gray-50 px-2 py-1 text-sm leading-normal text-gray-600">
-                        {trail.conditions}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex shrink-0 flex-col gap-2">
-                    <button
-                      type="button"
-                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-green-200 bg-green-50 px-3.5 py-1.5 text-sm font-medium whitespace-nowrap text-green-800 transition hover:bg-green-100"
-                      onClick={handleEditTrail}
-                      aria-label={`Editar trilha ${trail.name}`}
-                    >
-                      <Pencil className="size-3.5" aria-hidden />
-                      Editar
-                    </button>
-                    <button
-                      type="button"
-                      className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-red-200 bg-red-50 px-3.5 py-1.5 text-sm font-medium whitespace-nowrap text-red-700 transition hover:bg-red-100"
-                      onClick={handleDeleteTrail}
-                      aria-label={`Excluir trilha ${trail.name}`}
-                    >
-                      <Trash2 className="size-3.5" aria-hidden />
-                      Excluir
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+            {trails.data?.map((trail) => (
+              <TrailCard
+                key={trail.id}
+                trail={trail}
+                onEdit={handleOpenEdit}
+                onDelete={setDeleteTargetId}
+              />
+            ))}
           </div>
         </section>
       )}
 
       {editingTrail && (
-        <dialog
+        <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
-          open
           aria-modal="true"
           aria-label="Editar trilha"
+          // cannot be a native dialog
+          // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
+          role="dialog"
         >
           <div className="flex w-full max-w-md flex-col gap-4 rounded-xl bg-white p-7 shadow-lg">
             <div className="flex items-center justify-between">
@@ -213,13 +189,15 @@ export default function AdminTrailsPage() {
               </button>
             </div>
           </div>
-        </dialog>
+        </div>
       )}
 
       {deleteTargetId && (
-        <dialog
+        <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 p-4"
-          open
+          // cannot be a native dialog
+          // oxlint-disable-next-line jsx-a11y/prefer-tag-over-role
+          role="dialog"
           aria-modal="true"
           aria-label="Confirmar exclusão"
         >
@@ -264,8 +242,63 @@ export default function AdminTrailsPage() {
               </button>
             </div>
           </div>
-        </dialog>
+        </div>
       )}
     </>
+  );
+}
+
+interface TrailCardProps {
+  trail: Trail & { park: Park };
+  onEdit: (trail: Trail) => void;
+  onDelete: (id: string) => void;
+}
+
+function TrailCard({ trail, onEdit, onDelete }: TrailCardProps) {
+  const handleEditTrail = useCallback(() => onEdit(trail), [trail, onEdit]);
+  const handleDeleteTrail = useCallback(() => onDelete(trail.id), [trail.id, onDelete]);
+  return (
+    <div
+      key={trail.id}
+      className="flex items-start justify-between gap-4 rounded-lg border border-gray-100 bg-white px-5 py-4 transition hover:shadow-sm"
+    >
+      <div className="flex min-w-0 flex-1 items-start gap-3.5">
+        <StatusBadge status={trail.status} />
+        <div className="min-w-0 flex-1">
+          <p className="mb-0.5 truncate text-sm font-medium text-gray-900">{trail.name}</p>
+          <p className="mb-1 text-sm text-gray-500">
+            {trail.parkName} · {trail.difficulty} ·{" "}
+            {(trail.distanceMeters / 1000).toLocaleString("pt-BR", {
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 1,
+            })}{" "}
+            km
+          </p>
+          <p className="rounded-sm border-l-4 border-green-300 bg-gray-50 px-2 py-1 text-sm leading-normal text-gray-600">
+            {trail.conditions}
+          </p>
+        </div>
+      </div>
+      <div className="flex shrink-0 flex-col gap-2">
+        <button
+          type="button"
+          className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-green-200 bg-green-50 px-3.5 py-1.5 text-sm font-medium whitespace-nowrap text-green-800 transition hover:bg-green-100"
+          onClick={handleEditTrail}
+          aria-label={`Editar trilha ${trail.name}`}
+        >
+          <Pencil className="size-3.5" aria-hidden />
+          Editar
+        </button>
+        <button
+          type="button"
+          className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-red-200 bg-red-50 px-3.5 py-1.5 text-sm font-medium whitespace-nowrap text-red-700 transition hover:bg-red-100"
+          onClick={handleDeleteTrail}
+          aria-label={`Excluir trilha ${trail.name}`}
+        >
+          <Trash2 className="size-3.5" aria-hidden />
+          Excluir
+        </button>
+      </div>
+    </div>
   );
 }

@@ -1,10 +1,9 @@
+import type { Trail } from "@circuito/db/client";
 import { Mountain, Ruler, Timer } from "lucide-react";
 import { tv } from "tailwind-variants";
 
 import DifficultyBadge from "@/components/ui/DifficultyBadge";
 import StatusBadge from "@/components/ui/StatusBadge";
-import type { ParkId } from "@/data/parks";
-import type { Trail } from "@/data/trails";
 
 export interface TrailCardProps {
   trail: Trail;
@@ -17,7 +16,7 @@ const trailCardHeader = tv({
       "serra-dos-orgaos": "bg-linear-to-br from-green-900 to-green-800",
       "tres-picos": "bg-linear-to-br from-green-800 to-green-700",
       "montanhas-teresopolis": "bg-linear-to-br from-green-700 to-green-600",
-    } satisfies Record<ParkId, string>,
+    } as Record<string, string>,
   },
   defaultVariants: {
     park: "serra-dos-orgaos",
@@ -36,7 +35,11 @@ export default function TrailCard({ trail }: TrailCardProps) {
         <div className="mb-2.5 flex gap-4">
           <span className="flex items-center gap-1 text-xs text-gray-500">
             <Ruler className="size-3.5 shrink-0" aria-hidden />
-            {trail.distance} km
+            {(trail.distanceMeters / 1000).toLocaleString("pt-BR", {
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 1,
+            })}{" "}
+            km
           </span>
           <span className="flex items-center gap-1 text-xs text-gray-500">
             <Timer className="size-3.5 shrink-0" aria-hidden />
@@ -44,7 +47,7 @@ export default function TrailCard({ trail }: TrailCardProps) {
           </span>
           <span className="flex items-center gap-1 text-xs text-gray-500">
             <Mountain className="size-3.5 shrink-0" aria-hidden />
-            {trail.altitude} m
+            {trail.altitudeMeters.toLocaleString("pt-BR")} m
           </span>
         </div>
 

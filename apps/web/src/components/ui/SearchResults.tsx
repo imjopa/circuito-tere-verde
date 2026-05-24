@@ -1,10 +1,7 @@
+import type { Park, Trail, Waterfall } from "@circuito/db/client";
 import { Droplets, Footprints, Trees } from "lucide-react";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-
-import type { Park } from "@/data/parks";
-import type { Trail } from "@/data/trails";
-import type { Waterfall } from "@/data/waterfalls";
 
 export interface SearchResultsProps {
   results: {
@@ -13,11 +10,23 @@ export interface SearchResultsProps {
     waterfalls: Waterfall[];
     total: number;
   };
+  isLoading?: boolean;
   onClose: () => void;
 }
 
-export default function SearchResults({ results, onClose }: SearchResultsProps) {
+export default function SearchResults({ results, isLoading = false, onClose }: SearchResultsProps) {
   const navigate = useNavigate();
+
+  if (isLoading) {
+    return (
+      <output
+        className="absolute top-full right-0 left-0 z-50 mt-2 max-h-96 overflow-hidden overflow-y-auto rounded-lg border border-gray-100 bg-white shadow-lg"
+        aria-live="polite"
+      >
+        <p className="p-5 text-center text-sm text-gray-500">Buscando...</p>
+      </output>
+    );
+  }
 
   if (!results || results.total === 0) {
     return (

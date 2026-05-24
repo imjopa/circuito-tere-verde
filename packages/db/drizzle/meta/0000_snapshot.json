@@ -1,5 +1,5 @@
 {
-  "id": "a6261fa0-9b7a-4b3c-892e-243fa6dc9171",
+  "id": "fb61b5b0-399d-4ab0-9aa5-384b950406ad",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -10,18 +10,13 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "title": {
           "name": "title",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "park": {
-          "name": "park",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -34,13 +29,7 @@
         },
         "date": {
           "name": "date",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "time": {
-          "name": "time",
-          "type": "text",
+          "type": "date",
           "primaryKey": false,
           "notNull": true
         },
@@ -52,12 +41,6 @@
         },
         "category": {
           "name": "category",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "category_label": {
-          "name": "category_label",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -86,20 +69,36 @@
           "primaryKey": false,
           "notNull": true
         },
+        "price_cents": {
+          "name": "price_cents",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
         "requirements": {
           "name": "requirements",
           "type": "jsonb",
           "primaryKey": false,
           "notNull": true
-        },
-        "price": {
-          "name": "price",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
         }
       },
-      "indexes": {},
+      "indexes": {
+        "events_category_idx": {
+          "name": "events_category_idx",
+          "columns": [
+            {
+              "expression": "category",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "events_park_id_parks_id_fk": {
           "name": "events_park_id_parks_id_fk",
@@ -123,12 +122,19 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "name": {
           "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -151,15 +157,15 @@
           "primaryKey": false,
           "notNull": true
         },
-        "area": {
-          "name": "area",
-          "type": "text",
+        "area_hectares": {
+          "name": "area_hectares",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
-        "altitude": {
-          "name": "altitude",
-          "type": "text",
+        "altitude_meters": {
+          "name": "altitude_meters",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -169,9 +175,9 @@
           "primaryKey": false,
           "notNull": true
         },
-        "entrance_fee": {
-          "name": "entrance_fee",
-          "type": "text",
+        "entrance_fee_cents": {
+          "name": "entrance_fee_cents",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -188,10 +194,47 @@
           "notNull": true
         }
       },
-      "indexes": {},
+      "indexes": {
+        "parks_name_idx": {
+          "name": "parks_name_idx",
+          "columns": [
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "parks_slug_idx": {
+          "name": "parks_slug_idx",
+          "columns": [
+            {
+              "expression": "slug",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "parks_slug_unique": {
+          "name": "parks_slug_unique",
+          "nullsNotDistinct": false,
+          "columns": ["slug"]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -202,9 +245,10 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "name": {
           "name": "name",
@@ -230,9 +274,9 @@
           "primaryKey": false,
           "notNull": true
         },
-        "distance": {
-          "name": "distance",
-          "type": "double precision",
+        "distance_meters": {
+          "name": "distance_meters",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -242,8 +286,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "altitude": {
-          "name": "altitude",
+        "altitude_meters": {
+          "name": "altitude_meters",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -273,11 +317,193 @@
           "notNull": true
         }
       },
-      "indexes": {},
+      "indexes": {
+        "trails_park_id_idx": {
+          "name": "trails_park_id_idx",
+          "columns": [
+            {
+              "expression": "park_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "trails_difficulty_idx": {
+          "name": "trails_difficulty_idx",
+          "columns": [
+            {
+              "expression": "difficulty",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "trails_status_idx": {
+          "name": "trails_status_idx",
+          "columns": [
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
         "trails_park_id_parks_id_fk": {
           "name": "trails_park_id_parks_id_fk",
           "tableFrom": "trails",
+          "tableTo": "parks",
+          "columnsFrom": ["park_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.waterfalls": {
+      "name": "waterfalls",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "park_id": {
+          "name": "park_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "park_name": {
+          "name": "park_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "height_meters": {
+          "name": "height_meters",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "access": {
+          "name": "access",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "allows_bathing": {
+          "name": "allows_bathing",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "accessibility": {
+          "name": "accessibility",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "how_to_get": {
+          "name": "how_to_get",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tips": {
+          "name": "tips",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "waterfalls_park_id_idx": {
+          "name": "waterfalls_park_id_idx",
+          "columns": [
+            {
+              "expression": "park_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "waterfalls_access_idx": {
+          "name": "waterfalls_access_idx",
+          "columns": [
+            {
+              "expression": "access",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "waterfalls_allows_bathing_idx": {
+          "name": "waterfalls_allows_bathing_idx",
+          "columns": [
+            {
+              "expression": "allows_bathing",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "waterfalls_park_id_parks_id_fk": {
+          "name": "waterfalls_park_id_parks_id_fk",
+          "tableFrom": "waterfalls",
           "tableTo": "parks",
           "columnsFrom": ["park_id"],
           "columnsTo": ["id"],
