@@ -1,12 +1,16 @@
 import { useMemo } from "react";
-import { events } from "@/data/events";
-import { trails } from "@/data/trails";
+
+import { events as defaultEvents, type ParkEvent } from "@/data/events";
+import { trails as defaultTrails, type Trail } from "@/data/trails";
 
 /**
  * useAdminMetrics
- * Deriva todas as métricas do dashboard a partir do mock data real.
+ * Deriva todas as métricas do dashboard a partir dos dados informados.
  */
-export function useAdminMetrics() {
+export function useAdminMetrics(
+  trails: Trail[] = defaultTrails,
+  events: ParkEvent[] = defaultEvents,
+) {
   const metrics = useMemo(() => {
     const totalTrails = trails.length;
     const activeTrails = trails.filter((t) => t.status === "open" || t.status === "full").length;
@@ -42,7 +46,7 @@ export function useAdminMetrics() {
       activeAlerts,
       scheduledVisitors,
     };
-  }, []);
+  }, [trails, events]);
 
   return metrics;
 }

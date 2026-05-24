@@ -1,7 +1,8 @@
+import { Clock, Globe, MapPin, Phone, Ticket } from "lucide-react";
+import { useCallback, useState } from "react";
+
 import Navbar from "@/components/layout/Navbar";
 import { parks, type ParkId } from "@/data/parks";
-import { Clock, Globe, MapPin, Phone, Ticket } from "lucide-react";
-import { useState } from "react";
 
 interface ParkMap {
   embedUrl: string;
@@ -52,25 +53,33 @@ export default function MapsPage() {
 
       <main className="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-8">
         <div className="flex flex-wrap gap-3">
-          {parks.map((park) => (
-            <button
-              key={park.id}
-              className={`flex min-w-40 cursor-pointer flex-col gap-0.5 rounded-lg border px-5 py-3 text-left transition-colors ${
-                activeParkId === park.id
-                  ? "border-green-700 bg-green-50"
-                  : "border-gray-200 bg-white hover:border-green-400"
-              }`}
-              onClick={() => setActiveParkId(park.id)}
-              aria-pressed={activeParkId === park.id}
-            >
-              <span className="text-sm font-medium text-gray-900">{park.name}</span>
-              <span className="text-xs text-gray-500">{park.type}</span>
-            </button>
-          ))}
+          {parks.map((park) => {
+            const handleParkClick = useCallback(() => {
+              setActiveParkId(park.id);
+            }, [park.id]);
+
+            return (
+              <button
+                key={park.id}
+                className={`flex min-w-40 cursor-pointer flex-col gap-0.5 rounded-lg border px-5 py-3 text-left transition-colors ${
+                  activeParkId === park.id
+                    ? "border-green-700 bg-green-50"
+                    : "border-gray-200 bg-white hover:border-green-400"
+                }`}
+                onClick={handleParkClick}
+                aria-pressed={activeParkId === park.id}
+              >
+                <span className="text-sm font-medium text-gray-900">{park.name}</span>
+                <span className="text-xs text-gray-500">{park.type}</span>
+              </button>
+            );
+          })}
         </div>
 
         <div className="grid items-start gap-6 lg:grid-cols-3">
           <div className="aspect-16/10 overflow-hidden rounded-lg border border-gray-100 lg:col-span-2">
+            {/* TODO: ver quais atributos sandbox são necessários pro maps funcionar */}
+            {/* oxlint-disable-next-line react/iframe-missing-sandbox */}
             <iframe
               src={activeMapData.embedUrl}
               className="block h-full w-full border-none"
@@ -90,14 +99,14 @@ export default function MapsPage() {
               <div className="flex items-start gap-2.5">
                 <MapPin className="mt-px size-4 shrink-0 text-green-700" aria-hidden />
                 <div>
-                  <p className="mb-px text-xs uppercase tracking-wider text-gray-500">Endereço</p>
+                  <p className="mb-px text-xs tracking-wider text-gray-500 uppercase">Endereço</p>
                   <p className="text-sm leading-snug text-gray-800">{activeMapData.address}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2.5">
                 <Globe className="mt-px size-4 shrink-0 text-green-700" aria-hidden />
                 <div>
-                  <p className="mb-px text-xs uppercase tracking-wider text-gray-500">
+                  <p className="mb-px text-xs tracking-wider text-gray-500 uppercase">
                     Coordenadas
                   </p>
                   <p className="text-sm leading-snug text-gray-800">{activeMapData.coordinates}</p>
@@ -106,7 +115,7 @@ export default function MapsPage() {
               <div className="flex items-start gap-2.5">
                 <Clock className="mt-px size-4 shrink-0 text-green-700" aria-hidden />
                 <div>
-                  <p className="mb-px text-xs uppercase tracking-wider text-gray-500">
+                  <p className="mb-px text-xs tracking-wider text-gray-500 uppercase">
                     Horário de funcionamento
                   </p>
                   <p className="text-sm leading-snug text-gray-800">{activePark?.openingHours}</p>
@@ -115,14 +124,14 @@ export default function MapsPage() {
               <div className="flex items-start gap-2.5">
                 <Phone className="mt-px size-4 shrink-0 text-green-700" aria-hidden />
                 <div>
-                  <p className="mb-px text-xs uppercase tracking-wider text-gray-500">Telefone</p>
+                  <p className="mb-px text-xs tracking-wider text-gray-500 uppercase">Telefone</p>
                   <p className="text-sm leading-snug text-gray-800">{activeMapData.phone}</p>
                 </div>
               </div>
               <div className="flex items-start gap-2.5">
                 <Ticket className="mt-px size-4 shrink-0 text-green-700" aria-hidden />
                 <div>
-                  <p className="mb-px text-xs uppercase tracking-wider text-gray-500">Entrada</p>
+                  <p className="mb-px text-xs tracking-wider text-gray-500 uppercase">Entrada</p>
                   <p className="text-sm leading-snug text-gray-800">{activePark?.entranceFee}</p>
                 </div>
               </div>

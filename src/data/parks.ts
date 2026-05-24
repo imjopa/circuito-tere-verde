@@ -12,7 +12,6 @@ export interface Park {
   entranceFee: string;
   biodiversity: string[];
   highlights: string[];
-  colorAccent: string;
 }
 
 export const parks: Park[] = [
@@ -29,7 +28,6 @@ export const parks: Park[] = [
     entranceFee: "Gratuito",
     biodiversity: ["Mata Atlântica", "Orchidaceae", "Bromeliaceae"],
     highlights: ["Pedra do Sino", "Dedo de Deus", "Cachoeira do Véu da Noiva"],
-    colorAccent: "#0f5c44",
   },
   {
     id: "tres-picos",
@@ -44,7 +42,6 @@ export const parks: Park[] = [
     entranceFee: "Gratuito",
     biodiversity: ["Mata Atlântica", "Palmito-juçara", "Onça-parda"],
     highlights: ["Pico Maior", "Pedra Três Pontões", "Trilha Suspensa"],
-    colorAccent: "#1a6b5a",
   },
   {
     id: "montanhas-teresopolis",
@@ -59,6 +56,5 @@ export const parks: Park[] = [
     entranceFee: "R$ 10,00",
     biodiversity: ["Bromélias", "Sabiá-laranjeira", "Mico-leão-dourado"],
     highlights: ["Mirante do Soberbo", "Trilha das Bromélias", "Cascata do Imbuí"],
-    colorAccent: "#2a9d7f",
   },
 ];

@@ -1,6 +1,7 @@
+import { BookOpen, Footprints, Handshake, Leaf, type LucideIcon } from "lucide-react";
+
 import Navbar from "@/components/layout/Navbar";
 import { Link } from "@/components/ui/Link";
-import { BookOpen, Footprints, Handshake, Leaf, type LucideIcon } from "lucide-react";
 
 const PILLARS: { icon: LucideIcon; title: string; text: string }[] = [
   {
@@ -69,7 +70,7 @@ export default function AboutPage() {
           ].map((item) => (
             <div
               key={item.title}
-              className="rounded-lg border border-gray-100 border-t-4 border-t-green-600 bg-white p-6"
+              className="rounded-lg border border-t-4 border-gray-100 border-t-green-600 bg-white p-6"
             >
               <h2 className="mb-2.5 text-base text-green-800">{item.title}</h2>
               <p className="text-sm leading-relaxed text-gray-600">{item.text}</p>
@@ -96,7 +97,7 @@ export default function AboutPage() {
         <section>
           <div className="flex flex-col items-start gap-8 rounded-lg border border-gray-100 bg-white p-8 md:flex-row">
             <div className="flex flex-col">
-              <span className="w-fit mb-3 inline-block rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800">
+              <span className="mb-3 inline-block w-fit rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-800">
                 Contexto acadêmico
               </span>
               <h2 className="mb-3.5 text-xl text-green-800">MVP desenvolvido na UNIFESO</h2>

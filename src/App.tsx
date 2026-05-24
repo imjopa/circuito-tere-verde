@@ -1,6 +1,12 @@
+import { Navigate, Route, Routes } from "react-router-dom";
+
+import AdminLayout from "@/components/admin/AdminLayout";
 import ProtectedRoute from "@/components/admin/ProtectedRoute";
+import { AdminDataProvider } from "@/contexts/AdminDataContext";
 import AboutPage from "@/pages/AboutPage";
-import AdminDashboardPage from "@/pages/AdminDashboardPage";
+import AdminDashboardPage from "@/pages/admin/AdminDashboardPage";
+import AdminEventsPage from "@/pages/admin/AdminEventsPage";
+import AdminTrailsPage from "@/pages/admin/AdminTrailsPage";
 import AdminLoginPage from "@/pages/AdminLoginPage";
 import ContactPage from "@/pages/ContactPage";
 import EventsPage from "@/pages/EventsPage";
@@ -9,34 +15,44 @@ import MapsPage from "@/pages/MapsPage";
 import SchedulePage from "@/pages/SchedulePage";
 import TrailsPage from "@/pages/TrailsPage";
 import WaterfallsPage from "@/pages/WaterfallsPage";
-import { Navigate, Route, Routes } from "react-router-dom";
 
 export default function App() {
   return (
     <Routes>
       {/* ── Área pública ── */}
-      <Route path="/" element={<HomePage />} />
-      <Route path="/trilhas" element={<TrailsPage />} />
-      <Route path="/cachoeiras" element={<WaterfallsPage />} />
-      <Route path="/eventos" element={<EventsPage />} />
-      <Route path="/horarios" element={<SchedulePage />} />
-      <Route path="/mapas" element={<MapsPage />} />
-      <Route path="/contato" element={<ContactPage />} />
-      <Route path="/sobre" element={<AboutPage />} />
+      <Route path="/" Component={HomePage} />
+      <Route path="/trilhas" Component={TrailsPage} />
+      <Route path="/cachoeiras" Component={WaterfallsPage} />
+      <Route path="/eventos" Component={EventsPage} />
+      <Route path="/horarios" Component={SchedulePage} />
+      <Route path="/mapas" Component={MapsPage} />
+      <Route path="/contato" Component={ContactPage} />
+      <Route path="/sobre" Component={AboutPage} />
 
       {/* ── Área administrativa ── */}
-      <Route path="/admin" element={<AdminLoginPage />} />
-      <Route
-        path="/admin/dashboard"
-        element={
-          <ProtectedRoute>
-            <AdminDashboardPage />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/admin" Component={AdminLoginPage} />
+      <Route Component={PrivateLayout}>
+        <Route path="/admin/dashboard" Component={AdminDashboardPage} />
+        <Route path="/admin/trilhas" Component={AdminTrailsPage} />
+        <Route path="/admin/eventos" Component={AdminEventsPage} />
+      </Route>
 
       {/* ── Fallback ── */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" Component={RedirectToHome} />
     </Routes>
   );
+}
+
+function PrivateLayout() {
+  return (
+    <ProtectedRoute>
+      <AdminDataProvider>
+        <AdminLayout />
+      </AdminDataProvider>
+    </ProtectedRoute>
+  );
+}
+
+function RedirectToHome() {
+  return <Navigate to="/" replace />;
 }

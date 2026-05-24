@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { Leaf, Menu, X } from "lucide-react";
+import { useCallback, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { tv } from "tailwind-variants";
 
@@ -39,6 +39,14 @@ export default function Navbar() {
     return to === "/" ? pathname === "/" : pathname.startsWith(to);
   };
 
+  const handleMenuOpen = useCallback(() => {
+    setMenuOpen((prev) => !prev);
+  }, []);
+
+  const handleMenuClose = useCallback(() => {
+    setMenuOpen(false);
+  }, []);
+
   return (
     <header className="sticky top-0 z-100 bg-green-700 shadow-md">
       <nav
@@ -56,7 +64,7 @@ export default function Navbar() {
           </span>
         </Link>
 
-        <ul className="ml-auto hidden list-none gap-5 md:flex" role="list">
+        <ul className="ml-auto hidden list-none gap-5 md:flex">
           {NAV_LINKS.map((link) => (
             <li key={link.to}>
               <Link to={link.to} className={variants({ active: isActive(link.to) })}>
@@ -75,7 +83,7 @@ export default function Navbar() {
 
         <button
           className="ml-auto flex cursor-pointer items-center justify-center border-none bg-transparent text-xl text-white md:hidden"
-          onClick={() => setMenuOpen((prev) => !prev)}
+          onClick={handleMenuOpen}
           aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
           aria-expanded={menuOpen}
         >
@@ -88,9 +96,8 @@ export default function Navbar() {
       </nav>
 
       {menuOpen && (
-        <div
+        <nav
           className="flex flex-col gap-0 border-t border-white/10 bg-green-800 px-6 pt-2 pb-4 md:hidden"
-          role="navigation"
           aria-label="Menu mobile"
         >
           {NAV_LINKS.map((link) => (
@@ -98,7 +105,7 @@ export default function Navbar() {
               key={link.to}
               to={link.to}
               className={mobileNavLinkVariants({ active: isActive(link.to) })}
-              onClick={() => setMenuOpen(false)}
+              onClick={handleMenuClose}
             >
               {link.label}
             </Link>
@@ -106,11 +113,11 @@ export default function Navbar() {
           <Link
             to="/admin"
             className="mt-3.5 inline-block rounded-full bg-green-400 px-5 py-2 text-center text-sm font-medium text-green-900 transition hover:bg-green-300"
-            onClick={() => setMenuOpen(false)}
+            onClick={handleMenuClose}
           >
             Área Admin
           </Link>
-        </div>
+        </nav>
       )}
     </header>
   );

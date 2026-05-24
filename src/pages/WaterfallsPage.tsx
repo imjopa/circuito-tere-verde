@@ -1,9 +1,10 @@
+import { ArrowUp, Droplets, Trees } from "lucide-react";
+import { useCallback, useState } from "react";
+import { tv } from "tailwind-variants";
+
 import Navbar from "@/components/layout/Navbar";
 import { FilterChip } from "@/components/ui/FilterChip";
 import { waterfalls } from "@/data/waterfalls";
-import { ArrowUp, Droplets, Trees } from "lucide-react";
-import { useState } from "react";
-import { tv } from "tailwind-variants";
 
 const accessFilterLabels = {
   all: "Todas",
@@ -72,17 +73,19 @@ export default function WaterfallsPage() {
 
       <main className="mx-auto max-w-6xl px-6 py-7">
         <div className="mb-6 flex flex-wrap items-center gap-3">
-          <span className="whitespace-nowrap text-sm text-gray-500">Dificuldade de acesso:</span>
+          <span className="text-sm whitespace-nowrap text-gray-500">Dificuldade de acesso:</span>
           <div className="flex flex-wrap gap-2">
-            {Object.entries(accessFilterLabels).map(([value, label]) => (
-              <FilterChip
-                key={value}
-                active={activeAccess === value}
-                onClick={() => setActiveAccess(value)}
-              >
-                {label}
-              </FilterChip>
-            ))}
+            {Object.entries(accessFilterLabels).map(([value, label]) => {
+              const handleClick = useCallback(() => {
+                setActiveAccess(value);
+              }, [value]);
+
+              return (
+                <FilterChip key={value} active={activeAccess === value} onClick={handleClick}>
+                  {label}
+                </FilterChip>
+              );
+            })}
           </div>
         </div>
 
@@ -121,26 +124,26 @@ export default function WaterfallsPage() {
                   <p className="text-sm leading-relaxed text-gray-600">{wf.description}</p>
 
                   <div>
-                    <p className="mb-0.5 text-xs font-medium uppercase tracking-wider text-gray-500">
+                    <p className="mb-0.5 text-xs font-medium tracking-wider text-gray-500 uppercase">
                       Como chegar
                     </p>
                     <p className="text-sm leading-normal text-gray-600">{wf.howToGet}</p>
                   </div>
 
                   <div>
-                    <p className="mb-0.5 text-xs font-medium uppercase tracking-wider text-gray-500">
+                    <p className="mb-0.5 text-xs font-medium tracking-wider text-gray-500 uppercase">
                       Acessibilidade
                     </p>
                     <p className="text-sm leading-normal text-gray-600">{wf.accessibility}</p>
                   </div>
 
                   <div>
-                    <p className="mb-1 text-xs font-medium uppercase tracking-wider text-gray-500">
+                    <p className="mb-1 text-xs font-medium tracking-wider text-gray-500 uppercase">
                       Dicas
                     </p>
                     <ul className="flex list-none flex-col gap-0.5">
-                      {wf.tips.map((tip, i) => (
-                        <li key={i} className="text-sm text-gray-600">
+                      {wf.tips.map((tip) => (
+                        <li key={tip} className="text-sm text-gray-600">
                           • {tip}
                         </li>
                       ))}

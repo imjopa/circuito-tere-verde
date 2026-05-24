@@ -1,8 +1,10 @@
+import { Droplets, Footprints, Trees } from "lucide-react";
+import { useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+
 import type { Park } from "@/data/parks";
 import type { Trail } from "@/data/trails";
 import type { Waterfall } from "@/data/waterfalls";
-import { Droplets, Footprints, Trees } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 export interface SearchResultsProps {
   results: {
@@ -19,30 +21,28 @@ export default function SearchResults({ results, onClose }: SearchResultsProps) 
 
   if (!results || results.total === 0) {
     return (
-      <div
+      <output
         className="absolute top-full right-0 left-0 z-50 mt-2 max-h-96 overflow-hidden overflow-y-auto rounded-lg border border-gray-100 bg-white shadow-lg"
-        role="status"
         aria-live="polite"
       >
         <p className="p-5 text-center text-sm text-gray-500">Nenhum resultado encontrado.</p>
-      </div>
+      </output>
     );
   }
 
-  const handleTrailClick = () => {
+  const handleTrailClick = useCallback(() => {
     onClose();
-    navigate("/trilhas");
-  };
+    return navigate("/trilhas");
+  }, [onClose, navigate]);
 
-  const handleWaterfallClick = () => {
+  const handleWaterfallClick = useCallback(() => {
     onClose();
-    navigate("/cachoeiras");
-  };
+    return navigate("/cachoeiras");
+  }, [onClose, navigate]);
 
   return (
-    <div
+    <datalist
       className="absolute top-full right-0 left-0 z-50 mt-2 max-h-96 overflow-hidden overflow-y-auto rounded-lg border border-gray-100 bg-white shadow-lg"
-      role="listbox"
       aria-label="Resultados da busca"
     >
       {results.parks.length > 0 && (
@@ -51,18 +51,17 @@ export default function SearchResults({ results, onClose }: SearchResultsProps) 
             Parques
           </span>
           {results.parks.map((park) => (
-            <button
+            <option
               key={park.id}
               className="flex w-full cursor-pointer items-center gap-3 border-none bg-transparent px-4 py-2.5 text-left transition hover:bg-green-50"
               onClick={onClose}
-              role="option"
             >
               <Trees className="size-5 shrink-0 text-green-700" aria-hidden />
               <div>
                 <p className="text-sm font-medium text-gray-900">{park.name}</p>
                 <p className="mt-px text-xs text-gray-500">{park.type}</p>
               </div>
-            </button>
+            </option>
           ))}
         </div>
       )}
@@ -73,11 +72,10 @@ export default function SearchResults({ results, onClose }: SearchResultsProps) 
             Trilhas
           </span>
           {results.trails.map((trail) => (
-            <button
+            <option
               key={trail.id}
               className="flex w-full cursor-pointer items-center gap-3 border-none bg-transparent px-4 py-2.5 text-left transition hover:bg-green-50"
               onClick={handleTrailClick}
-              role="option"
             >
               <Footprints className="size-5 shrink-0 text-green-700" aria-hidden />
               <div>
@@ -86,7 +84,7 @@ export default function SearchResults({ results, onClose }: SearchResultsProps) 
                   {trail.parkName} · {trail.difficulty}
                 </p>
               </div>
-            </button>
+            </option>
           ))}
         </div>
       )}
@@ -97,11 +95,10 @@ export default function SearchResults({ results, onClose }: SearchResultsProps) 
             Cachoeiras
           </span>
           {results.waterfalls.map((wf) => (
-            <button
+            <option
               key={wf.id}
               className="flex w-full cursor-pointer items-center gap-3 border-none bg-transparent px-4 py-2.5 text-left transition hover:bg-green-50"
               onClick={handleWaterfallClick}
-              role="option"
             >
               <Droplets className="size-5 shrink-0 text-green-700" aria-hidden />
               <div>
@@ -110,7 +107,7 @@ export default function SearchResults({ results, onClose }: SearchResultsProps) 
                   {wf.parkName} · {wf.access}
                 </p>
               </div>
-            </button>
+            </option>
           ))}
         </div>
       )}
@@ -121,6 +118,6 @@ export default function SearchResults({ results, onClose }: SearchResultsProps) 
           {results.total !== 1 ? "s" : ""}
         </span>
       </div>
-    </div>
+    </datalist>
   );
 }

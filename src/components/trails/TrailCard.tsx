@@ -1,9 +1,10 @@
+import { Mountain, Ruler, Timer } from "lucide-react";
+import { tv } from "tailwind-variants";
+
 import DifficultyBadge from "@/components/ui/DifficultyBadge";
 import StatusBadge from "@/components/ui/StatusBadge";
 import type { ParkId } from "@/data/parks";
 import type { Trail } from "@/data/trails";
-import { Mountain, Ruler, Timer } from "lucide-react";
-import { tv } from "tailwind-variants";
 
 export interface TrailCardProps {
   trail: Trail;

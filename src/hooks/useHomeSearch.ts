@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+
 import { parks } from "@/data/parks";
 import { trails } from "@/data/trails";
 import { waterfalls } from "@/data/waterfalls";
@@ -15,27 +16,23 @@ export function useHomeSearch() {
     const term = query.trim().toLowerCase();
     if (term.length < 2) return null;
 
-    const matchedParks = parks
-      .filter(
-        (p) =>
-          p.name.toLowerCase().includes(term) ||
-          p.type.toLowerCase().includes(term) ||
-          p.biodiversity.some((b) => b.toLowerCase().includes(term)),
-      )
-      .map((p) => ({ ...p, resultType: "park" }));
+    const matchedParks = parks.filter(
+      (p) =>
+        p.name.toLowerCase().includes(term) ||
+        p.type.toLowerCase().includes(term) ||
+        p.biodiversity.some((b) => b.toLowerCase().includes(term)),
+    );
 
-    const matchedTrails = trails
-      .filter(
-        (t) =>
-          t.name.toLowerCase().includes(term) ||
-          t.parkName.toLowerCase().includes(term) ||
-          t.difficulty.toLowerCase().includes(term),
-      )
-      .map((t) => ({ ...t, resultType: "trail" }));
+    const matchedTrails = trails.filter(
+      (t) =>
+        t.name.toLowerCase().includes(term) ||
+        t.parkName.toLowerCase().includes(term) ||
+        t.difficulty.toLowerCase().includes(term),
+    );
 
-    const matchedWaterfalls = waterfalls
-      .filter((w) => w.name.toLowerCase().includes(term) || w.parkName.toLowerCase().includes(term))
-      .map((w) => ({ ...w, resultType: "waterfall" }));
+    const matchedWaterfalls = waterfalls.filter(
+      (w) => w.name.toLowerCase().includes(term) || w.parkName.toLowerCase().includes(term),
+    );
 
     return {
       parks: matchedParks,

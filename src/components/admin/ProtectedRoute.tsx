@@ -1,8 +1,8 @@
-import { Navigate } from "react-router-dom";
 import type { ReactNode } from "react";
+import { Navigate, Outlet } from "react-router-dom";
 
 export interface ProtectedRouteProps {
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 export default function ProtectedRoute({ children }: ProtectedRouteProps) {
@@ -12,5 +12,5 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
     return <Navigate to="/admin" replace />;
   }
 
-  return children;
+  return children ?? <Outlet />;
 }

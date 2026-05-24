@@ -1,9 +1,10 @@
+import { Leaf, Lock } from "lucide-react";
+import { useCallback, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { useAuth } from "@/hooks/useAuth";
-import { Leaf, Lock } from "lucide-react";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 export default function AdminLoginPage() {
   const navigate = useNavigate();
@@ -11,11 +12,28 @@ export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const success = await login(email, password);
-    if (success) navigate("/admin/dashboard");
-  };
+  const handleSubmit = useCallback(
+    async (e: React.SubmitEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      const success = await login(email, password);
+      if (success) return navigate("/admin/dashboard");
+    },
+    [login, navigate, email, password],
+  );
+
+  const handleEmailChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setEmail(e.target.value);
+    },
+    [setEmail],
+  );
+
+  const handlePasswordChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setPassword(e.target.value);
+    },
+    [setPassword],
+  );
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-green-50 p-6">
@@ -43,7 +61,7 @@ export default function AdminLoginPage() {
               required
               autoComplete="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleEmailChange}
               placeholder="admin@tereverde.com.br"
             />
           </div>
@@ -58,7 +76,7 @@ export default function AdminLoginPage() {
               required
               autoComplete="current-password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePasswordChange}
               placeholder="••••••••"
             />
           </div>

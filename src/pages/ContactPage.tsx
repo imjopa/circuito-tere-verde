@@ -1,10 +1,11 @@
+import { CircleCheck, Mail, MapPin, MessageCircle, Phone, type LucideIcon } from "lucide-react";
+import { useCallback, useState } from "react";
+
 import Navbar from "@/components/layout/Navbar";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import { TextArea } from "@/components/ui/TextArea";
-import { CircleCheck, Mail, MapPin, MessageCircle, Phone, type LucideIcon } from "lucide-react";
-import { useState } from "react";
 
 const CONTACTS: { icon: LucideIcon; label: string; value: string; sub: string }[] = [
   { icon: Phone, label: "Telefone geral", value: "(21) 0000-0000", sub: "Seg–Sex, 08h às 17h" },
@@ -25,32 +26,42 @@ export default function ContactPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
-  };
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+      const { name, value } = e.target;
+      setForm((prev) => ({ ...prev, [name]: value }));
+      if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
+    },
+    [setForm, setErrors, errors],
+  );
 
-  const validate = () => {
+  const validate = useCallback(() => {
     const errs: Record<string, string> = {};
     if (!form.name.trim()) errs.name = "Nome obrigatório.";
     if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email)) errs.email = "E-mail inválido.";
     if (!form.subject.trim()) errs.subject = "Assunto obrigatório.";
     if (!form.message.trim() || form.message.length < 10) errs.message = "Mensagem muito curta.";
     return errs;
-  };
+  }, [form]);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const errs = validate();
-    if (Object.keys(errs).length > 0) {
-      setErrors(errs);
-      return;
-    }
-    setSubmitted(true);
-  };
+  const handleSubmit = useCallback(
+    (e: React.SubmitEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      const errs = validate();
+      if (Object.keys(errs).length > 0) {
+        setErrors(errs);
+        return;
+      }
+      setSubmitted(true);
+    },
+    [validate, setErrors, setSubmitted],
+  );
+
+  const handleReset = useCallback(() => {
+    setForm(INITIAL_FORM);
+    setErrors({});
+    setSubmitted(false);
+  }, [setForm, setErrors, setSubmitted]);
 
   return (
     <div className="min-h-screen">
@@ -73,7 +84,7 @@ export default function ContactPage() {
               >
                 <c.icon className="size-5 shrink-0 text-green-700" aria-hidden />
                 <div>
-                  <p className="text-xs uppercase tracking-wider text-gray-500">{c.label}</p>
+                  <p className="text-xs tracking-wider text-gray-500 uppercase">{c.label}</p>
                   <p className="mt-0.5 text-sm font-medium text-gray-900">{c.value}</p>
                   <p className="mt-px text-xs text-gray-500">{c.sub}</p>
                 </div>
@@ -92,10 +103,7 @@ export default function ContactPage() {
                   Obrigado, {form.name}. Retornaremos em breve para {form.email}.
                 </p>
                 <button
-                  onClick={() => {
-                    setForm(INITIAL_FORM);
-                    setSubmitted(false);
-                  }}
+                  onClick={handleReset}
                   className="mt-2 rounded-lg bg-green-700 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-green-800"
                 >
                   Enviar outra mensagem

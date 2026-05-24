@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+
 import { trails } from "@/data/trails";
 
 export function useTrailFilters() {

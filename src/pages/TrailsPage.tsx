@@ -1,9 +1,11 @@
+import { Leaf, Search, X } from "lucide-react";
+import { useCallback } from "react";
+
 import Navbar from "@/components/layout/Navbar";
 import TrailCard from "@/components/trails/TrailCard";
 import { Button } from "@/components/ui/Button";
 import { FilterChip } from "@/components/ui/FilterChip";
 import { useTrailFilters } from "@/hooks/useTrailFilters";
-import { Leaf, Search, X } from "lucide-react";
 
 const difficultyFilters = [
   { value: "all", label: "Todas" },
@@ -30,6 +32,37 @@ export default function TrailsPage() {
     filteredTrails,
   } = useTrailFilters();
 
+  const handleSearch = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setSearchQuery(e.target.value);
+    },
+    [setSearchQuery],
+  );
+
+  const handleClearSearch = useCallback(() => {
+    setSearchQuery("");
+  }, [setSearchQuery]);
+
+  const handleDifficultyClick = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      setActiveDifficulty(e.currentTarget.value);
+    },
+    [setActiveDifficulty],
+  );
+
+  const handleParkClick = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      setActivePark(e.currentTarget.value);
+    },
+    [setActivePark],
+  );
+
+  const handleClearFilters = useCallback(() => {
+    setSearchQuery("");
+    setActiveDifficulty("all");
+    setActivePark("all");
+  }, [setSearchQuery, setActiveDifficulty, setActivePark]);
+
   return (
     <div className="min-h-screen">
       <Navbar />
@@ -49,14 +82,15 @@ export default function TrailsPage() {
           <Search className="size-5 shrink-0 text-gray-400" aria-hidden />
           <input
             type="text"
+            aria-label="Buscar trilha ou parque..."
             placeholder="Buscar trilha ou parque..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1 border-none bg-transparent font-body text-sm outline-none"
+            onChange={handleSearch}
+            className="font-body flex-1 border-none bg-transparent text-sm outline-none"
           />
           {searchQuery && (
             <button
-              onClick={() => setSearchQuery("")}
+              onClick={handleClearSearch}
               className="flex size-5 items-center justify-center rounded-full bg-gray-100 text-gray-500"
               aria-label="Limpar busca"
             >
@@ -66,13 +100,13 @@ export default function TrailsPage() {
         </div>
 
         <div className="mb-3.5 flex flex-wrap items-center gap-3">
-          <span className="whitespace-nowrap text-sm text-gray-500">Dificuldade:</span>
+          <span className="text-sm whitespace-nowrap text-gray-500">Dificuldade:</span>
           <div className="flex flex-wrap gap-2">
             {difficultyFilters.map((filter) => (
               <FilterChip
                 key={filter.value}
                 active={activeDifficulty === filter.value}
-                onClick={() => setActiveDifficulty(filter.value)}
+                onClick={handleDifficultyClick}
               >
                 {filter.label}
               </FilterChip>
@@ -81,13 +115,13 @@ export default function TrailsPage() {
         </div>
 
         <div className="mb-3.5 flex flex-wrap items-center gap-3">
-          <span className="whitespace-nowrap text-sm text-gray-500">Parque:</span>
+          <span className="text-sm whitespace-nowrap text-gray-500">Parque:</span>
           <div className="flex flex-wrap gap-2">
             {parkFilters.map((filter) => (
               <FilterChip
                 key={filter.value}
                 active={activePark === filter.value}
-                onClick={() => setActivePark(filter.value)}
+                onClick={handleParkClick}
               >
                 {filter.label}
               </FilterChip>
@@ -105,15 +139,7 @@ export default function TrailsPage() {
           <div className="px-4 py-16 text-center text-gray-500">
             <Leaf className="mx-auto mb-4 size-12 text-green-600" aria-hidden />
             <p className="mb-5 text-sm">Nenhuma trilha encontrada com esses filtros.</p>
-            <Button
-              onClick={() => {
-                setSearchQuery("");
-                setActiveDifficulty("all");
-                setActivePark("all");
-              }}
-            >
-              Limpar filtros
-            </Button>
+            <Button onClick={handleClearFilters}>Limpar filtros</Button>
           </div>
         )}
       </main>

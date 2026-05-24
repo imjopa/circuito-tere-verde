@@ -1,4 +1,17 @@
+import { tv } from "tailwind-variants";
+
 import type { Park } from "@/data/parks";
+
+const variants = tv({
+  base: "rounded-lg border border-t-4 border-gray-100 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-md",
+  variants: {
+    park: {
+      "serra-dos-orgaos": "border-green-900",
+      "tres-picos": "border-green-800",
+      "montanhas-teresopolis": "border-green-700",
+    },
+  },
+});
 
 export interface ParkCardProps {
   park: Park;
@@ -6,10 +19,7 @@ export interface ParkCardProps {
 
 export default function ParkCard({ park }: ParkCardProps) {
   return (
-    <article
-      className="rounded-lg border border-gray-100 border-t-4 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-md"
-      style={{ borderTopColor: park.colorAccent }}
-    >
+    <article className={variants({ park: park.id })}>
       <div className="mb-3 flex items-center justify-between">
         <span className="text-xs font-medium tracking-wide text-gray-500 uppercase">
           {park.type}

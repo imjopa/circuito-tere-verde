@@ -1,10 +1,3 @@
-import Navbar from "@/components/layout/Navbar";
-import ParkCard from "@/components/parks/ParkCard";
-import { Link } from "@/components/ui/Link";
-import SearchResults from "@/components/ui/SearchResults";
-import { events } from "@/data/events";
-import { parks } from "@/data/parks";
-import { useHomeSearch } from "@/hooks/useHomeSearch";
 import {
   ArrowRight,
   Calendar,
@@ -17,7 +10,15 @@ import {
   X,
   type LucideIcon,
 } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+import Navbar from "@/components/layout/Navbar";
+import ParkCard from "@/components/parks/ParkCard";
+import { Link } from "@/components/ui/Link";
+import SearchResults from "@/components/ui/SearchResults";
+import { events } from "@/data/events";
+import { parks } from "@/data/parks";
+import { useHomeSearch } from "@/hooks/useHomeSearch";
 
 // Atalhos rápidos com rotas reais
 const QUICK_ACCESS: { icon: LucideIcon; label: string; to: string }[] = [
@@ -58,22 +59,34 @@ export default function HomePage() {
     return () => abortController.abort();
   }, []);
 
-  const handleQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(e.target.value);
-    setShowResults(true);
-  };
+  const handleQueryChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setQuery(e.target.value);
+      setShowResults(true);
+    },
+    [setQuery],
+  );
 
-  const handleClear = () => {
+  const handleClear = useCallback(() => {
     clearSearch();
     setShowResults(false);
-  };
+  }, [clearSearch]);
+
+  const handleCloseResults = useCallback(() => {
+    setShowResults(false);
+  }, []);
+
+  const handleFocus = useCallback(() => {
+    if (query.length < 2) return;
+    setShowResults(true);
+  }, [query]);
 
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
 
       {/* Hero */}
-      <section className="relative overflow-hidden bg-green-700 px-6 pb-20 pt-16">
+      <section className="relative overflow-hidden bg-green-700 px-6 pt-16 pb-20">
         <div className="mx-auto max-w-xl">
           <span className="mb-4 inline-block rounded-full bg-green-400 px-3 py-1 text-xs font-medium text-green-900">
             Teresópolis, RJ
@@ -103,9 +116,9 @@ export default function HomePage() {
 
       {/* Busca funcional */}
       <div className="relative z-20 mx-auto -mt-6 max-w-2xl px-6" ref={searchRef}>
-        <div
+        <search
           className="flex items-center gap-3 rounded-full border border-gray-100 bg-white px-4 py-2.5 shadow-lg"
-          role="search"
+          aria-expanded={showResults && !!results}
         >
           <Search className="size-5 shrink-0 text-gray-400" aria-hidden />
           <input
@@ -113,11 +126,10 @@ export default function HomePage() {
             placeholder="Buscar trilhas, cachoeiras, parques..."
             value={query}
             onChange={handleQueryChange}
-            onFocus={() => query.length >= 2 && setShowResults(true)}
-            className="flex-1 border-none bg-transparent font-body text-sm text-gray-700 outline-none [&::-webkit-search-cancel-button]:hidden"
+            onFocus={handleFocus}
+            className="font-body flex-1 border-none bg-transparent text-sm text-gray-700 outline-none [&::-webkit-search-cancel-button]:hidden"
             aria-label="Buscar no Circuito Terê Verde"
             aria-autocomplete="list"
-            aria-expanded={showResults && !!results}
           />
           {query && (
             <button
@@ -128,9 +140,9 @@ export default function HomePage() {
               <X className="size-3.5" aria-hidden />
             </button>
           )}
-        </div>
+        </search>
         {showResults && results !== null && (
-          <SearchResults results={results} onClose={() => setShowResults(false)} />
+          <SearchResults results={results} onClose={handleCloseResults} />
         )}
       </div>
 
@@ -192,7 +204,7 @@ export default function HomePage() {
                   className="flex items-center gap-4 rounded-md border border-gray-100 bg-white px-5 py-4 transition hover:shadow-sm"
                 >
                   <div className="min-w-11 shrink-0 rounded-md bg-green-700 px-3 py-1.5 text-center text-white">
-                    <span className="block text-lg font-semibold leading-tight">{day}</span>
+                    <span className="block text-lg leading-tight font-semibold">{day}</span>
                     <span className="text-xs uppercase opacity-80">{month}</span>
                   </div>
                   <div className="min-w-0 flex-1">

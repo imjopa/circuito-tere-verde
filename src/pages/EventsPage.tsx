@@ -1,32 +1,51 @@
+import { Clock, Coins, MapPin, Users } from "lucide-react";
+import { useCallback, useState } from "react";
+import { tv } from "tailwind-variants";
+
 import Navbar from "@/components/layout/Navbar";
 import { FilterChip } from "@/components/ui/FilterChip";
-import { events, type ParkEventStatus } from "@/data/events";
-import { Clock, Coins, MapPin, Users } from "lucide-react";
-import { useState } from "react";
+import { events } from "@/data/events";
 
 type EventCategory = "guided_trail" | "education" | "volunteer" | "workshop";
 
-const CATEGORY_FILTERS: { value: EventCategory | "all"; label: string }[] = [
-  { value: "all", label: "Todos" },
-  { value: "guided_trail", label: "Trilha Guiada" },
-  { value: "education", label: "Educativo" },
-  { value: "volunteer", label: "Voluntário" },
-  { value: "workshop", label: "Workshop" },
-];
-
-const CATEGORY_COLORS: Record<EventCategory, { bg: string; color: string }> = {
-  guided_trail: { bg: "#dcfce7", color: "#14532d" },
-  education: { bg: "#dbeafe", color: "#1e3a5f" },
-  volunteer: { bg: "#fef9c3", color: "#713f12" },
-  workshop: { bg: "#f3e8ff", color: "#4c1d95" },
+const categoryLabels = {
+  all: "Todos",
+  guided_trail: "Trilha Guiada",
+  education: "Educativo",
+  volunteer: "Voluntário",
+  workshop: "Workshop",
 };
 
-const STATUS_CONFIG: Record<ParkEventStatus, { label: string; bg: string; color: string }> = {
-  open: { label: "Vagas disponíveis", bg: "#dcfce7", color: "#14532d" },
-  few_spots: { label: "Últimas vagas", bg: "#ffedd5", color: "#7c2d12" },
-  full: { label: "Esgotado", bg: "#fee2e2", color: "#7f1d1d" },
-  cancelled: { label: "Cancelado", bg: "#f1f5f9", color: "#1e293b" },
+const categoryVariants = tv({
+  base: "rounded-full px-2.5 py-0.5 text-xs font-medium",
+  variants: {
+    category: {
+      guided_trail: "bg-[#dcfce7] text-[#14532d]",
+      education: "bg-[#dbeafe] text-[#1e3a5f]",
+      volunteer: "bg-[#fef9c3] text-[#713f12]",
+      workshop: "bg-[#f3e8ff] text-[#4c1d95]",
+    },
+  },
+});
+
+const statusLabels = {
+  open: "Vagas disponíveis",
+  few_spots: "Últimas vagas",
+  full: "Esgotado",
+  cancelled: "Cancelado",
 };
+
+const statusVariants = tv({
+  base: "rounded-full px-2.5 py-0.5 text-xs font-medium",
+  variants: {
+    status: {
+      open: "bg-[#dcfce7] text-[#14532d]",
+      few_spots: "bg-[#ffedd5] text-[#7c2d12]",
+      full: "bg-[#fee2e2] text-[#7f1d1d]",
+      cancelled: "bg-[#f1f5f9] text-[#1e293b]",
+    },
+  },
+});
 
 export default function EventsPage() {
   const [activeCategory, setActiveCategory] = useState<EventCategory | "all">("all");
@@ -50,17 +69,19 @@ export default function EventsPage() {
 
       <main className="mx-auto max-w-6xl px-6 py-7">
         <div className="mb-6 flex flex-wrap items-center gap-3">
-          <span className="whitespace-nowrap text-sm text-gray-500">Categoria:</span>
+          <span className="text-sm whitespace-nowrap text-gray-500">Categoria:</span>
           <div className="flex flex-wrap gap-2">
-            {CATEGORY_FILTERS.map((f) => (
-              <FilterChip
-                key={f.value}
-                active={activeCategory === f.value}
-                onClick={() => setActiveCategory(f.value)}
-              >
-                {f.label}
-              </FilterChip>
-            ))}
+            {Object.entries(categoryLabels).map(([value, label]) => {
+              const handleClick = useCallback(() => {
+                setActiveCategory(value as EventCategory);
+              }, [value]);
+
+              return (
+                <FilterChip key={value} active={activeCategory === value} onClick={handleClick}>
+                  {label}
+                </FilterChip>
+              );
+            })}
           </div>
         </div>
 
@@ -78,8 +99,6 @@ export default function EventsPage() {
                 .replace(".", "")
                 .toUpperCase();
               const weekday = evDate.toLocaleDateString("pt-BR", { weekday: "long" });
-              const catColor = CATEGORY_COLORS[ev.category];
-              const statusCfg = STATUS_CONFIG[ev.status] ?? STATUS_CONFIG.open;
               const occupancy = Math.round(((ev.spots - ev.spotsLeft) / ev.spots) * 100);
 
               return (
@@ -89,23 +108,17 @@ export default function EventsPage() {
                 >
                   <div className="flex w-20 shrink-0 flex-col items-center justify-center gap-0.5 bg-green-700 px-4 py-5 text-white">
                     <span className="font-display text-3xl leading-none font-bold">{day}</span>
-                    <span className="text-xs uppercase tracking-wider opacity-85">{month}</span>
+                    <span className="text-xs tracking-wider uppercase opacity-85">{month}</span>
                     <span className="mt-0.5 text-center text-xs opacity-65">{weekday}</span>
                   </div>
 
                   <div className="flex min-w-0 flex-1 flex-col gap-2.5 p-5">
                     <div className="flex flex-wrap gap-1.5">
-                      <span
-                        className="rounded-full px-2.5 py-0.5 text-xs font-medium"
-                        style={{ background: catColor.bg, color: catColor.color }}
-                      >
+                      <span className={categoryVariants({ category: ev.category })}>
                         {ev.categoryLabel}
                       </span>
-                      <span
-                        className="rounded-full px-2.5 py-0.5 text-xs font-medium"
-                        style={{ background: statusCfg.bg, color: statusCfg.color }}
-                      >
-                        {statusCfg.label}
+                      <span className={statusVariants({ status: ev.status })}>
+                        {statusLabels[ev.status]}
                       </span>
                     </div>
 
@@ -135,10 +148,12 @@ export default function EventsPage() {
                       <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-gray-100">
                         <div
                           className="h-full rounded-full bg-green-500 transition-all duration-300"
+                          // width has to be dynamic
+                          // oxlint-disable-next-line react-perf/jsx-no-new-object-as-prop
                           style={{ width: `${occupancy}%` }}
                         />
                       </div>
-                      <span className="whitespace-nowrap text-xs text-gray-500">
+                      <span className="text-xs whitespace-nowrap text-gray-500">
                         {occupancy}% ocupado
                       </span>
                     </div>

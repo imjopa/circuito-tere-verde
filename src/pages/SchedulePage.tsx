@@ -1,9 +1,3 @@
-import Navbar from "@/components/layout/Navbar";
-import { Input } from "@/components/ui/Input";
-import { Label } from "@/components/ui/Label";
-import { Select } from "@/components/ui/Select";
-import { TextArea } from "@/components/ui/TextArea";
-import { parks } from "@/data/parks";
 import {
   Accessibility,
   Backpack,
@@ -13,7 +7,14 @@ import {
   Users,
   type LucideIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
+
+import Navbar from "@/components/layout/Navbar";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
+import { Select } from "@/components/ui/Select";
+import { TextArea } from "@/components/ui/TextArea";
+import { parks } from "@/data/parks";
 
 const VISIT_TIMES = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00"];
 
@@ -37,15 +38,16 @@ export default function SchedulePage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
-  function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
-  ) {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
-  }
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+      const { name, value } = e.target;
+      setForm((prev) => ({ ...prev, [name]: value }));
+      if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
+    },
+    [errors],
+  );
 
-  function validate() {
+  const validate = useCallback(() => {
     const newErrors: Record<string, string> = {};
     if (!form.name.trim()) newErrors.name = "Nome obrigatório.";
     if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email))
@@ -55,23 +57,26 @@ export default function SchedulePage() {
     if (!form.time) newErrors.time = "Selecione um horário.";
     if (form.visitors < 1 || form.visitors > 20) newErrors.visitors = "Entre 1 e 20 visitantes.";
     return newErrors;
-  }
+  }, [form]);
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const validationErrors = validate();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
-    setSubmitted(true);
-  }
+  const handleSubmit = useCallback(
+    (e: React.SubmitEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      const validationErrors = validate();
+      if (Object.keys(validationErrors).length > 0) {
+        setErrors(validationErrors);
+        return;
+      }
+      setSubmitted(true);
+    },
+    [validate],
+  );
 
-  function handleReset() {
+  const handleReset = useCallback(() => {
     setForm(INITIAL_FORM);
     setErrors({});
     setSubmitted(false);
-  }
+  }, []);
 
   const selectedPark = parks.find((p) => p.id === form.parkId);
 
@@ -93,29 +98,29 @@ export default function SchedulePage() {
             <p className="text-sm text-gray-500">Seu pedido foi registrado com sucesso.</p>
             <div className="my-3 grid w-full grid-cols-2 gap-3 text-left">
               <div className="flex flex-col gap-0.5 rounded-lg bg-green-50 px-3.5 py-2.5">
-                <span className="text-xs uppercase tracking-wider text-gray-500">Visitante</span>
+                <span className="text-xs tracking-wider text-gray-500 uppercase">Visitante</span>
                 <strong className="text-sm text-gray-900">{form.name}</strong>
               </div>
               <div className="flex flex-col gap-0.5 rounded-lg bg-green-50 px-3.5 py-2.5">
-                <span className="text-xs uppercase tracking-wider text-gray-500">Parque</span>
+                <span className="text-xs tracking-wider text-gray-500 uppercase">Parque</span>
                 <strong className="text-sm text-gray-900">{selectedPark?.name}</strong>
               </div>
               <div className="flex flex-col gap-0.5 rounded-lg bg-green-50 px-3.5 py-2.5">
-                <span className="text-xs uppercase tracking-wider text-gray-500">Data</span>
+                <span className="text-xs tracking-wider text-gray-500 uppercase">Data</span>
                 <strong className="text-sm text-gray-900">{formattedDate}</strong>
               </div>
               <div className="flex flex-col gap-0.5 rounded-lg bg-green-50 px-3.5 py-2.5">
-                <span className="text-xs uppercase tracking-wider text-gray-500">Horário</span>
+                <span className="text-xs tracking-wider text-gray-500 uppercase">Horário</span>
                 <strong className="text-sm text-gray-900">{form.time}</strong>
               </div>
               <div className="flex flex-col gap-0.5 rounded-lg bg-green-50 px-3.5 py-2.5">
-                <span className="text-xs uppercase tracking-wider text-gray-500">Visitantes</span>
+                <span className="text-xs tracking-wider text-gray-500 uppercase">Visitantes</span>
                 <strong className="text-sm text-gray-900">
                   {form.visitors} pessoa{form.visitors > 1 ? "s" : ""}
                 </strong>
               </div>
               <div className="flex flex-col gap-0.5 rounded-lg bg-green-50 px-3.5 py-2.5">
-                <span className="text-xs uppercase tracking-wider text-gray-500">Confirmação</span>
+                <span className="text-xs tracking-wider text-gray-500 uppercase">Confirmação</span>
                 <strong className="text-sm text-gray-900">{form.email}</strong>
               </div>
             </div>
@@ -151,7 +156,7 @@ export default function SchedulePage() {
         <div className="flex flex-col items-start gap-8 lg:flex-row">
           <form onSubmit={handleSubmit} className="flex min-w-0 flex-1 flex-col gap-6" noValidate>
             <fieldset className="flex flex-col gap-4 rounded-lg border border-gray-100 bg-white p-5">
-              <legend className="px-2 font-display text-sm font-medium text-green-800">
+              <legend className="font-display px-2 text-sm font-medium text-green-800">
                 Dados do visitante
               </legend>
               <div className="flex flex-col gap-4">
@@ -207,7 +212,7 @@ export default function SchedulePage() {
             </fieldset>
 
             <fieldset className="flex flex-col gap-4 rounded-lg border border-gray-100 bg-white p-5">
-              <legend className="px-2 font-display text-sm font-medium text-green-800">
+              <legend className="font-display px-2 text-sm font-medium text-green-800">
                 Detalhes da visita
               </legend>
               <div className="flex flex-col gap-1.5">
@@ -325,7 +330,7 @@ export default function SchedulePage() {
             </button>
           </form>
 
-          <aside className="sticky top-20 flex w-full shrink-0 flex-col gap-4 rounded-lg border border-gray-100 bg-white p-5 lg:w-80 lg:order-last">
+          <aside className="sticky top-20 flex w-full shrink-0 flex-col gap-4 rounded-lg border border-gray-100 bg-white p-5 lg:order-last lg:w-80">
             <h2 className="mb-1 text-base font-medium text-green-800">Informações importantes</h2>
             {(
               [

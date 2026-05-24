@@ -1,5 +1,15 @@
 import { cn } from "tailwind-variants";
 
-export function Label({ className, ...props }: React.ComponentProps<"label">) {
-  return <label className={cn("text-sm font-medium text-gray-600", className)} {...props} />;
+interface LabelProps extends React.ComponentProps<"label"> {
+  htmlFor: string;
+}
+
+export function Label({ htmlFor, className, ...props }: LabelProps) {
+  return (
+    <label
+      htmlFor={htmlFor}
+      className={cn("text-sm font-medium text-gray-600", className)}
+      {...props}
+    />
+  );
 }
