@@ -1,9 +1,11 @@
+import type { ParkId } from "./parks";
+
 export type AccessDifficulty = "easy" | "medium" | "hard";
 
 export interface Waterfall {
   id: string;
   name: string;
-  parkId: string;
+  parkId: ParkId;
   parkName: string;
   height: string;
   access: AccessDifficulty;

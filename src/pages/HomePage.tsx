@@ -6,6 +6,7 @@ import { events } from "@/data/events";
 import { parks } from "@/data/parks";
 import { useHomeSearch } from "@/hooks/useHomeSearch";
 import {
+  ArrowRight,
   Calendar,
   Clock,
   Droplets,
@@ -171,11 +172,10 @@ export default function HomePage() {
               <h2 className="mb-1 text-xl text-green-800">Próximos eventos</h2>
               <p className="text-sm text-gray-500">Atividades e trilhas guiadas nos parques</p>
             </div>
-            <Link
-              to="/eventos"
-              className="whitespace-nowrap text-sm font-medium text-green-600 transition hover:text-green-700"
-            >
-              Ver todos →
+            <Link to="/eventos">
+              <span className="flex items-center gap-1">
+                Ver todos <ArrowRight className="size-4" />
+              </span>
             </Link>
           </div>
           <div className="flex flex-col gap-3">

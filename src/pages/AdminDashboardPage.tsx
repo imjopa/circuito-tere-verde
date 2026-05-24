@@ -208,7 +208,7 @@ export default function AdminDashboardPage() {
               aria-label={item.label}
               aria-pressed={activeView === item.view}
             >
-              <item.icon className="size-5" aria-hidden />
+              <item.icon className="size-5 text-green-100" aria-hidden />
             </button>
           ))}
         </nav>

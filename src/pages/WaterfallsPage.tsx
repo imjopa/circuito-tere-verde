@@ -1,40 +1,54 @@
 import Navbar from "@/components/layout/Navbar";
 import { FilterChip } from "@/components/ui/FilterChip";
-import type { ParkId } from "@/data/parks";
 import { waterfalls } from "@/data/waterfalls";
 import { ArrowUp, Droplets, Trees } from "lucide-react";
 import { useState } from "react";
 import { tv } from "tailwind-variants";
 
-const ACCESS_FILTERS = [
-  { value: "all", label: "Todas" },
-  { value: "easy", label: "Fácil" },
-  { value: "medium", label: "Moderado" },
-  { value: "hard", label: "Difícil" },
-];
-
-const ACCESS_CONFIG = {
-  easy: { label: "Fácil acesso", access: "easy" as const },
-  medium: { label: "Acesso moderado", access: "moderate" as const },
-  hard: { label: "Acesso difícil", access: "difficult" as const },
+const accessFilterLabels = {
+  all: "Todas",
+  easy: "Fácil",
+  medium: "Moderado",
+  hard: "Difícil",
 };
 
-const PARK_HEADER_BG: Record<ParkId, string> = {
-  "serra-dos-orgaos": "linear-gradient(135deg, #0a3d2e, #0f5c44)",
-  "tres-picos": "linear-gradient(135deg, #0f5c44, #1a6b5a)",
-  "montanhas-teresopolis": "linear-gradient(135deg, #1a6b5a, #2a9d7f)",
+const accessLabel = {
+  easy: "Fácil acesso",
+  medium: "Acesso moderado",
+  hard: "Acesso difícil",
 };
 
 const variants = tv({
-  base: "rounded-full px-2.5 py-0.5 text-xs font-medium",
+  slots: {
+    base: "overflow-hidden rounded-lg border border-gray-100 bg-white transition hover:-translate-y-0.5 hover:shadow-md",
+    header: "relative px-5 pt-5 pb-3",
+    accessLabel: "rounded-full px-2.5 py-0.5 text-xs font-medium",
+  },
   variants: {
+    park: {
+      "serra-dos-orgaos": {
+        header: "bg-linear-to-br from-green-900 to-green-800",
+      },
+      "tres-picos": {
+        header: "bg-linear-to-br from-green-800 to-green-700",
+      },
+      "montanhas-teresopolis": {
+        header: "bg-linear-to-br from-green-700 to-green-600",
+      },
+    },
     access: {
-      easy: "bg-green-100 text-green-900",
-      moderate: "bg-yellow-100 text-yellow-900",
-      difficult: "bg-red-100 text-red-900",
+      easy: {
+        accessLabel: "bg-green-100 text-green-900",
+      },
+      medium: {
+        accessLabel: "bg-yellow-100 text-yellow-900",
+      },
+      hard: {
+        accessLabel: "bg-red-100 text-red-900",
+      },
     },
   },
-  defaultVariants: { access: "easy" },
+  defaultVariants: { access: "easy", park: "serra-dos-orgaos" },
 });
 
 export default function WaterfallsPage() {
@@ -60,13 +74,13 @@ export default function WaterfallsPage() {
         <div className="mb-6 flex flex-wrap items-center gap-3">
           <span className="whitespace-nowrap text-sm text-gray-500">Dificuldade de acesso:</span>
           <div className="flex flex-wrap gap-2">
-            {ACCESS_FILTERS.map((f) => (
+            {Object.entries(accessFilterLabels).map(([value, label]) => (
               <FilterChip
-                key={f.value}
-                active={activeAccess === f.value}
-                onClick={() => setActiveAccess(f.value)}
+                key={value}
+                active={activeAccess === value}
+                onClick={() => setActiveAccess(value)}
               >
-                {f.label}
+                {label}
               </FilterChip>
             ))}
           </div>
@@ -74,20 +88,13 @@ export default function WaterfallsPage() {
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((wf) => {
-            const accessCfg = ACCESS_CONFIG[wf.access];
+            const classes = variants({ access: wf.access, park: wf.parkId });
+
             return (
-              <article
-                key={wf.id}
-                className="overflow-hidden rounded-lg border border-gray-100 bg-white transition hover:-translate-y-0.5 hover:shadow-md"
-              >
-                <div
-                  className="relative px-5 pt-5 pb-3"
-                  style={{ background: PARK_HEADER_BG[wf.parkId as ParkId] }}
-                >
+              <article key={wf.id} className={classes.base()}>
+                <div className={classes.header()}>
                   <div className="mb-3 flex flex-wrap gap-1.5">
-                    <span className={variants({ access: accessCfg.access })}>
-                      {accessCfg.label}
-                    </span>
+                    <span className={classes.accessLabel()}>{accessLabel[wf.access]}</span>
                     {wf.allowsBathing && (
                       <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-0.5 text-xs text-white">
                         <Droplets className="size-3.5" aria-hidden />
