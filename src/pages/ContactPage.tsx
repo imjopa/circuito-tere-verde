@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Navbar from "../components/layout/Navbar";
-import styles from "./ContactPage.module.css";
+import { formInput, formTextarea } from "../lib/variants/input";
 
 const CONTACTS = [
   { icon: "📞", label: "Telefone geral", value: "(21) 0000-0000", sub: "Seg–Sex, 08h às 17h" },
@@ -15,6 +15,8 @@ const CONTACTS = [
 ];
 
 const INITIAL_FORM = { name: "", email: "", subject: "", message: "" };
+
+const labelClass = "text-[0.8125rem] font-medium text-gray-600";
 
 export default function ContactPage() {
   const [form, setForm] = useState(INITIAL_FORM);
@@ -49,41 +51,44 @@ export default function ContactPage() {
   };
 
   return (
-    <div className={styles.page}>
+    <div className="min-h-screen">
       <Navbar />
-      <div className={styles.pageHeader}>
-        <div className={styles.pageHeaderContent}>
-          <h1 className={styles.pageTitle}>Contato</h1>
-          <p className={styles.pageSubtitle}>Fale conosco — estamos aqui para ajudar</p>
+      <div className="bg-green-700 px-6 py-8">
+        <div className="mx-auto max-w-[1200px]">
+          <h1 className="text-[1.75rem] text-white">Contato</h1>
+          <p className="mt-1 text-sm text-white/65">Fale conosco — estamos aqui para ajudar</p>
         </div>
       </div>
 
-      <main className={styles.main}>
-        <div className={styles.layout}>
-          {/* Canais de contato */}
-          <aside className={styles.contactCards}>
-            <h2 className={styles.sectionTitle}>Canais de atendimento</h2>
+      <main className="mx-auto max-w-[1200px] px-6 py-8">
+        <div className="grid grid-cols-[320px_1fr] items-start gap-8">
+          <aside className="flex flex-col gap-3">
+            <h2 className="mb-4 text-[1.0625rem] font-medium text-green-800">
+              Canais de atendimento
+            </h2>
             {CONTACTS.map((c) => (
-              <div key={c.label} className={styles.contactCard}>
-                <span className={styles.contactIcon}>{c.icon}</span>
+              <div
+                key={c.label}
+                className="flex items-start gap-3 rounded-lg border border-gray-100 bg-white p-4"
+              >
+                <span className="shrink-0 text-xl">{c.icon}</span>
                 <div>
-                  <p className={styles.contactLabel}>{c.label}</p>
-                  <p className={styles.contactValue}>{c.value}</p>
-                  <p className={styles.contactSub}>{c.sub}</p>
+                  <p className="text-xs uppercase tracking-wider text-gray-500">{c.label}</p>
+                  <p className="mt-0.5 text-[0.9375rem] font-medium text-gray-900">{c.value}</p>
+                  <p className="mt-px text-xs text-gray-500">{c.sub}</p>
                 </div>
               </div>
             ))}
           </aside>
 
-          {/* Formulário */}
-          <div className={styles.formArea}>
-            <h2 className={styles.sectionTitle}>Envie uma mensagem</h2>
+          <div className="rounded-lg border border-gray-100 bg-white p-6">
+            <h2 className="mb-4 text-[1.0625rem] font-medium text-green-800">Envie uma mensagem</h2>
 
             {submitted ? (
-              <div className={styles.successCard}>
-                <div className={styles.successIcon}>✅</div>
-                <h3 className={styles.successTitle}>Mensagem enviada!</h3>
-                <p className={styles.successText}>
+              <div className="flex flex-col items-center gap-3 px-4 py-10 text-center">
+                <div className="text-5xl">✅</div>
+                <h3 className="text-xl text-green-800">Mensagem enviada!</h3>
+                <p className="max-w-[340px] text-[0.9375rem] leading-relaxed text-gray-500">
                   Obrigado, {form.name}. Retornaremos em breve para {form.email}.
                 </p>
                 <button
@@ -91,16 +96,16 @@ export default function ContactPage() {
                     setForm(INITIAL_FORM);
                     setSubmitted(false);
                   }}
-                  className={styles.backBtn}
+                  className="mt-2 rounded-lg bg-green-700 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-green-800"
                 >
                   Enviar outra mensagem
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className={styles.form} noValidate>
-                <div className={styles.fieldRow2}>
-                  <div className={styles.field}>
-                    <label htmlFor="name" className={styles.label}>
+              <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-[5px]">
+                    <label htmlFor="name" className={labelClass}>
                       Nome *
                     </label>
                     <input
@@ -109,17 +114,17 @@ export default function ContactPage() {
                       type="text"
                       value={form.name}
                       onChange={handleChange}
-                      className={`${styles.input} ${errors.name ? styles.inputError : ""}`}
+                      className={formInput({ error: !!errors.name })}
                       placeholder="Seu nome"
                     />
                     {errors.name && (
-                      <span className={styles.error} role="alert">
+                      <span className="text-xs text-red-600" role="alert">
                         {errors.name}
                       </span>
                     )}
                   </div>
-                  <div className={styles.field}>
-                    <label htmlFor="email" className={styles.label}>
+                  <div className="flex flex-col gap-[5px]">
+                    <label htmlFor="email" className={labelClass}>
                       E-mail *
                     </label>
                     <input
@@ -128,18 +133,18 @@ export default function ContactPage() {
                       type="email"
                       value={form.email}
                       onChange={handleChange}
-                      className={`${styles.input} ${errors.email ? styles.inputError : ""}`}
+                      className={formInput({ error: !!errors.email })}
                       placeholder="seu@email.com"
                     />
                     {errors.email && (
-                      <span className={styles.error} role="alert">
+                      <span className="text-xs text-red-600" role="alert">
                         {errors.email}
                       </span>
                     )}
                   </div>
                 </div>
-                <div className={styles.field}>
-                  <label htmlFor="subject" className={styles.label}>
+                <div className="flex flex-col gap-[5px]">
+                  <label htmlFor="subject" className={labelClass}>
                     Assunto *
                   </label>
                   <input
@@ -148,17 +153,17 @@ export default function ContactPage() {
                     type="text"
                     value={form.subject}
                     onChange={handleChange}
-                    className={`${styles.input} ${errors.subject ? styles.inputError : ""}`}
+                    className={formInput({ error: !!errors.subject })}
                     placeholder="Sobre o que você quer falar?"
                   />
                   {errors.subject && (
-                    <span className={styles.error} role="alert">
+                    <span className="text-xs text-red-600" role="alert">
                       {errors.subject}
                     </span>
                   )}
                 </div>
-                <div className={styles.field}>
-                  <label htmlFor="message" className={styles.label}>
+                <div className="flex flex-col gap-[5px]">
+                  <label htmlFor="message" className={labelClass}>
                     Mensagem *
                   </label>
                   <textarea
@@ -167,16 +172,19 @@ export default function ContactPage() {
                     rows={5}
                     value={form.message}
                     onChange={handleChange}
-                    className={`${styles.textarea} ${errors.message ? styles.inputError : ""}`}
+                    className={formTextarea({ error: !!errors.message })}
                     placeholder="Escreva sua mensagem aqui..."
                   />
                   {errors.message && (
-                    <span className={styles.error} role="alert">
+                    <span className="text-xs text-red-600" role="alert">
                       {errors.message}
                     </span>
                   )}
                 </div>
-                <button type="submit" className={styles.submitBtn}>
+                <button
+                  type="submit"
+                  className="rounded-lg bg-green-700 py-3 text-[0.9375rem] font-medium text-white transition hover:bg-green-800"
+                >
                   Enviar mensagem
                 </button>
               </form>

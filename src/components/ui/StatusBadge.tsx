@@ -1,15 +1,27 @@
 import type { ParkEventStatus } from "../../data/events";
 import type { TrailStatus } from "../../data/trails";
-import styles from "./StatusBadge.module.css";
+import { statusBadge } from "../../lib/variants/badge";
 
-const STATUS_CONFIG: Record<TrailStatus | ParkEventStatus, { label: string; className: string }> = {
-  open: { label: "Aberta", className: "open" },
-  closed: { label: "Fechada", className: "closed" },
-  maintenance: { label: "Manutenção", className: "maintenance" },
-  climate_risk: { label: "Risco Climático", className: "climateRisk" },
-  full: { label: "Lotada", className: "full" },
-  cancelled: { label: "Cancelada", className: "cancelled" },
-  few_spots: { label: "Poucas Vagas", className: "fewSpots" },
+type StatusVariant =
+  | "open"
+  | "closed"
+  | "maintenance"
+  | "climate_risk"
+  | "full"
+  | "cancelled"
+  | "few_spots";
+
+const STATUS_CONFIG: Record<
+  TrailStatus | ParkEventStatus,
+  { label: string; status: StatusVariant }
+> = {
+  open: { label: "Aberta", status: "open" },
+  closed: { label: "Fechada", status: "closed" },
+  maintenance: { label: "Manutenção", status: "maintenance" },
+  climate_risk: { label: "Risco Climático", status: "climate_risk" },
+  full: { label: "Lotada", status: "full" },
+  cancelled: { label: "Cancelada", status: "cancelled" },
+  few_spots: { label: "Poucas Vagas", status: "few_spots" },
 };
 
 export interface StatusBadgeProps {
@@ -19,5 +31,5 @@ export interface StatusBadgeProps {
 export default function StatusBadge({ status }: StatusBadgeProps) {
   const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.open;
 
-  return <span className={`${styles.badge} ${styles[config.className]}`}>{config.label}</span>;
+  return <span className={statusBadge({ status: config.status })}>{config.label}</span>;
 }

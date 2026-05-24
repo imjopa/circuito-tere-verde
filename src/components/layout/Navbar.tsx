@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import styles from "./Navbar.module.css";
+import { mobileNavLink, navLink } from "../../lib/variants/nav";
 
 const NAV_LINKS = [
   { to: "/", label: "Parques" },
@@ -19,33 +19,43 @@ export default function Navbar() {
   };
 
   return (
-    <header className={styles.header}>
-      <nav className={styles.nav} aria-label="Navegação principal">
-        <Link to="/" className={styles.brand} aria-label="Circuito Terê Verde — página inicial">
-          <span className={styles.brandIcon} aria-hidden="true">
+    <header className="sticky top-0 z-100 bg-green-700 shadow-md">
+      <nav
+        className="mx-auto flex h-[60px] max-w-6xl items-center gap-6 px-6"
+        aria-label="Navegação principal"
+      >
+        <Link
+          to="/"
+          className="flex shrink-0 items-center gap-2"
+          aria-label="Circuito Terê Verde — página inicial"
+        >
+          <span className="text-xl" aria-hidden="true">
             🌿
           </span>
-          <span className={styles.brandName}>Circuito Terê Verde</span>
+          <span className="font-display text-base font-semibold whitespace-nowrap text-white">
+            Circuito Terê Verde
+          </span>
         </Link>
 
-        {/* Links desktop */}
-        <ul className={styles.links} role="list">
+        <ul className="ml-auto hidden list-none gap-5 md:flex" role="list">
           {NAV_LINKS.map((link) => (
             <li key={link.to}>
-              <Link to={link.to} className={isActive(link.to) ? styles.active : ""}>
+              <Link to={link.to} className={navLink({ active: isActive(link.to) })}>
                 {link.label}
               </Link>
             </li>
           ))}
         </ul>
 
-        <Link to="/admin" className={styles.adminBtn}>
+        <Link
+          to="/admin"
+          className="hidden shrink-0 rounded-full bg-green-400 px-4 py-1.5 text-[0.8125rem] font-medium whitespace-nowrap text-green-900 transition hover:bg-green-300 md:inline-block"
+        >
           Área Admin
         </Link>
 
-        {/* Botão hambúrguer mobile */}
         <button
-          className={styles.menuBtn}
+          className="ml-auto flex cursor-pointer items-center justify-center border-none bg-transparent text-xl text-white md:hidden"
           onClick={() => setMenuOpen((prev) => !prev)}
           aria-label={menuOpen ? "Fechar menu" : "Abrir menu"}
           aria-expanded={menuOpen}
@@ -54,20 +64,27 @@ export default function Navbar() {
         </button>
       </nav>
 
-      {/* Menu mobile */}
       {menuOpen && (
-        <div className={styles.mobileMenu} role="navigation" aria-label="Menu mobile">
+        <div
+          className="flex flex-col gap-0 border-t border-white/10 bg-green-800 px-6 pt-2 pb-4 md:hidden"
+          role="navigation"
+          aria-label="Menu mobile"
+        >
           {NAV_LINKS.map((link) => (
             <Link
               key={link.to}
               to={link.to}
-              className={`${styles.mobileLink} ${isActive(link.to) ? styles.mobileLinkActive : ""}`}
+              className={mobileNavLink({ active: isActive(link.to) })}
               onClick={() => setMenuOpen(false)}
             >
               {link.label}
             </Link>
           ))}
-          <Link to="/admin" className={styles.mobileAdminBtn} onClick={() => setMenuOpen(false)}>
+          <Link
+            to="/admin"
+            className="mt-3.5 inline-block rounded-full bg-green-400 px-5 py-2 text-center text-sm font-medium text-green-900 transition hover:bg-green-300"
+            onClick={() => setMenuOpen(false)}
+          >
             Área Admin
           </Link>
         </div>

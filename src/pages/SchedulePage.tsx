@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Navbar from "../components/layout/Navbar";
 import { parks } from "../data/parks";
-import styles from "./SchedulePage.module.css";
+import { formInput, formSelect, formTextarea } from "../lib/variants/input";
 
 const VISIT_TIMES = ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00"];
 
@@ -15,6 +15,8 @@ const INITIAL_FORM = {
   visitors: 1,
   notes: "",
 };
+
+const labelClass = "text-[0.8125rem] font-medium text-gray-600";
 
 function getTodayString() {
   return new Date().toISOString().split("T")[0];
@@ -72,46 +74,61 @@ export default function SchedulePage() {
       year: "numeric",
     });
     return (
-      <div className={styles.page}>
+      <div className="min-h-screen">
         <Navbar />
-        <main className={styles.main}>
-          <div className={styles.successCard}>
-            <div className={styles.successIcon}>✅</div>
-            <h2 className={styles.successTitle}>Agendamento confirmado!</h2>
-            <p className={styles.successSub}>Seu pedido foi registrado com sucesso.</p>
-            <div className={styles.summaryGrid}>
-              <div className={styles.summaryItem}>
-                <span>Visitante</span>
-                <strong>{form.name}</strong>
+        <main className="mx-auto max-w-[1200px] px-6 py-8">
+          <div className="mx-auto my-12 flex max-w-[520px] flex-col items-center gap-3 rounded-xl border border-gray-100 bg-white p-10 text-center">
+            <div className="text-5xl">✅</div>
+            <h2 className="text-2xl text-green-800">Agendamento confirmado!</h2>
+            <p className="text-[0.9375rem] text-gray-500">Seu pedido foi registrado com sucesso.</p>
+            <div className="my-3 grid w-full grid-cols-2 gap-3 text-left">
+              <div className="flex flex-col gap-0.5 rounded-lg bg-green-50 px-3.5 py-2.5">
+                <span className="text-[0.6875rem] uppercase tracking-wider text-gray-500">
+                  Visitante
+                </span>
+                <strong className="text-sm text-gray-900">{form.name}</strong>
               </div>
-              <div className={styles.summaryItem}>
-                <span>Parque</span>
-                <strong>{selectedPark?.name}</strong>
+              <div className="flex flex-col gap-0.5 rounded-lg bg-green-50 px-3.5 py-2.5">
+                <span className="text-[0.6875rem] uppercase tracking-wider text-gray-500">
+                  Parque
+                </span>
+                <strong className="text-sm text-gray-900">{selectedPark?.name}</strong>
               </div>
-              <div className={styles.summaryItem}>
-                <span>Data</span>
-                <strong>{formattedDate}</strong>
+              <div className="flex flex-col gap-0.5 rounded-lg bg-green-50 px-3.5 py-2.5">
+                <span className="text-[0.6875rem] uppercase tracking-wider text-gray-500">
+                  Data
+                </span>
+                <strong className="text-sm text-gray-900">{formattedDate}</strong>
               </div>
-              <div className={styles.summaryItem}>
-                <span>Horário</span>
-                <strong>{form.time}</strong>
+              <div className="flex flex-col gap-0.5 rounded-lg bg-green-50 px-3.5 py-2.5">
+                <span className="text-[0.6875rem] uppercase tracking-wider text-gray-500">
+                  Horário
+                </span>
+                <strong className="text-sm text-gray-900">{form.time}</strong>
               </div>
-              <div className={styles.summaryItem}>
-                <span>Visitantes</span>
-                <strong>
+              <div className="flex flex-col gap-0.5 rounded-lg bg-green-50 px-3.5 py-2.5">
+                <span className="text-[0.6875rem] uppercase tracking-wider text-gray-500">
+                  Visitantes
+                </span>
+                <strong className="text-sm text-gray-900">
                   {form.visitors} pessoa{form.visitors > 1 ? "s" : ""}
                 </strong>
               </div>
-              <div className={styles.summaryItem}>
-                <span>Confirmação</span>
-                <strong>{form.email}</strong>
+              <div className="flex flex-col gap-0.5 rounded-lg bg-green-50 px-3.5 py-2.5">
+                <span className="text-[0.6875rem] uppercase tracking-wider text-gray-500">
+                  Confirmação
+                </span>
+                <strong className="text-sm text-gray-900">{form.email}</strong>
               </div>
             </div>
-            <p className={styles.successNote}>
+            <p className="max-w-[380px] text-center text-[0.8125rem] leading-relaxed text-gray-500">
               Uma confirmação será enviada para <strong>{form.email}</strong>. Apresente este
               agendamento na entrada do parque.
             </p>
-            <button onClick={handleReset} className={styles.newScheduleBtn}>
+            <button
+              onClick={handleReset}
+              className="mt-2 rounded-lg bg-green-700 px-7 py-3 text-[0.9375rem] font-medium text-white transition hover:bg-green-800"
+            >
               Fazer novo agendamento
             </button>
           </div>
@@ -121,25 +138,27 @@ export default function SchedulePage() {
   }
 
   return (
-    <div className={styles.page}>
+    <div className="min-h-screen">
       <Navbar />
-      <div className={styles.pageHeader}>
-        <div className={styles.pageHeaderContent}>
-          <h1 className={styles.pageTitle}>Agendamento de visita</h1>
-          <p className={styles.pageSubtitle}>
+      <div className="bg-green-700 px-6 py-8">
+        <div className="mx-auto max-w-[1200px]">
+          <h1 className="text-[1.75rem] text-white">Agendamento de visita</h1>
+          <p className="mt-1 text-sm text-white/65">
             Reserve sua entrada com antecedência e garanta sua vaga
           </p>
         </div>
       </div>
 
-      <main className={styles.main}>
-        <div className={styles.formLayout}>
-          <form onSubmit={handleSubmit} className={styles.form} noValidate>
-            <fieldset className={styles.fieldset}>
-              <legend className={styles.legend}>Dados do visitante</legend>
-              <div className={styles.fieldRow}>
-                <div className={styles.field}>
-                  <label htmlFor="name" className={styles.label}>
+      <main className="mx-auto max-w-[1200px] px-6 py-8">
+        <div className="grid grid-cols-[1fr_320px] items-start gap-8">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-6" noValidate>
+            <fieldset className="flex flex-col gap-4 rounded-lg border border-gray-100 bg-white p-5">
+              <legend className="px-2 font-display text-sm font-medium text-green-800">
+                Dados do visitante
+              </legend>
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-[5px]">
+                  <label htmlFor="name" className={labelClass}>
                     Nome completo *
                   </label>
                   <input
@@ -148,19 +167,19 @@ export default function SchedulePage() {
                     type="text"
                     value={form.name}
                     onChange={handleChange}
-                    className={`${styles.input} ${errors.name ? styles.inputError : ""}`}
+                    className={formInput({ error: !!errors.name })}
                     placeholder="Seu nome"
                   />
                   {errors.name && (
-                    <span className={styles.error} role="alert">
+                    <span className="mt-0.5 text-xs text-red-600" role="alert">
                       {errors.name}
                     </span>
                   )}
                 </div>
               </div>
-              <div className={styles.fieldRow2}>
-                <div className={styles.field}>
-                  <label htmlFor="email" className={styles.label}>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col gap-[5px]">
+                  <label htmlFor="email" className={labelClass}>
                     E-mail *
                   </label>
                   <input
@@ -169,17 +188,17 @@ export default function SchedulePage() {
                     type="email"
                     value={form.email}
                     onChange={handleChange}
-                    className={`${styles.input} ${errors.email ? styles.inputError : ""}`}
+                    className={formInput({ error: !!errors.email })}
                     placeholder="seu@email.com"
                   />
                   {errors.email && (
-                    <span className={styles.error} role="alert">
+                    <span className="mt-0.5 text-xs text-red-600" role="alert">
                       {errors.email}
                     </span>
                   )}
                 </div>
-                <div className={styles.field}>
-                  <label htmlFor="phone" className={styles.label}>
+                <div className="flex flex-col gap-[5px]">
+                  <label htmlFor="phone" className={labelClass}>
                     Telefone
                   </label>
                   <input
@@ -188,17 +207,19 @@ export default function SchedulePage() {
                     type="tel"
                     value={form.phone}
                     onChange={handleChange}
-                    className={styles.input}
+                    className={formInput()}
                     placeholder="(21) 00000-0000"
                   />
                 </div>
               </div>
             </fieldset>
 
-            <fieldset className={styles.fieldset}>
-              <legend className={styles.legend}>Detalhes da visita</legend>
-              <div className={styles.field}>
-                <label htmlFor="parkId" className={styles.label}>
+            <fieldset className="flex flex-col gap-4 rounded-lg border border-gray-100 bg-white p-5">
+              <legend className="px-2 font-display text-sm font-medium text-green-800">
+                Detalhes da visita
+              </legend>
+              <div className="flex flex-col gap-[5px]">
+                <label htmlFor="parkId" className={labelClass}>
                   Parque *
                 </label>
                 <select
@@ -206,7 +227,7 @@ export default function SchedulePage() {
                   name="parkId"
                   value={form.parkId}
                   onChange={handleChange}
-                  className={`${styles.select} ${errors.parkId ? styles.inputError : ""}`}
+                  className={formSelect({ error: !!errors.parkId })}
                 >
                   <option value="">Selecione o parque</option>
                   {parks.map((p) => (
@@ -216,15 +237,15 @@ export default function SchedulePage() {
                   ))}
                 </select>
                 {errors.parkId && (
-                  <span className={styles.error} role="alert">
+                  <span className="mt-0.5 text-xs text-red-600" role="alert">
                     {errors.parkId}
                   </span>
                 )}
               </div>
 
-              <div className={styles.fieldRow2}>
-                <div className={styles.field}>
-                  <label htmlFor="date" className={styles.label}>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col gap-[5px]">
+                  <label htmlFor="date" className={labelClass}>
                     Data *
                   </label>
                   <input
@@ -234,16 +255,16 @@ export default function SchedulePage() {
                     value={form.date}
                     onChange={handleChange}
                     min={getTodayString()}
-                    className={`${styles.input} ${errors.date ? styles.inputError : ""}`}
+                    className={formInput({ error: !!errors.date })}
                   />
                   {errors.date && (
-                    <span className={styles.error} role="alert">
+                    <span className="mt-0.5 text-xs text-red-600" role="alert">
                       {errors.date}
                     </span>
                   )}
                 </div>
-                <div className={styles.field}>
-                  <label htmlFor="time" className={styles.label}>
+                <div className="flex flex-col gap-[5px]">
+                  <label htmlFor="time" className={labelClass}>
                     Horário *
                   </label>
                   <select
@@ -251,7 +272,7 @@ export default function SchedulePage() {
                     name="time"
                     value={form.time}
                     onChange={handleChange}
-                    className={`${styles.select} ${errors.time ? styles.inputError : ""}`}
+                    className={formSelect({ error: !!errors.time })}
                   >
                     <option value="">Selecione</option>
                     {VISIT_TIMES.map((t) => (
@@ -261,15 +282,15 @@ export default function SchedulePage() {
                     ))}
                   </select>
                   {errors.time && (
-                    <span className={styles.error} role="alert">
+                    <span className="mt-0.5 text-xs text-red-600" role="alert">
                       {errors.time}
                     </span>
                   )}
                 </div>
               </div>
 
-              <div className={styles.field}>
-                <label htmlFor="visitors" className={styles.label}>
+              <div className="flex flex-col gap-[5px]">
+                <label htmlFor="visitors" className={labelClass}>
                   Número de visitantes *
                 </label>
                 <input
@@ -280,17 +301,17 @@ export default function SchedulePage() {
                   max={20}
                   value={form.visitors}
                   onChange={handleChange}
-                  className={`${styles.input} ${errors.visitors ? styles.inputError : ""}`}
+                  className={formInput({ error: !!errors.visitors })}
                 />
                 {errors.visitors && (
-                  <span className={styles.error} role="alert">
+                  <span className="mt-0.5 text-xs text-red-600" role="alert">
                     {errors.visitors}
                   </span>
                 )}
               </div>
 
-              <div className={styles.field}>
-                <label htmlFor="notes" className={styles.label}>
+              <div className="flex flex-col gap-[5px]">
+                <label htmlFor="notes" className={labelClass}>
                   Observações
                 </label>
                 <textarea
@@ -299,28 +320,31 @@ export default function SchedulePage() {
                   value={form.notes}
                   onChange={handleChange}
                   rows={3}
-                  className={styles.textarea}
+                  className={formTextarea()}
                   placeholder="Necessidades especiais, grupo escolar, etc."
                 />
               </div>
             </fieldset>
 
             {selectedPark && (
-              <div className={styles.parkPreview}>
-                <p className={styles.parkPreviewTitle}>{selectedPark.name}</p>
-                <p className={styles.parkPreviewMeta}>
+              <div className="rounded-lg border border-green-100 bg-green-50 px-4 py-3.5">
+                <p className="text-[0.9375rem] font-medium text-green-800">{selectedPark.name}</p>
+                <p className="mt-0.5 text-[0.8125rem] text-gray-500">
                   {selectedPark.openingHours} · Entrada: {selectedPark.entranceFee}
                 </p>
               </div>
             )}
 
-            <button type="submit" className={styles.submitBtn}>
+            <button
+              type="submit"
+              className="rounded-lg bg-green-700 py-3.5 text-base font-medium text-white transition hover:bg-green-800"
+            >
               Confirmar agendamento
             </button>
           </form>
 
-          <aside className={styles.infoPanel}>
-            <h2 className={styles.infoPanelTitle}>Informações importantes</h2>
+          <aside className="sticky top-20 flex flex-col gap-4 rounded-lg border border-gray-100 bg-white p-5">
+            <h2 className="mb-1 text-base font-medium text-green-800">Informações importantes</h2>
             {[
               {
                 icon: "🕐",
@@ -348,11 +372,11 @@ export default function SchedulePage() {
                 text: "Informe necessidades especiais no campo de observações.",
               },
             ].map((item) => (
-              <div key={item.title} className={styles.infoPanelItem}>
-                <span className={styles.infoPanelIcon}>{item.icon}</span>
+              <div key={item.title} className="flex items-start gap-3">
+                <span className="mt-px shrink-0 text-lg">{item.icon}</span>
                 <div>
-                  <p className={styles.infoPanelItemTitle}>{item.title}</p>
-                  <p className={styles.infoPanelItemText}>{item.text}</p>
+                  <p className="text-[0.8125rem] font-medium text-gray-700">{item.title}</p>
+                  <p className="mt-px text-[0.8125rem] leading-normal text-gray-500">{item.text}</p>
                 </div>
               </div>
             ))}

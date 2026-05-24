@@ -1,10 +1,10 @@
 import type { TrailDifficulty } from "../../data/trails";
-import styles from "./DifficultyBadge.module.css";
+import { difficultyBadge } from "../../lib/variants/badge";
 
 const difficultyConfig = {
-  easy: { label: "Fácil", className: "easy" },
-  medium: { label: "Moderado", className: "medium" },
-  hard: { label: "Difícil", className: "hard" },
+  easy: { label: "Fácil", difficulty: "easy" as const },
+  medium: { label: "Moderado", difficulty: "medium" as const },
+  hard: { label: "Difícil", difficulty: "hard" as const },
 };
 
 export interface DifficultyBadgeProps {
@@ -14,5 +14,5 @@ export interface DifficultyBadgeProps {
 export default function DifficultyBadge({ difficulty }: DifficultyBadgeProps) {
   const config = difficultyConfig[difficulty] ?? difficultyConfig.easy;
 
-  return <span className={`${styles.badge} ${styles[config.className]}`}>{config.label}</span>;
+  return <span className={difficultyBadge({ difficulty: config.difficulty })}>{config.label}</span>;
 }

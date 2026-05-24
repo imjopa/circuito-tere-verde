@@ -21,5 +21,6 @@
     "noEmit": true,
     "lib": ["es2022", "dom", "dom.iterable"],
     "jsx": "react-jsx"
-  }
+  },
+  "include": ["src"]
 }

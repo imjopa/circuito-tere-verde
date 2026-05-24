@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import styles from "./AdminLoginPage.module.css";
+import { btnPrimary } from "../lib/variants/button";
+import { formInput } from "../lib/variants/input";
 
 export default function AdminLoginPage() {
   const navigate = useNavigate();
@@ -16,19 +17,23 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className={styles.page}>
-      <div className={styles.card}>
-        <div className={styles.logoArea}>
-          <div className={styles.logoIcon}>🌿</div>
-          <span className={styles.logoText}>Circuito Terê Verde</span>
+    <div className="flex min-h-screen items-center justify-center bg-green-50 p-6">
+      <div className="w-full max-w-[380px] rounded-xl border border-gray-100 bg-white p-10 px-8 shadow-lg">
+        <div className="mb-8 flex items-center justify-center gap-2">
+          <div className="flex h-11 w-11 items-center justify-center rounded-md bg-green-700 text-[1.75rem]">
+            🌿
+          </div>
+          <span className="font-display text-base font-semibold text-green-800">
+            Circuito Terê Verde
+          </span>
         </div>
 
-        <h1 className={styles.title}>Bem-vindo de volta</h1>
-        <p className={styles.subtitle}>Acesso restrito a administradores</p>
+        <h1 className="mb-1.5 text-center text-[1.375rem] text-gray-900">Bem-vindo de volta</h1>
+        <p className="mb-8 text-center text-sm text-gray-500">Acesso restrito a administradores</p>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
-          <div className={styles.field}>
-            <label htmlFor="email" className={styles.label}>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="email" className="text-[0.8125rem] font-medium text-gray-500">
               E-mail
             </label>
             <input
@@ -39,12 +44,12 @@ export default function AdminLoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="admin@tereverde.com.br"
-              className={styles.input}
+              className={formInput()}
             />
           </div>
 
-          <div className={styles.field}>
-            <label htmlFor="password" className={styles.label}>
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="password" className="text-[0.8125rem] font-medium text-gray-500">
               Senha
             </label>
             <input
@@ -55,22 +60,31 @@ export default function AdminLoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className={styles.input}
+              className={formInput()}
             />
           </div>
 
           {authError && (
-            <p className={styles.errorMessage} role="alert">
+            <p
+              className="rounded-md bg-red-100 px-3.5 py-2.5 text-center text-[0.8125rem] text-red-800"
+              role="alert"
+            >
               {authError}
             </p>
           )}
 
-          <button type="submit" disabled={isLoading} className={styles.submitBtn}>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className={`${btnPrimary()} mt-2 w-full rounded-lg disabled:cursor-not-allowed disabled:opacity-60`}
+          >
             {isLoading ? "Verificando..." : "Entrar no painel"}
           </button>
         </form>
 
-        <p className={styles.hint}>🔒 Ambiente seguro — dados criptografados</p>
+        <p className="mt-6 text-center text-xs text-gray-500">
+          🔒 Ambiente seguro — dados criptografados
+        </p>
       </div>
     </div>
   );

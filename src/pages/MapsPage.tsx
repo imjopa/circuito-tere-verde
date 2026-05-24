@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Navbar from "../components/layout/Navbar";
 import { parks, type ParkId } from "../data/parks";
-import styles from "./MapsPage.module.css";
 
 interface ParkMap {
   embedUrl: string;
@@ -40,38 +39,40 @@ export default function MapsPage() {
   const activeMapData = PARK_MAPS[activeParkId];
 
   return (
-    <div className={styles.page}>
+    <div className="min-h-screen">
       <Navbar />
 
-      <div className={styles.pageHeader}>
-        <div className={styles.pageHeaderContent}>
-          <h1 className={styles.pageTitle}>Mapas dos parques</h1>
-          <p className={styles.pageSubtitle}>Localize os parques e planeje sua visita</p>
+      <div className="bg-green-700 px-6 py-8">
+        <div className="mx-auto max-w-6xl">
+          <h1 className="text-[1.75rem] text-white">Mapas dos parques</h1>
+          <p className="mt-1 text-sm text-white/65">Localize os parques e planeje sua visita</p>
         </div>
       </div>
 
-      <main className={styles.main}>
-        {/* Seletor de parque */}
-        <div className={styles.parkSelector}>
+      <main className="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-8">
+        <div className="flex flex-wrap gap-3">
           {parks.map((park) => (
             <button
               key={park.id}
-              className={`${styles.parkBtn} ${activeParkId === park.id ? styles.parkBtnActive : ""}`}
+              className={`flex min-w-40 cursor-pointer flex-col gap-0.5 rounded-lg border px-5 py-3 text-left transition-colors ${
+                activeParkId === park.id
+                  ? "border-green-700 bg-green-50"
+                  : "border-gray-200 bg-white hover:border-green-400"
+              }`}
               onClick={() => setActiveParkId(park.id)}
               aria-pressed={activeParkId === park.id}
             >
-              <span className={styles.parkBtnName}>{park.name}</span>
-              <span className={styles.parkBtnType}>{park.type}</span>
+              <span className="text-sm font-medium text-gray-900">{park.name}</span>
+              <span className="text-[0.6875rem] text-gray-500">{park.type}</span>
             </button>
           ))}
         </div>
 
-        {/* Layout mapa + info */}
-        <div className={styles.mapLayout}>
-          <div className={styles.mapWrapper}>
+        <div className="grid items-start gap-6 lg:grid-cols-[1fr_300px]">
+          <div className="aspect-16/10 overflow-hidden rounded-lg border border-gray-100">
             <iframe
               src={activeMapData.embedUrl}
-              className={styles.mapIframe}
+              className="block h-full w-full border-none"
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
@@ -80,44 +81,54 @@ export default function MapsPage() {
             />
           </div>
 
-          <aside className={styles.mapInfo}>
-            <h2 className={styles.mapInfoTitle}>{activePark?.name}</h2>
-            <p className={styles.mapInfoType}>{activePark?.type}</p>
+          <aside className="sticky top-20 flex flex-col gap-4 rounded-lg border border-gray-100 bg-white p-5">
+            <h2 className="text-[1.0625rem] font-semibold text-green-800">{activePark?.name}</h2>
+            <p className="-mt-1.5 text-xs text-gray-500">{activePark?.type}</p>
 
-            <div className={styles.infoList}>
-              <div className={styles.infoItem}>
-                <span className={styles.infoIcon}>📍</span>
+            <div className="flex flex-col gap-3.5">
+              <div className="flex items-start gap-2.5">
+                <span className="mt-px shrink-0 text-base">📍</span>
                 <div>
-                  <p className={styles.infoLabel}>Endereço</p>
-                  <p className={styles.infoValue}>{activeMapData.address}</p>
+                  <p className="mb-px text-[0.6875rem] uppercase tracking-wider text-gray-500">
+                    Endereço
+                  </p>
+                  <p className="text-sm leading-snug text-gray-800">{activeMapData.address}</p>
                 </div>
               </div>
-              <div className={styles.infoItem}>
-                <span className={styles.infoIcon}>🌐</span>
+              <div className="flex items-start gap-2.5">
+                <span className="mt-px shrink-0 text-base">🌐</span>
                 <div>
-                  <p className={styles.infoLabel}>Coordenadas</p>
-                  <p className={styles.infoValue}>{activeMapData.coordinates}</p>
+                  <p className="mb-px text-[0.6875rem] uppercase tracking-wider text-gray-500">
+                    Coordenadas
+                  </p>
+                  <p className="text-sm leading-snug text-gray-800">{activeMapData.coordinates}</p>
                 </div>
               </div>
-              <div className={styles.infoItem}>
-                <span className={styles.infoIcon}>🕐</span>
+              <div className="flex items-start gap-2.5">
+                <span className="mt-px shrink-0 text-base">🕐</span>
                 <div>
-                  <p className={styles.infoLabel}>Horário de funcionamento</p>
-                  <p className={styles.infoValue}>{activePark?.openingHours}</p>
+                  <p className="mb-px text-[0.6875rem] uppercase tracking-wider text-gray-500">
+                    Horário de funcionamento
+                  </p>
+                  <p className="text-sm leading-snug text-gray-800">{activePark?.openingHours}</p>
                 </div>
               </div>
-              <div className={styles.infoItem}>
-                <span className={styles.infoIcon}>📞</span>
+              <div className="flex items-start gap-2.5">
+                <span className="mt-px shrink-0 text-base">📞</span>
                 <div>
-                  <p className={styles.infoLabel}>Telefone</p>
-                  <p className={styles.infoValue}>{activeMapData.phone}</p>
+                  <p className="mb-px text-[0.6875rem] uppercase tracking-wider text-gray-500">
+                    Telefone
+                  </p>
+                  <p className="text-sm leading-snug text-gray-800">{activeMapData.phone}</p>
                 </div>
               </div>
-              <div className={styles.infoItem}>
-                <span className={styles.infoIcon}>🎟️</span>
+              <div className="flex items-start gap-2.5">
+                <span className="mt-px shrink-0 text-base">🎟️</span>
                 <div>
-                  <p className={styles.infoLabel}>Entrada</p>
-                  <p className={styles.infoValue}>{activePark?.entranceFee}</p>
+                  <p className="mb-px text-[0.6875rem] uppercase tracking-wider text-gray-500">
+                    Entrada
+                  </p>
+                  <p className="text-sm leading-snug text-gray-800">{activePark?.entranceFee}</p>
                 </div>
               </div>
             </div>
@@ -126,7 +137,7 @@ export default function MapsPage() {
               href={`https://www.google.com/maps/search/${encodeURIComponent(activePark?.name + " Teresópolis")}`}
               target="_blank"
               rel="noopener noreferrer"
-              className={styles.directionsBtn}
+              className="block rounded-md bg-green-700 px-4 py-2.5 text-center text-sm font-medium text-white transition-colors hover:bg-green-800"
             >
               Abrir no Google Maps →
             </a>

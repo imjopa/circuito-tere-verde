@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Navbar from "../components/layout/Navbar";
 import { events, type ParkEventStatus } from "../data/events";
-import styles from "./EventsPage.module.css";
+import { filterChip } from "../lib/variants/chip";
 
 type EventCategory = "guided_trail" | "education" | "volunteer" | "workshop";
 
@@ -35,26 +35,26 @@ export default function EventsPage() {
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   return (
-    <div className={styles.page}>
+    <div className="min-h-screen">
       <Navbar />
 
-      <div className={styles.pageHeader}>
-        <div className={styles.pageHeaderContent}>
-          <h1 className={styles.pageTitle}>Eventos</h1>
-          <p className={styles.pageSubtitle}>
+      <div className="bg-green-700 px-6 py-8">
+        <div className="mx-auto max-w-6xl">
+          <h1 className="text-[1.75rem] text-white">Eventos</h1>
+          <p className="mt-1 text-sm text-white/65">
             Atividades, trilhas guiadas e programas educativos nos parques
           </p>
         </div>
       </div>
 
-      <main className={styles.main}>
-        <div className={styles.filterRow}>
-          <span className={styles.filterLabel}>Categoria:</span>
-          <div className={styles.filterChips}>
+      <main className="mx-auto max-w-6xl px-6 py-7">
+        <div className="mb-6 flex flex-wrap items-center gap-3">
+          <span className="whitespace-nowrap text-[0.8125rem] text-gray-500">Categoria:</span>
+          <div className="flex flex-wrap gap-2">
             {CATEGORY_FILTERS.map((f) => (
               <button
                 key={f.value}
-                className={`${styles.chip} ${activeCategory === f.value ? styles.chipActive : ""}`}
+                className={filterChip({ active: activeCategory === f.value })}
                 onClick={() => setActiveCategory(f.value)}
               >
                 {f.label}
@@ -64,9 +64,11 @@ export default function EventsPage() {
         </div>
 
         {filtered.length === 0 ? (
-          <p className={styles.empty}>Nenhum evento nessa categoria no momento.</p>
+          <p className="px-4 py-12 text-center text-[0.9375rem] text-gray-500">
+            Nenhum evento nessa categoria no momento.
+          </p>
         ) : (
-          <div className={styles.list}>
+          <div className="flex flex-col gap-4">
             {filtered.map((ev) => {
               const evDate = new Date(ev.date + "T00:00:00");
               const day = evDate.getDate().toString().padStart(2, "0");
@@ -80,34 +82,45 @@ export default function EventsPage() {
               const occupancy = Math.round(((ev.spots - ev.spotsLeft) / ev.spots) * 100);
 
               return (
-                <article key={ev.id} className={styles.card}>
-                  <div className={styles.dateCol}>
-                    <span className={styles.dateDay}>{day}</span>
-                    <span className={styles.dateMonth}>{month}</span>
-                    <span className={styles.dateWeekday}>{weekday}</span>
+                <article
+                  key={ev.id}
+                  className="flex overflow-hidden rounded-lg border border-gray-100 bg-white transition-shadow hover:shadow-md"
+                >
+                  <div className="flex min-w-[72px] shrink-0 flex-col items-center justify-center gap-0.5 bg-green-700 px-4 py-5 text-white">
+                    <span className="font-display text-[1.75rem] leading-none font-bold">
+                      {day}
+                    </span>
+                    <span className="text-[0.6875rem] uppercase tracking-wider opacity-85">
+                      {month}
+                    </span>
+                    <span className="mt-0.5 text-center text-[0.5625rem] opacity-65">
+                      {weekday}
+                    </span>
                   </div>
 
-                  <div className={styles.cardBody}>
-                    <div className={styles.cardTop}>
+                  <div className="flex min-w-0 flex-1 flex-col gap-2.5 p-5">
+                    <div className="flex flex-wrap gap-1.5">
                       <span
-                        className={styles.categoryBadge}
+                        className="rounded-full px-2.5 py-0.5 text-[0.6875rem] font-medium"
                         style={{ background: catColor.bg, color: catColor.color }}
                       >
                         {ev.categoryLabel}
                       </span>
                       <span
-                        className={styles.statusBadge}
+                        className="rounded-full px-2.5 py-0.5 text-[0.6875rem] font-medium"
                         style={{ background: statusCfg.bg, color: statusCfg.color }}
                       >
                         {statusCfg.label}
                       </span>
                     </div>
 
-                    <h2 className={styles.cardTitle}>{ev.title}</h2>
-                    <p className={styles.cardPark}>📍 {ev.park}</p>
-                    <p className={styles.cardDescription}>{ev.description}</p>
+                    <h2 className="font-display text-[1.0625rem] font-semibold text-gray-900">
+                      {ev.title}
+                    </h2>
+                    <p className="text-[0.8125rem] text-gray-500">📍 {ev.park}</p>
+                    <p className="text-sm leading-relaxed text-gray-600">{ev.description}</p>
 
-                    <div className={styles.metaGrid}>
+                    <div className="flex flex-wrap gap-3 text-[0.8125rem] text-gray-500">
                       <span>
                         🕐 {ev.time} · {ev.duration}
                       </span>
@@ -115,16 +128,21 @@ export default function EventsPage() {
                       <span>👥 {ev.spotsLeft} vagas restantes</span>
                     </div>
 
-                    <div className={styles.occupancy}>
-                      <div className={styles.occupancyBar}>
-                        <div className={styles.occupancyFill} style={{ width: `${occupancy}%` }} />
+                    <div className="flex items-center gap-3">
+                      <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-gray-100">
+                        <div
+                          className="h-full rounded-full bg-green-500 transition-[width] duration-300"
+                          style={{ width: `${occupancy}%` }}
+                        />
                       </div>
-                      <span className={styles.occupancyLabel}>{occupancy}% ocupado</span>
+                      <span className="whitespace-nowrap text-xs text-gray-500">
+                        {occupancy}% ocupado
+                      </span>
                     </div>
 
                     {ev.requirements?.length > 0 && (
-                      <div className={styles.requirements}>
-                        <span className={styles.requirementsLabel}>Requisitos: </span>
+                      <div className="text-[0.8125rem] text-gray-500">
+                        <span className="font-medium text-gray-700">Requisitos: </span>
                         {ev.requirements.join(" · ")}
                       </div>
                     )}
