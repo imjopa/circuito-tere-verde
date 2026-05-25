@@ -1,6 +1,6 @@
 import { tv, type VariantProps } from "tailwind-variants";
 
-export const variants = tv({
+const variants = tv({
   base: "min-h-30 resize-y w-full rounded-lg border px-3 py-2 text-sm outline-none transition",
   variants: {
     error: {

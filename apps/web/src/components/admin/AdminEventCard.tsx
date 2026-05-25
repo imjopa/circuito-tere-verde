@@ -1,4 +1,4 @@
-import type { Park, ParkEvent, ParkEventStatus } from "@circuito/db/client";
+import type { Park, ParkEvent } from "@circuito/db/client";
 import { tv } from "tailwind-variants";
 
 import { AdminListCard } from "./AdminListCard";
@@ -8,8 +8,6 @@ interface AdminEventCardProps {
   onEdit: (event: ParkEvent & { park: Park }) => void;
   onDelete: (id: string) => void;
 }
-
-export const DEFAULT_EVENT_STATUS: ParkEventStatus = "open";
 
 export const EVENT_STATUS_OPTIONS = [
   { value: "open", label: "Vagas disponíveis" },

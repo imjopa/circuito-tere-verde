@@ -1,6 +1,6 @@
 import { tv, type VariantProps } from "tailwind-variants";
 
-export const filterChip = tv({
+const variants = tv({
   base: "cursor-pointer rounded-full px-4 py-1.5 text-sm transition-colors",
   variants: {
     active: {
@@ -12,8 +12,8 @@ export const filterChip = tv({
   defaultVariants: { active: false },
 });
 
-export type FilterChipProps = React.ComponentProps<"button"> & VariantProps<typeof filterChip>;
+export type FilterChipProps = React.ComponentProps<"button"> & VariantProps<typeof variants>;
 
 export function FilterChip({ active, className, ...props }: FilterChipProps) {
-  return <button className={filterChip({ active, className })} {...props} />;
+  return <button className={variants({ active, className })} {...props} />;
 }

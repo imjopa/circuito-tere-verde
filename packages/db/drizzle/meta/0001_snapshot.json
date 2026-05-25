@@ -104,12 +104,8 @@
           "name": "events_park_id_parks_id_fk",
           "tableFrom": "events",
           "tableTo": "parks",
-          "columnsFrom": [
-            "park_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["park_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -251,9 +247,7 @@
         "parks_slug_unique": {
           "name": "parks_slug_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "slug"
-          ]
+          "columns": ["slug"]
         }
       },
       "policies": {},
@@ -390,12 +384,8 @@
           "name": "trails_park_id_parks_id_fk",
           "tableFrom": "trails",
           "tableTo": "parks",
-          "columnsFrom": [
-            "park_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["park_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -530,12 +520,8 @@
           "name": "waterfalls_park_id_parks_id_fk",
           "tableFrom": "waterfalls",
           "tableTo": "parks",
-          "columnsFrom": [
-            "park_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["park_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }

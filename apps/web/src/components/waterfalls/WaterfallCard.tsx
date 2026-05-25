@@ -1,23 +1,57 @@
 import type { Park, Waterfall } from "@circuito/db/client";
 import { ArrowUp, Droplets, Trees } from "lucide-react";
+import { tv } from "tailwind-variants";
 
 import { DetailSection } from "@/components/ui/DetailSection";
 import { waterfallAccessLabels } from "@/lib/constants/labels";
-import { accessLabelVariants, waterfallCardHeader } from "@/lib/theme/parkVariants";
 
 export interface WaterfallCardProps {
   waterfall: Waterfall & { park: Park };
 }
 
+const variants = tv({
+  slots: {
+    header: "relative px-5 pt-5 pb-3",
+    accessLabel: "rounded-full px-2.5 py-0.5 text-xs font-medium",
+  },
+  variants: {
+    access: {
+      easy: {
+        accessLabel: "bg-green-100 text-green-900",
+      },
+      medium: {
+        accessLabel: "bg-yellow-100 text-yellow-900",
+      },
+      hard: {
+        accessLabel: "bg-red-100 text-red-900",
+      },
+    },
+    park: {
+      "serra-dos-orgaos": {
+        header: "bg-linear-to-br from-green-900 to-green-800",
+      },
+      "tres-picos": {
+        header: "bg-linear-to-br from-green-800 to-green-700",
+      },
+      "montanhas-teresopolis": {
+        header: "bg-linear-to-br from-green-700 to-green-600",
+      },
+    } as Record<string, { header: string }>,
+  },
+  defaultVariants: {
+    park: "serra-dos-orgaos",
+    access: "easy",
+  },
+});
+
 export function WaterfallCard({ waterfall }: WaterfallCardProps) {
-  const headerClass = waterfallCardHeader({ park: waterfall.park.slug });
-  const accessClass = accessLabelVariants({ access: waterfall.access });
+  const { header, accessLabel } = variants({ park: waterfall.park.slug, access: waterfall.access });
 
   return (
     <article className="overflow-hidden rounded-lg border border-gray-100 bg-white transition hover:-translate-y-0.5 hover:shadow-md">
-      <div className={headerClass}>
+      <div className={header()}>
         <div className="mb-3 flex flex-wrap gap-1.5">
-          <span className={accessClass}>{waterfallAccessLabels[waterfall.access]}</span>
+          <span className={accessLabel()}>{waterfallAccessLabels[waterfall.access]}</span>
           {waterfall.allowsBathing && (
             <span className="inline-flex items-center gap-1 rounded-full bg-white/20 px-2.5 py-0.5 text-xs text-white">
               <Droplets className="size-3.5" aria-hidden />

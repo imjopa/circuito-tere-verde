@@ -12,6 +12,9 @@ const variants = tv({
       "montanhas-teresopolis": "border-green-700",
     } as Record<string, string>,
   },
+  defaultVariants: {
+    park: "serra-dos-orgaos",
+  },
 });
 
 export interface ParkCardProps {

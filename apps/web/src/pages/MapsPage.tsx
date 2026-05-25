@@ -111,7 +111,7 @@ export default function MapsPage() {
           </div>
 
           <a
-            href={`https://www.google.com/maps/search/${encodeURIComponent(activePark?.name + " Teresópolis")}`}
+            href={`https://www.google.com/maps/search/${encodeURIComponent(`${activePark?.name} Teresópolis`)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="block rounded-md bg-green-700 px-4 py-2.5 text-center text-sm font-medium text-white transition-colors hover:bg-green-800"
