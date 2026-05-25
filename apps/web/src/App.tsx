@@ -1,21 +1,23 @@
+import { lazy } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 
-import AdminLayout from "@/components/admin/AdminLayout";
 import ProtectedRoute from "@/components/admin/ProtectedRoute";
-import AboutPage from "@/pages/AboutPage";
-import AdminDashboardPage from "@/pages/admin/AdminDashboardPage";
-import AdminEventsPage from "@/pages/admin/AdminEventsPage";
-import AdminParksPage from "@/pages/admin/AdminParksPage";
-import AdminTrailsPage from "@/pages/admin/AdminTrailsPage";
-import AdminWaterfallsPage from "@/pages/admin/AdminWaterfallsPage";
-import AdminLoginPage from "@/pages/AdminLoginPage";
-import ContactPage from "@/pages/ContactPage";
-import EventsPage from "@/pages/EventsPage";
-import HomePage from "@/pages/HomePage";
-import MapsPage from "@/pages/MapsPage";
-import SchedulePage from "@/pages/SchedulePage";
-import TrailsPage from "@/pages/TrailsPage";
-import WaterfallsPage from "@/pages/WaterfallsPage";
+
+const AdminLayout = lazy(() => import("@/components/admin/AdminLayout"));
+const AboutPage = lazy(() => import("@/pages/AboutPage"));
+const AdminDashboardPage = lazy(() => import("@/pages/admin/AdminDashboardPage"));
+const AdminEventsPage = lazy(() => import("@/pages/admin/AdminEventsPage"));
+const AdminParksPage = lazy(() => import("@/pages/admin/AdminParksPage"));
+const AdminTrailsPage = lazy(() => import("@/pages/admin/AdminTrailsPage"));
+const AdminWaterfallsPage = lazy(() => import("@/pages/admin/AdminWaterfallsPage"));
+const AdminLoginPage = lazy(() => import("@/pages/AdminLoginPage"));
+const ContactPage = lazy(() => import("@/pages/ContactPage"));
+const EventsPage = lazy(() => import("@/pages/EventsPage"));
+const HomePage = lazy(() => import("@/pages/HomePage"));
+const MapsPage = lazy(() => import("@/pages/MapsPage"));
+const SchedulePage = lazy(() => import("@/pages/SchedulePage"));
+const TrailsPage = lazy(() => import("@/pages/TrailsPage"));
+const WaterfallsPage = lazy(() => import("@/pages/WaterfallsPage"));
 
 export default function App() {
   return (
