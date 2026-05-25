@@ -6,21 +6,21 @@ import {
   Footprints,
   Map,
   Phone,
-  Search,
-  X,
   type LucideIcon,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { EventCard } from "@/components/events/EventCard";
 import Navbar from "@/components/layout/Navbar";
 import ParkCard from "@/components/parks/ParkCard";
 import { Link } from "@/components/ui/Link";
+import { LoadingMessage } from "@/components/ui/QueryFeedback";
+import { SearchBar } from "@/components/ui/SearchBar";
 import SearchResults from "@/components/ui/SearchResults";
 import { useEvents } from "@/hooks/data/useEvents";
 import { useParks } from "@/hooks/data/useParks";
 import { useSearch, useSearchFilters } from "@/hooks/data/useSearch";
 
-// Atalhos rápidos com rotas reais
 const QUICK_ACCESS: { icon: LucideIcon; label: string; to: string }[] = [
   { icon: Footprints, label: "Trilhas", to: "/trilhas" },
   { icon: Droplets, label: "Cachoeiras", to: "/cachoeiras" },
@@ -29,13 +29,6 @@ const QUICK_ACCESS: { icon: LucideIcon; label: string; to: string }[] = [
   { icon: Map, label: "Mapas", to: "/mapas" },
   { icon: Phone, label: "Contato", to: "/contato" },
 ];
-
-const categoryLabels = {
-  education: "Educação",
-  guided_trail: "Trilha guiada",
-  volunteer: "Voluntariado",
-  workshop: "Workshop",
-} as const;
 
 export default function HomePage() {
   const parks = useParks();
@@ -56,7 +49,6 @@ export default function HomePage() {
       .toSorted((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
       .slice(0, 3) ?? [];
 
-  // Fecha dropdown ao clicar fora
   useEffect(() => {
     const abortController = new AbortController();
 
@@ -100,7 +92,6 @@ export default function HomePage() {
     <div className="flex min-h-screen flex-col">
       <Navbar />
 
-      {/* Hero */}
       <section className="relative overflow-hidden bg-green-700 px-6 pt-16 pb-20">
         <div className="mx-auto max-w-xl">
           <span className="mb-4 inline-block rounded-full bg-green-400 px-3 py-1 text-xs font-medium text-green-900">
@@ -129,44 +120,28 @@ export default function HomePage() {
         />
       </section>
 
-      {/* Busca funcional */}
       <div className="relative z-20 mx-auto -mt-6 max-w-2xl px-6" ref={searchRef}>
-        <search
-          className="flex items-center gap-3 rounded-full border border-gray-100 bg-white px-4 py-2.5 shadow-lg"
-          aria-expanded={showResults && !!results}
+        <SearchBar
+          value={q}
+          onChange={handleQueryChange}
+          onClear={handleClear}
+          onFocus={handleFocus}
+          placeholder="Buscar trilhas, cachoeiras, parques..."
+          ariaLabel="Buscar no Circuito Terê Verde"
+          variant="hero"
+          ariaExpanded={showResults && !!results}
         >
-          <Search className="size-5 shrink-0 text-gray-400" aria-hidden />
-          <input
-            type="search"
-            placeholder="Buscar trilhas, cachoeiras, parques..."
-            value={q}
-            onChange={handleQueryChange}
-            onFocus={handleFocus}
-            className="font-body flex-1 border-none bg-transparent text-sm text-gray-700 outline-none [&::-webkit-search-cancel-button]:hidden"
-            aria-label="Buscar no Circuito Terê Verde"
-            aria-autocomplete="list"
-          />
-          {q && (
-            <button
-              onClick={handleClear}
-              className="flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-full border-none bg-gray-100 text-xs text-gray-500"
-              aria-label="Limpar busca"
-            >
-              <X className="size-3.5" aria-hidden />
-            </button>
+          {results && showResults && (
+            <SearchResults
+              results={results}
+              isLoading={search.isLoading}
+              onClose={handleCloseResults}
+            />
           )}
-        </search>
-        {results && showResults && (
-          <SearchResults
-            results={results}
-            isLoading={search.isLoading}
-            onClose={handleCloseResults}
-          />
-        )}
+        </SearchBar>
       </div>
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-12">
-        {/* Parques */}
         <section id="parques" className="mb-14">
           <h2 className="mb-1.5 text-xl text-green-800">Os 3 parques</h2>
           <p className="mb-6 text-sm text-gray-500">
@@ -174,14 +149,13 @@ export default function HomePage() {
           </p>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {parks.isLoading ? (
-              <p className="text-sm text-gray-500">Carregando parques...</p>
+              <LoadingMessage>Carregando parques...</LoadingMessage>
             ) : (
               (parks.data?.map((park) => <ParkCard key={park.id} park={park} />) ?? [])
             )}
           </div>
         </section>
 
-        {/* Acesso rápido */}
         <section className="mb-14" aria-label="Acesso rápido">
           <h2 className="mb-1.5 text-xl text-green-800">Acesso rápido</h2>
           <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
@@ -198,7 +172,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Próximos eventos */}
         <section id="eventos" className="mb-14">
           <div className="mb-6 flex flex-wrap items-end justify-between gap-2">
             <div>
@@ -213,40 +186,11 @@ export default function HomePage() {
           </div>
           <div className="flex flex-col gap-3">
             {events.isLoading ? (
-              <p className="text-sm text-gray-500">Carregando eventos...</p>
+              <LoadingMessage>Carregando eventos...</LoadingMessage>
             ) : (
-              upcomingEvents.map((event) => {
-                const evDate = new Date(event.date + "T00:00:00");
-                const day = evDate.getDate().toString().padStart(2, "0");
-                const month = evDate
-                  .toLocaleDateString("pt-BR", { month: "short" })
-                  .replace(".", "")
-                  .toUpperCase();
-                return (
-                  <article
-                    key={event.id}
-                    className="flex items-center gap-4 rounded-md border border-gray-100 bg-white px-5 py-4 transition hover:shadow-sm"
-                  >
-                    <div className="min-w-11 shrink-0 rounded-md bg-green-700 px-3 py-1.5 text-center text-white">
-                      <span className="block text-lg leading-tight font-semibold">{day}</span>
-                      <span className="text-xs uppercase opacity-80">{month}</span>
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <h3 className="text-sm font-medium text-gray-900">{event.title}</h3>
-                      <p className="mt-0.5 text-sm text-gray-500">
-                        {event.park.name} ·{" "}
-                        {(event.priceCents / 100).toLocaleString("pt-BR", {
-                          style: "currency",
-                          currency: "BRL",
-                        })}
-                      </p>
-                    </div>
-                    <span className="shrink-0 rounded-full bg-green-100 px-2.5 py-1 text-xs whitespace-nowrap text-green-800">
-                      {categoryLabels[event.category]}
-                    </span>
-                  </article>
-                );
-              })
+              upcomingEvents.map((event) => (
+                <EventCard key={event.id} event={event} variant="compact" />
+              ))
             )}
           </div>
         </section>

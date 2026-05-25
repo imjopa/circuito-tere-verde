@@ -1,18 +1,21 @@
-import { Leaf, Search, X } from "lucide-react";
-import { useCallback } from "react";
+import { Leaf } from "lucide-react";
+import { useCallback, useMemo } from "react";
 
-import Navbar from "@/components/layout/Navbar";
+import { PageLayout } from "@/components/layout/PageLayout";
 import TrailCard from "@/components/trails/TrailCard";
 import { EmptyFilterResults } from "@/components/ui/EmptyFilterResults";
-import { FilterChip } from "@/components/ui/FilterChip";
+import { FilterGroup } from "@/components/ui/FilterGroup";
+import { LoadingMessage, QueryErrorState } from "@/components/ui/QueryFeedback";
+import { SearchBar } from "@/components/ui/SearchBar";
 import { useParks } from "@/hooks/data/useParks";
 import { useTrailFilters, useTrails } from "@/hooks/data/useTrails";
+import { difficultyLabels } from "@/lib/constants/labels";
+import { formatCountLabel } from "@/lib/format";
 
-const difficultyLabels = {
-  easy: "Fácil",
-  medium: "Moderado",
-  hard: "Difícil",
-} as const;
+const difficultyOptions = Object.entries(difficultyLabels).map(([value, label]) => ({
+  value,
+  label,
+}));
 
 export default function TrailsPage() {
   const parks = useParks();
@@ -32,96 +35,63 @@ export default function TrailsPage() {
     [setFilters],
   );
 
+  const parkOptions = useMemo(
+    () => parks.data?.map((p) => ({ value: p.id, label: p.name })) ?? [],
+    [parks.data],
+  );
+
+  const trailCount = trails.data?.length ?? 0;
+
   return (
-    <div className="min-h-screen">
-      <Navbar />
+    <PageLayout
+      title="Trilhas"
+      subtitle={formatCountLabel(trailCount, "trilha encontrada", "trilhas encontradas")}
+    >
+      <SearchBar
+        value={q}
+        onChange={handleSearch}
+        onClear={handleClearSearch}
+        placeholder="Buscar trilha ou parque..."
+        ariaLabel="Buscar trilha ou parque..."
+        className="mb-5"
+      />
 
-      <div className="bg-green-700 px-6 py-8">
-        <div className="mx-auto max-w-6xl">
-          <h1 className="text-3xl text-white">Trilhas</h1>
-          <p className="mt-1 text-sm text-white/65">
-            {trails.data?.length ?? 0} trilha{trails.data?.length !== 1 ? "s" : ""} encontrada
-            {trails.data?.length !== 1 ? "s" : ""}
-          </p>
+      <FilterGroup
+        label="Dificuldade"
+        options={difficultyOptions}
+        value={difficulty}
+        onChange={(value) => setFilters({ difficulty: value })}
+        className="mb-3.5 flex flex-wrap items-center gap-3"
+      />
+
+      <FilterGroup
+        label="Parque"
+        options={parkOptions}
+        value={park}
+        onChange={(value) => setFilters({ park: value })}
+        allLabel="Todos"
+        className="mb-3.5 flex flex-wrap items-center gap-3"
+      />
+
+      {trails.isLoading ? (
+        <LoadingMessage>Carregando trilhas...</LoadingMessage>
+      ) : trails.error ? (
+        <QueryErrorState onRetry={() => trails.refetch()}>
+          Erro ao carregar trilhas.
+        </QueryErrorState>
+      ) : !trails.data?.length ? (
+        <EmptyFilterResults
+          icon={Leaf}
+          message="Nenhuma trilha encontrada com esses filtros."
+          onClearFilters={handleClearFilters}
+        />
+      ) : (
+        <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          {trails.data.map((trail) => (
+            <TrailCard key={trail.id} trail={trail} />
+          ))}
         </div>
-      </div>
-
-      <main className="mx-auto max-w-6xl px-6 py-7">
-        <div className="mb-5 flex items-center gap-3 rounded-full border border-gray-100 bg-white px-4 py-2.5 shadow-sm">
-          <Search className="size-5 shrink-0 text-gray-400" aria-hidden />
-          <input
-            type="text"
-            aria-label="Buscar trilha ou parque..."
-            placeholder="Buscar trilha ou parque..."
-            value={q}
-            onChange={handleSearch}
-            className="font-body flex-1 border-none bg-transparent text-sm outline-none"
-          />
-          {q && (
-            <button
-              onClick={handleClearSearch}
-              className="flex size-5 items-center justify-center rounded-full bg-gray-100 text-gray-500"
-              aria-label="Limpar busca"
-            >
-              <X className="size-3.5" aria-hidden />
-            </button>
-          )}
-        </div>
-
-        <div className="mb-3.5 flex flex-wrap items-center gap-3">
-          <span className="text-sm whitespace-nowrap text-gray-500">Dificuldade:</span>
-          <div className="flex flex-wrap gap-2">
-            <FilterChip active={difficulty === ""} onClick={() => setFilters({ difficulty: "" })}>
-              Todas
-            </FilterChip>
-            {Object.entries(difficultyLabels).map(([value, label]) => (
-              <FilterChip
-                key={value}
-                active={difficulty === value}
-                // oxlint-disable-next-line react-perf/jsx-no-new-function-as-prop
-                onClick={() => setFilters({ difficulty: value })}
-              >
-                {label}
-              </FilterChip>
-            ))}
-          </div>
-        </div>
-
-        <div className="mb-3.5 flex flex-wrap items-center gap-3">
-          <span className="text-sm whitespace-nowrap text-gray-500">Parque:</span>
-          <div className="flex flex-wrap gap-2">
-            <FilterChip active={park === ""} onClick={() => setFilters({ park: "" })}>
-              Todos
-            </FilterChip>
-            {parks.data?.map((filter) => (
-              <FilterChip
-                key={filter.id}
-                active={park === filter.id}
-                // oxlint-disable-next-line react-perf/jsx-no-new-function-as-prop
-                onClick={() => setFilters({ park: filter.id })}
-              >
-                {filter.name}
-              </FilterChip>
-            ))}
-          </div>
-        </div>
-
-        {trails.isLoading ? (
-          <p className="px-4 py-16 text-center text-sm text-gray-500">Carregando trilhas...</p>
-        ) : trails.data?.length && trails.data.length > 0 ? (
-          <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {trails.data.map((trail) => (
-              <TrailCard key={trail.id} trail={trail} />
-            ))}
-          </div>
-        ) : (
-          <EmptyFilterResults
-            icon={Leaf}
-            message="Nenhuma trilha encontrada com esses filtros."
-            onClearFilters={handleClearFilters}
-          />
-        )}
-      </main>
-    </div>
+      )}
+    </PageLayout>
   );
 }

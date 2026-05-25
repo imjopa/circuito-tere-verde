@@ -1,32 +1,18 @@
 import type { Trail } from "@circuito/db/client";
 import { Mountain, Ruler, Timer } from "lucide-react";
-import { tv } from "tailwind-variants";
 
 import DifficultyBadge from "@/components/ui/DifficultyBadge";
 import StatusBadge from "@/components/ui/StatusBadge";
+import { parkCardHeader } from "@/lib/theme/parkVariants";
 
 export interface TrailCardProps {
   trail: Trail;
 }
 
-const trailCardHeader = tv({
-  base: "relative flex h-24 flex-col justify-end bg-green-700 p-3 px-4 [&>:first-child]:absolute [&>:first-child]:top-2.5 [&>:first-child]:right-3",
-  variants: {
-    park: {
-      "serra-dos-orgaos": "bg-linear-to-br from-green-900 to-green-800",
-      "tres-picos": "bg-linear-to-br from-green-800 to-green-700",
-      "montanhas-teresopolis": "bg-linear-to-br from-green-700 to-green-600",
-    } as Record<string, string>,
-  },
-  defaultVariants: {
-    park: "serra-dos-orgaos",
-  },
-});
-
 export default function TrailCard({ trail }: TrailCardProps) {
   return (
     <article className="overflow-hidden rounded-lg border border-gray-100 bg-white transition hover:-translate-y-0.5 hover:shadow-md">
-      <div className={trailCardHeader({ park: trail.parkId })}>
+      <div className={parkCardHeader({ park: trail.parkId })}>
         <StatusBadge status={trail.status} />
         <h3 className="font-display text-base text-white">{trail.name}</h3>
       </div>
