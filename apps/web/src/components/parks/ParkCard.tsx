@@ -20,7 +20,7 @@ export interface ParkCardProps {
 
 export default function ParkCard({ park }: ParkCardProps) {
   return (
-    <article className={variants({ park: park.id })}>
+    <article className={variants({ park: park.slug })}>
       <div className="mb-3 flex items-center justify-between">
         <span className="text-xs font-medium tracking-wide text-gray-500 uppercase">
           {park.type}

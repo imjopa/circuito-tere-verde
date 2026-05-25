@@ -1,3 +1,4 @@
+import type { Park } from "@circuito/db/client";
 import { Clock, Globe, MapPin, Phone, Ticket } from "lucide-react";
 import { parseAsString, useQueryState } from "nuqs";
 
@@ -8,9 +9,9 @@ import { PARK_MAPS } from "@/lib/constants/parkMaps";
 
 export default function MapsPage() {
   const parks = useParks();
-  const [parkId, setParkId] = useQueryState("park", parseAsString.withDefault(""));
-  const activePark = parks.data?.find((p) => p.id === parkId);
-  const activeMapData = PARK_MAPS[parkId ?? ""] ?? PARK_MAPS["serra-dos-orgaos"]!;
+  const [parkSlug, setParkSlug] = useQueryState("park", parseAsString.withDefault(""));
+  const activePark = parks.data?.find((p) => p.slug === parkSlug);
+  const activeMapData = PARK_MAPS[parkSlug ?? ""] ?? PARK_MAPS["serra-dos-orgaos"]!;
 
   if (parks.isLoading) {
     return (
@@ -37,10 +38,10 @@ export default function MapsPage() {
       <div className="flex flex-wrap gap-3">
         {parks.data?.map((park) => (
           <ParkSelectorButton
-            key={park.id}
+            key={park.slug}
             park={park}
-            isActive={parkId === park.id}
-            onSelect={() => setParkId(park.id)}
+            isActive={parkSlug === park.slug}
+            onSelect={() => setParkSlug(park.slug)}
           />
         ))}
       </div>
@@ -128,7 +129,7 @@ function ParkSelectorButton({
   isActive,
   onSelect,
 }: {
-  park: { id: string; name: string; type: string };
+  park: Park;
   isActive: boolean;
   onSelect: () => void;
 }) {
