@@ -47,6 +47,24 @@ const config = defineConfig({
       ],
     },
   },
+  overrides: [
+    {
+      files: ["apps/web/**"],
+      rules: {
+        "no-restricted-imports": [
+          "error",
+          {
+            paths: [
+              {
+                name: "@circuito/db",
+                message: "Use @circuito/db/client instead",
+              },
+            ],
+          },
+        ],
+      },
+    },
+  ],
 });
 
 export default config;
