@@ -183,7 +183,7 @@ circuito-tere-verde/
 
 ## 📋 Requisitos Não-Funcionais
 
-- [x] RNF01 — Interface responsiva (mobile-first)
+- [x] RNF01 — Interface responsiva
 - [x] RNF02 — Carregamento rápido (Vite + React Compiler)
 - [x] RNF03 — Acessibilidade (labels, roles, contraste)
 - [x] RNF04 — Código organizado em componentes reutilizáveis
