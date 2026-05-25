@@ -20,8 +20,8 @@ export function createParksRoutes(db: Db) {
 
   app.post("/", async (c) => {
     const body = await c.req.json<NewPark>();
-    await db.insert(parks).values(body);
-    return c.json(body, 201);
+    const [created] = await db.insert(parks).values(body).returning();
+    return c.json(created, 201);
   });
 
   app.patch("/:id", async (c) => {

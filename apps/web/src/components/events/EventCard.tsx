@@ -79,7 +79,13 @@ export function EventCard({ event, variant = "full" }: EventCardProps) {
         <div className="flex flex-wrap gap-3 text-sm text-gray-500">
           <span className="inline-flex items-center gap-1">
             <Clock className="size-3.5 shrink-0" aria-hidden />
-            {event.date} · {event.duration}
+            {new Date(event.date).toLocaleDateString("pt-BR", {
+              weekday: "long",
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+            })}{" "}
+            · {event.duration}
           </span>
           <span className="inline-flex items-center gap-1">
             <Coins className="size-3.5 shrink-0" aria-hidden />

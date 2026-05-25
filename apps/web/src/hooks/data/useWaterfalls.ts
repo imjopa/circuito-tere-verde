@@ -1,7 +1,7 @@
 import type { Park, Waterfall } from "@circuito/db/client";
 import { useQuery } from "@tanstack/react-query";
 import ky from "ky";
-import { parseAsStringEnum, useQueryStates } from "nuqs";
+import { parseAsString, parseAsStringEnum, useQueryStates } from "nuqs";
 
 const accessFilters = ["easy", "medium", "hard"];
 
@@ -17,6 +17,8 @@ export function useWaterfalls() {
 
 export function useWaterfallFilters() {
   return useQueryStates({
+    q: parseAsString.withDefault(""),
     access: parseAsStringEnum(accessFilters).withDefault(""),
+    park: parseAsString.withDefault(""),
   });
 }

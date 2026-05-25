@@ -36,7 +36,7 @@ export default function TrailsPage() {
   );
 
   const parkOptions = useMemo(
-    () => parks.data?.map((p) => ({ value: p.id, label: p.name })) ?? [],
+    () => parks.data?.map((p) => ({ value: p.slug, label: p.name })) ?? [],
     [parks.data],
   );
 

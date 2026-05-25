@@ -1,18 +1,29 @@
 import { parks, waterfalls, type NewWaterfall } from "@circuito/db";
 import type { Db, WaterfallAccess } from "@circuito/db";
-import { and, desc, eq, SQL } from "drizzle-orm";
+import { and, desc, eq, ilike, or, SQL, sql } from "drizzle-orm";
 import { Hono } from "hono";
 
 export function createWaterfallsRoutes(db: Db) {
   const app = new Hono();
 
   app.get("/", async (c) => {
-    const parkId = c.req.query("park");
+    const parkSlug = c.req.query("park");
     const access = c.req.query("access");
+    const searchQuery = c.req.query("q");
 
     const filters = [
-      parkId && eq(waterfalls.parkId, parkId),
+      parkSlug && eq(parks.slug, parkSlug),
       access && eq(waterfalls.access, access as WaterfallAccess),
+      searchQuery &&
+        or(
+          ilike(waterfalls.name, `%${searchQuery}%`),
+          ilike(waterfalls.parkName, `%${searchQuery}%`),
+          ilike(waterfalls.description, `%${searchQuery}%`),
+          ilike(waterfalls.accessibility, `%${searchQuery}%`),
+          ilike(waterfalls.howToGet, `%${searchQuery}%`),
+          ilike(parks.name, `%${searchQuery}%`),
+          sql`${waterfalls.tips}::text ilike ${`%${searchQuery}%`}`,
+        ),
     ].filter((f): f is SQL => Boolean(f));
 
     const query = db
@@ -42,8 +53,8 @@ export function createWaterfallsRoutes(db: Db) {
 
   app.post("/", async (c) => {
     const body = await c.req.json<NewWaterfall>();
-    await db.insert(waterfalls).values(body);
-    return c.json(body, 201);
+    const [created] = await db.insert(waterfalls).values(body).returning();
+    return c.json(created, 201);
   });
 
   app.patch("/:id", async (c) => {

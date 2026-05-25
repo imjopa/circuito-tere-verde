@@ -7,12 +7,12 @@ export function createTrailsRoutes(db: Db) {
   const app = new Hono();
 
   app.get("/", async (c) => {
-    const parkId = c.req.query("park");
+    const parkSlug = c.req.query("park");
     const difficulty = c.req.query("difficulty");
     const searchQuery = c.req.query("q");
 
     const filters = [
-      parkId && eq(trails.parkId, parkId),
+      parkSlug && eq(parks.slug, parkSlug),
       difficulty && eq(trails.difficulty, difficulty as TrailDifficulty),
       searchQuery &&
         or(
@@ -53,8 +53,8 @@ export function createTrailsRoutes(db: Db) {
 
   app.post("/", async (c) => {
     const body = await c.req.json<NewTrail>();
-    await db.insert(trails).values(body);
-    return c.json(body, 201);
+    const [created] = await db.insert(trails).values(body).returning();
+    return c.json(created, 201);
   });
 
   app.patch("/:id", async (c) => {

@@ -1,18 +1,28 @@
 import { events, parks, type NewParkEvent } from "@circuito/db";
 import type { Db, ParkEventCategory } from "@circuito/db";
-import { and, desc, eq, SQL } from "drizzle-orm";
+import { and, desc, eq, ilike, or, SQL, sql } from "drizzle-orm";
 import { Hono } from "hono";
 
 export function createEventsRoutes(db: Db) {
   const app = new Hono();
 
   app.get("/", async (c) => {
-    const parkId = c.req.query("park");
+    const parkSlug = c.req.query("park");
     const category = c.req.query("category");
+    const searchQuery = c.req.query("q");
 
     const filters = [
-      parkId && eq(events.parkId, parkId),
+      parkSlug && eq(parks.slug, parkSlug),
       category && eq(events.category, category as ParkEventCategory),
+      searchQuery &&
+        or(
+          ilike(events.title, `%${searchQuery}%`),
+          ilike(events.description, `%${searchQuery}%`),
+          ilike(events.duration, `%${searchQuery}%`),
+          ilike(events.category, `%${searchQuery}%`),
+          ilike(parks.name, `%${searchQuery}%`),
+          sql`${events.requirements}::text ilike ${`%${searchQuery}%`}`,
+        ),
     ].filter((f): f is SQL => Boolean(f));
 
     const query = db
@@ -42,8 +52,8 @@ export function createEventsRoutes(db: Db) {
 
   app.post("/", async (c) => {
     const body = await c.req.json<NewParkEvent>();
-    await db.insert(events).values(body);
-    return c.json(body, 201);
+    const [created] = await db.insert(events).values(body).returning();
+    return c.json(created, 201);
   });
 
   app.patch("/:id", async (c) => {

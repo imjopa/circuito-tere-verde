@@ -1,4 +1,4 @@
-import type { Trail } from "@circuito/db/client";
+import type { Park, Trail } from "@circuito/db/client";
 import { Mountain, Ruler, Timer } from "lucide-react";
 
 import DifficultyBadge from "@/components/ui/DifficultyBadge";
@@ -6,13 +6,13 @@ import StatusBadge from "@/components/ui/StatusBadge";
 import { parkCardHeader } from "@/lib/theme/parkVariants";
 
 export interface TrailCardProps {
-  trail: Trail;
+  trail: Trail & { park: Park };
 }
 
 export default function TrailCard({ trail }: TrailCardProps) {
   return (
     <article className="overflow-hidden rounded-lg border border-gray-100 bg-white transition hover:-translate-y-0.5 hover:shadow-md">
-      <div className={parkCardHeader({ park: trail.parkId })}>
+      <div className={parkCardHeader({ park: trail.park.slug })}>
         <StatusBadge status={trail.status} />
         <h3 className="font-display text-base text-white">{trail.name}</h3>
       </div>

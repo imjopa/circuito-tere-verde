@@ -1,4 +1,4 @@
-import type { Waterfall } from "@circuito/db/client";
+import type { Park, Waterfall } from "@circuito/db/client";
 import { ArrowUp, Droplets, Trees } from "lucide-react";
 
 import { DetailSection } from "@/components/ui/DetailSection";
@@ -6,11 +6,11 @@ import { waterfallAccessLabels } from "@/lib/constants/labels";
 import { accessLabelVariants, waterfallCardHeader } from "@/lib/theme/parkVariants";
 
 export interface WaterfallCardProps {
-  waterfall: Waterfall;
+  waterfall: Waterfall & { park: Park };
 }
 
 export function WaterfallCard({ waterfall }: WaterfallCardProps) {
-  const headerClass = waterfallCardHeader({ park: waterfall.parkId });
+  const headerClass = waterfallCardHeader({ park: waterfall.park.slug });
   const accessClass = accessLabelVariants({ access: waterfall.access });
 
   return (

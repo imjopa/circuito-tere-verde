@@ -1,7 +1,7 @@
 import type { Park, ParkEvent } from "@circuito/db/client";
 import { useQuery } from "@tanstack/react-query";
 import ky from "ky";
-import { parseAsStringEnum, useQueryStates } from "nuqs";
+import { parseAsString, parseAsStringEnum, useQueryStates } from "nuqs";
 
 const categoryFilters = ["guided_trail", "education", "volunteer", "workshop"];
 
@@ -16,6 +16,8 @@ export function useEvents() {
 
 export function useEventFilters() {
   return useQueryStates({
+    q: parseAsString.withDefault(""),
     category: parseAsStringEnum(categoryFilters).withDefault(""),
+    park: parseAsString.withDefault(""),
   });
 }
