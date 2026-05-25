@@ -11,7 +11,6 @@ interface AdminParkCardProps {
 export function AdminParkCard({ park, onEdit }: AdminParkCardProps) {
   return (
     <AdminListCard
-      // oxlint-disable-next-line react-perf/jsx-no-jsx-as-prop
       badge={<ParkStatusBadge status={park.status} />}
       title={park.name}
       meta={`${park.type} · ${park.areaHectares.toLocaleString("pt-BR")} ha`}

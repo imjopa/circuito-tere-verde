@@ -1,30 +1,26 @@
 import type { NewWaterfall, Park, Waterfall, WaterfallAccess } from "@circuito/db/client";
 import { useMutation } from "@tanstack/react-query";
 import ky from "ky";
-import { Plus } from "lucide-react";
+import { AlertTriangle, Plus } from "lucide-react";
 import { useCallback, useState } from "react";
 
-import { Input } from "@/components/ui/Input";
-import { Modal, ModalFooter } from "@/components/ui/Modal";
+import { AdminWaterfallCard } from "@/components/admin/AdminWaterfallCard";
+import {
+  WaterfallFormFields,
+  type WaterfallFormState,
+} from "@/components/admin/WaterfallFormFields";
+import { ConfirmDialog, Modal, ModalFooter } from "@/components/ui/Modal";
 import { LoadingMessage } from "@/components/ui/QueryFeedback";
-import { Select } from "@/components/ui/Select";
-import { TextArea } from "@/components/ui/TextArea";
 import { useParks } from "@/hooks/data/useParks";
 import { useWaterfalls } from "@/hooks/data/useWaterfalls";
 import { parseCommaList } from "@/lib/admin-form-utils";
 import { queryClient } from "@/lib/query-client";
 
-const ACCESS_OPTIONS = [
-  { value: "easy", label: "Fácil" },
-  { value: "medium", label: "Médio" },
-  { value: "hard", label: "Difícil" },
-] as const;
-
-const EMPTY_FORM = {
+const EMPTY_FORM: WaterfallFormState = {
   name: "",
   parkId: "",
   heightMeters: "",
-  access: "easy" as WaterfallAccess,
+  access: "easy",
   allowsBathing: true,
   description: "",
   accessibility: "",
@@ -32,12 +28,48 @@ const EMPTY_FORM = {
   tips: "",
 };
 
+function waterfallToForm(waterfall: Waterfall): WaterfallFormState {
+  return {
+    name: waterfall.name,
+    parkId: waterfall.parkId,
+    heightMeters: String(waterfall.heightMeters),
+    access: waterfall.access,
+    allowsBathing: waterfall.allowsBathing,
+    description: waterfall.description,
+    accessibility: waterfall.accessibility,
+    howToGet: waterfall.howToGet,
+    tips: waterfall.tips.join(", "),
+  };
+}
+
+function formToPayload(form: WaterfallFormState, park: Park): NewWaterfall {
+  return {
+    name: form.name.trim(),
+    parkId: park.id,
+    parkName: park.name,
+    heightMeters: Number(form.heightMeters) || 0,
+    access: form.access,
+    allowsBathing: form.allowsBathing,
+    description: form.description.trim(),
+    accessibility: form.accessibility.trim(),
+    howToGet: form.howToGet.trim(),
+    tips: parseCommaList(form.tips),
+  };
+}
+
 export default function AdminWaterfallsPage() {
   const waterfalls = useWaterfalls();
   const parks = useParks();
+
   const [showCreate, setShowCreate] = useState(false);
-  const [form, setForm] = useState(EMPTY_FORM);
-  const [error, setError] = useState<string | null>(null);
+  const [createForm, setCreateForm] = useState(EMPTY_FORM);
+  const [createError, setCreateError] = useState<string | null>(null);
+
+  const [editingWaterfall, setEditingWaterfall] = useState<Waterfall | null>(null);
+  const [editForm, setEditForm] = useState<WaterfallFormState | null>(null);
+  const [editError, setEditError] = useState<string | null>(null);
+
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
 
   const createWaterfall = useMutation({
     mutationFn: (data: NewWaterfall) =>
@@ -45,50 +77,121 @@ export default function AdminWaterfallsPage() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["waterfalls"] });
       setShowCreate(false);
-      setForm(EMPTY_FORM);
-      setError(null);
+      setCreateForm(EMPTY_FORM);
+      setCreateError(null);
     },
     onError: () =>
-      setError("Não foi possível criar a cachoeira. Verifique os dados e tente novamente."),
+      setCreateError("Não foi possível criar a cachoeira. Verifique os dados e tente novamente."),
   });
 
-  const updateField = useCallback(
-    (field: keyof typeof EMPTY_FORM) =>
+  const updateWaterfall = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: Partial<NewWaterfall> }) =>
+      ky.patch(`/api/waterfalls/${id}`, { json: data }).json<Waterfall>(),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["waterfalls"] });
+      setEditingWaterfall(null);
+      setEditForm(null);
+      setEditError(null);
+    },
+    onError: () =>
+      setEditError("Não foi possível salvar a cachoeira. Verifique os dados e tente novamente."),
+  });
+
+  const deleteWaterfall = useMutation({
+    mutationFn: (id: string) => ky.delete(`/api/waterfalls/${id}`).json<Waterfall>(),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["waterfalls"] });
+      setDeleteTargetId(null);
+    },
+  });
+
+  const updateCreateField = useCallback(
+    (field: keyof WaterfallFormState) =>
       (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const value =
-          e.target.type === "checkbox" ? (e.target as HTMLInputElement).checked : e.target.value;
-        setForm((prev) => ({ ...prev, [field]: value }));
+          field === "access"
+            ? (e.target.value as WaterfallAccess)
+            : e.target.type === "checkbox"
+              ? (e.target as HTMLInputElement).checked
+              : e.target.value;
+        setCreateForm((prev) => ({ ...prev, [field]: value }));
       },
     [],
   );
 
-  const handleSubmit = useCallback(async () => {
-    const park = parks.data?.find((p) => p.id === form.parkId);
-    if (!form.name.trim() || !park) {
-      setError("Preencha o nome e selecione um parque.");
-      return;
-    }
+  const updateEditField = useCallback(
+    (field: keyof WaterfallFormState) =>
+      (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        const value =
+          field === "access"
+            ? (e.target.value as WaterfallAccess)
+            : e.target.type === "checkbox"
+              ? (e.target as HTMLInputElement).checked
+              : e.target.value;
+        setEditForm((prev) => (prev ? { ...prev, [field]: value } : prev));
+      },
+    [],
+  );
 
-    setError(null);
-    await createWaterfall.mutateAsync({
-      name: form.name.trim(),
-      parkId: park.id,
-      parkName: park.name,
-      heightMeters: Number(form.heightMeters) || 0,
-      access: form.access,
-      allowsBathing: form.allowsBathing,
-      description: form.description.trim(),
-      accessibility: form.accessibility.trim(),
-      howToGet: form.howToGet.trim(),
-      tips: parseCommaList(form.tips),
-    });
-  }, [form, parks.data, createWaterfall]);
+  const submitForm = useCallback(
+    async (form: WaterfallFormState, mode: "create" | "edit") => {
+      const park = parks.data?.find((p) => p.id === form.parkId);
+      if (!form.name.trim() || !park) {
+        const message = "Preencha o nome e selecione um parque.";
+        if (mode === "create") setCreateError(message);
+        else setEditError(message);
+        return;
+      }
 
-  const handleClose = useCallback(() => {
-    setShowCreate(false);
-    setForm(EMPTY_FORM);
-    setError(null);
+      const payload = formToPayload(form, park);
+
+      if (mode === "create") {
+        setCreateError(null);
+        await createWaterfall.mutateAsync(payload);
+      } else if (editingWaterfall) {
+        setEditError(null);
+        await updateWaterfall.mutateAsync({ id: editingWaterfall.id, data: payload });
+      }
+    },
+    [parks.data, createWaterfall, updateWaterfall, editingWaterfall],
+  );
+
+  const handleCreateSubmit = useCallback(
+    () => submitForm(createForm, "create"),
+    [createForm, submitForm],
+  );
+
+  const handleEditSubmit = useCallback(async () => {
+    if (!editForm) return;
+    await submitForm(editForm, "edit");
+  }, [editForm, submitForm]);
+
+  const handleOpenEdit = useCallback((waterfall: Waterfall) => {
+    setEditingWaterfall(waterfall);
+    setEditForm(waterfallToForm(waterfall));
+    setEditError(null);
   }, []);
+
+  const handleCloseCreate = useCallback(() => {
+    setShowCreate(false);
+    setCreateForm(EMPTY_FORM);
+    setCreateError(null);
+  }, []);
+
+  const handleCloseEdit = useCallback(() => {
+    setEditingWaterfall(null);
+    setEditForm(null);
+    setEditError(null);
+  }, []);
+
+  const handleCloseDelete = useCallback(() => {
+    setDeleteTargetId(null);
+  }, []);
+
+  const executeDelete = useCallback(async () => {
+    if (!deleteTargetId) return;
+    await deleteWaterfall.mutateAsync(deleteTargetId);
+  }, [deleteTargetId, deleteWaterfall]);
 
   return (
     <>
@@ -111,7 +214,12 @@ export default function AdminWaterfallsPage() {
           </div>
           <div className="flex flex-col gap-3">
             {waterfalls.data?.map((wf) => (
-              <WaterfallCard key={wf.id} waterfall={wf} />
+              <AdminWaterfallCard
+                key={wf.id}
+                waterfall={wf}
+                onEdit={handleOpenEdit}
+                onDelete={setDeleteTargetId}
+              />
             ))}
           </div>
         </section>
@@ -120,145 +228,73 @@ export default function AdminWaterfallsPage() {
       <Modal
         open={showCreate}
         title="Nova cachoeira"
-        onClose={handleClose}
+        onClose={handleCloseCreate}
         ariaLabel="Nova cachoeira"
       >
         <div className="flex max-h-[60vh] flex-col gap-4 overflow-y-auto pr-1">
-          {error && (
+          {createError && (
             <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-              {error}
+              {createError}
             </p>
           )}
-
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="wfName" className="text-sm font-medium text-gray-600">
-              Nome
-            </label>
-            <Input id="wfName" value={form.name} onChange={updateField("name")} required />
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="wfPark" className="text-sm font-medium text-gray-600">
-              Parque
-            </label>
-            <Select id="wfPark" value={form.parkId} onChange={updateField("parkId")} required>
-              <option value="">Selecione um parque</option>
-              {parks.data?.map((park) => (
-                <option key={park.id} value={park.id}>
-                  {park.name}
-                </option>
-              ))}
-            </Select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="wfHeight" className="text-sm font-medium text-gray-600">
-                Altura (m)
-              </label>
-              <Input
-                id="wfHeight"
-                type="number"
-                min={0}
-                value={form.heightMeters}
-                onChange={updateField("heightMeters")}
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="wfAccess" className="text-sm font-medium text-gray-600">
-                Acesso
-              </label>
-              <Select id="wfAccess" value={form.access} onChange={updateField("access")}>
-                {ACCESS_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </Select>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <input
-              id="wfBathing"
-              type="checkbox"
-              checked={form.allowsBathing}
-              onChange={updateField("allowsBathing")}
-              className="size-4"
-              aria-label="Permite banho"
-            />
-            <label htmlFor="wfBathing" className="text-sm text-gray-700">
-              Permite banho
-            </label>
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="wfDescription" className="text-sm font-medium text-gray-600">
-              Descrição
-            </label>
-            <TextArea
-              id="wfDescription"
-              value={form.description}
-              onChange={updateField("description")}
-              rows={3}
-            />
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="wfAccessibility" className="text-sm font-medium text-gray-600">
-              Acessibilidade
-            </label>
-            <TextArea
-              id="wfAccessibility"
-              value={form.accessibility}
-              onChange={updateField("accessibility")}
-              rows={2}
-            />
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="wfHowToGet" className="text-sm font-medium text-gray-600">
-              Como chegar
-            </label>
-            <TextArea
-              id="wfHowToGet"
-              value={form.howToGet}
-              onChange={updateField("howToGet")}
-              rows={2}
-            />
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="wfTips" className="text-sm font-medium text-gray-600">
-              Dicas
-            </label>
-            <TextArea
-              id="wfTips"
-              value={form.tips}
-              onChange={updateField("tips")}
-              rows={2}
-              placeholder="Separados por vírgula"
-            />
-          </div>
+          <WaterfallFormFields
+            idPrefix="create-wf"
+            form={createForm}
+            parks={parks.data}
+            onFieldChange={updateCreateField}
+          />
         </div>
         <ModalFooter
-          onCancel={handleClose}
-          onConfirm={handleSubmit}
+          onCancel={handleCloseCreate}
+          onConfirm={handleCreateSubmit}
           confirmLabel={createWaterfall.isPending ? "Salvando…" : "Criar cachoeira"}
         />
       </Modal>
-    </>
-  );
-}
 
-function WaterfallCard({ waterfall }: { waterfall: Waterfall & { park: Park } }) {
-  return (
-    <div className="rounded-lg border border-gray-100 bg-white px-5 py-4 transition hover:shadow-sm">
-      <p className="text-sm font-medium text-gray-900">{waterfall.name}</p>
-      <p className="text-sm text-gray-500">
-        {waterfall.parkName} · {waterfall.heightMeters} m ·{" "}
-        {waterfall.allowsBathing ? "Permite banho" : "Sem banho"}
-      </p>
-    </div>
+      <Modal
+        open={!!editingWaterfall && !!editForm}
+        title="Editar cachoeira"
+        onClose={handleCloseEdit}
+        ariaLabel="Editar cachoeira"
+      >
+        <div className="flex max-h-[60vh] flex-col gap-4 overflow-y-auto pr-1">
+          {editError && (
+            <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {editError}
+            </p>
+          )}
+          {editForm && (
+            <WaterfallFormFields
+              idPrefix="edit-wf"
+              form={editForm}
+              parks={parks.data}
+              onFieldChange={updateEditField}
+            />
+          )}
+        </div>
+        <ModalFooter
+          onCancel={handleCloseEdit}
+          onConfirm={handleEditSubmit}
+          confirmLabel={updateWaterfall.isPending ? "Salvando…" : "Salvar alterações"}
+        />
+      </Modal>
+
+      <ConfirmDialog
+        open={!!deleteTargetId}
+        onCancel={handleCloseDelete}
+        onConfirm={executeDelete}
+        message={
+          <p className="rounded-md border border-red-200 bg-red-50 px-4 py-3.5 text-sm leading-relaxed text-gray-700">
+            <span className="inline-flex items-start gap-1.5">
+              <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
+              <span>
+                Esta ação é <strong>irreversível</strong>. A cachoeira será removida permanentemente
+                da listagem.
+              </span>
+            </span>
+          </p>
+        }
+      />
+    </>
   );
 }

@@ -17,7 +17,6 @@ export function AdminTrailCard({ trail, onEdit, onDelete }: AdminTrailCardProps)
 
   return (
     <AdminListCard
-      // oxlint-disable-next-line react-perf/jsx-no-jsx-as-prop
       badge={<StatusBadge status={trail.status} />}
       title={trail.name}
       meta={`${trail.parkName} · ${trail.difficulty} · ${distance} km`}

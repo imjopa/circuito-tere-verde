@@ -1,63 +1,95 @@
-import type { NewTrail, Trail, TrailDifficulty, TrailStatus } from "@circuito/db/client";
+import type { NewTrail, Park, Trail, TrailDifficulty, TrailStatus } from "@circuito/db/client";
 import { useMutation } from "@tanstack/react-query";
 import ky from "ky";
 import { AlertTriangle, Plus } from "lucide-react";
 import { useCallback, useState } from "react";
 
 import { AdminTrailCard } from "@/components/admin/AdminTrailCard";
-import { Input } from "@/components/ui/Input";
+import { TrailFormFields, type TrailFormState } from "@/components/admin/TrailFormFields";
 import { ConfirmDialog, Modal, ModalFooter } from "@/components/ui/Modal";
 import { LoadingMessage } from "@/components/ui/QueryFeedback";
-import { Select } from "@/components/ui/Select";
-import StatusBadge from "@/components/ui/StatusBadge";
-import { TextArea } from "@/components/ui/TextArea";
 import { useParks } from "@/hooks/data/useParks";
 import { useTrails } from "@/hooks/data/useTrails";
 import { parseCommaList } from "@/lib/admin-form-utils";
 import { queryClient } from "@/lib/query-client";
 
-const DEFAULT_TRAIL_STATUS: TrailStatus = "open";
-
-const TRAIL_STATUS_OPTIONS = [
-  { value: "open", label: "Aberta" },
-  { value: "closed", label: "Fechada" },
-  { value: "maintenance", label: "Manutenção" },
-  { value: "climate_risk", label: "Risco Climático" },
-  { value: "full", label: "Lotada" },
-] as const;
-
-const DIFFICULTY_OPTIONS = [
-  { value: "easy", label: "Fácil" },
-  { value: "medium", label: "Médio" },
-  { value: "hard", label: "Difícil" },
-] as const;
-
-const EMPTY_CREATE_FORM = {
+const EMPTY_FORM: TrailFormState = {
   name: "",
   parkId: "",
-  difficulty: "medium" as TrailDifficulty,
+  difficulty: "medium",
   distanceMeters: "",
   duration: "",
   altitudeMeters: "",
-  status: "open" as TrailStatus,
+  status: "open",
   description: "",
   conditions: "",
   tips: "",
 };
 
+function trailToForm(trail: Trail): TrailFormState {
+  return {
+    name: trail.name,
+    parkId: trail.parkId,
+    difficulty: trail.difficulty,
+    distanceMeters: String(trail.distanceMeters),
+    duration: trail.duration,
+    altitudeMeters: String(trail.altitudeMeters),
+    status: trail.status,
+    description: trail.description,
+    conditions: trail.conditions,
+    tips: trail.tips.join(", "),
+  };
+}
+
+function formToPayload(form: TrailFormState, park: Park): NewTrail {
+  return {
+    name: form.name.trim(),
+    parkId: park.id,
+    parkName: park.name,
+    difficulty: form.difficulty,
+    distanceMeters: Number(form.distanceMeters) || 0,
+    duration: form.duration.trim(),
+    altitudeMeters: Number(form.altitudeMeters) || 0,
+    status: form.status,
+    description: form.description.trim(),
+    conditions: form.conditions.trim(),
+    tips: parseCommaList(form.tips),
+  };
+}
+
 export default function AdminTrailsPage() {
   const trails = useTrails();
   const parks = useParks();
 
+  const [showCreate, setShowCreate] = useState(false);
+  const [createForm, setCreateForm] = useState(EMPTY_FORM);
+  const [createError, setCreateError] = useState<string | null>(null);
+
+  const [editingTrail, setEditingTrail] = useState<Trail | null>(null);
+  const [editForm, setEditForm] = useState<TrailFormState | null>(null);
+  const [editError, setEditError] = useState<string | null>(null);
+
+  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+
   const updateTrail = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: { status: TrailStatus; conditions: string } }) =>
+    mutationFn: ({ id, data }: { id: string; data: Partial<NewTrail> }) =>
       ky.patch(`/api/trails/${id}`, { json: data }).json<Trail>(),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["trails"] }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["trails"] });
+      setEditingTrail(null);
+      setEditForm(null);
+      setEditError(null);
+    },
+    onError: () =>
+      setEditError("Não foi possível salvar a trilha. Verifique os dados e tente novamente."),
   });
 
   const deleteTrail = useMutation({
     mutationFn: (id: string) => ky.delete(`/api/trails/${id}`).json<Trail>(),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["trails"] }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["trails"] });
+      setDeleteTargetId(null);
+    },
   });
 
   const createTrail = useMutation({
@@ -65,98 +97,100 @@ export default function AdminTrailsPage() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ["trails"] });
       setShowCreate(false);
-      setCreateForm(EMPTY_CREATE_FORM);
+      setCreateForm(EMPTY_FORM);
       setCreateError(null);
     },
     onError: () =>
       setCreateError("Não foi possível criar a trilha. Verifique os dados e tente novamente."),
   });
 
-  const [showCreate, setShowCreate] = useState(false);
-  const [createForm, setCreateForm] = useState(EMPTY_CREATE_FORM);
-  const [createError, setCreateError] = useState<string | null>(null);
-  const [editingTrail, setEditingTrail] = useState<Trail | null>(null);
-  const [trailStatusDraft, setTrailStatusDraft] = useState<TrailStatus | null>(null);
-  const [trailCondDraft, setTrailCondDraft] = useState("");
-  const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
+  const updateCreateField = useCallback(
+    (field: keyof TrailFormState) =>
+      (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        const value =
+          field === "difficulty"
+            ? (e.target.value as TrailDifficulty)
+            : field === "status"
+              ? (e.target.value as TrailStatus)
+              : e.target.value;
+        setCreateForm((prev) => ({ ...prev, [field]: value }));
+      },
+    [],
+  );
+
+  const updateEditField = useCallback(
+    (field: keyof TrailFormState) =>
+      (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        const value =
+          field === "difficulty"
+            ? (e.target.value as TrailDifficulty)
+            : field === "status"
+              ? (e.target.value as TrailStatus)
+              : e.target.value;
+        setEditForm((prev) => (prev ? { ...prev, [field]: value } : prev));
+      },
+    [],
+  );
+
+  const submitForm = useCallback(
+    async (form: TrailFormState, mode: "create" | "edit") => {
+      const park = parks.data?.find((p) => p.id === form.parkId);
+      if (!form.name.trim() || !park) {
+        const message = "Preencha o nome e selecione um parque.";
+        if (mode === "create") setCreateError(message);
+        else setEditError(message);
+        return;
+      }
+
+      const payload = formToPayload(form, park);
+
+      if (mode === "create") {
+        setCreateError(null);
+        await createTrail.mutateAsync(payload);
+      } else if (editingTrail) {
+        setEditError(null);
+        await updateTrail.mutateAsync({ id: editingTrail.id, data: payload });
+      }
+    },
+    [parks.data, createTrail, updateTrail, editingTrail],
+  );
+
+  const handleCreateSubmit = useCallback(
+    () => submitForm(createForm, "create"),
+    [createForm, submitForm],
+  );
+
+  const handleEditSubmit = useCallback(async () => {
+    if (!editForm) return;
+    await submitForm(editForm, "edit");
+  }, [editForm, submitForm]);
 
   const handleOpenEdit = useCallback((trail: Trail) => {
     setEditingTrail(trail);
-    setTrailStatusDraft(trail.status);
-    setTrailCondDraft(trail.conditions);
+    setEditForm(trailToForm(trail));
+    setEditError(null);
   }, []);
 
-  const saveTrail = useCallback(async () => {
-    if (!editingTrail) return;
-
-    await updateTrail.mutateAsync({
-      id: editingTrail.id,
-      data: {
-        status: trailStatusDraft ?? DEFAULT_TRAIL_STATUS,
-        conditions: trailCondDraft,
-      },
-    });
-    setEditingTrail(null);
-  }, [editingTrail, trailStatusDraft, trailCondDraft, updateTrail]);
-
-  const executeDelete = useCallback(async () => {
-    if (!deleteTargetId) return;
-    await deleteTrail.mutateAsync(deleteTargetId);
-    setDeleteTargetId(null);
-  }, [deleteTargetId, deleteTrail]);
-
-  const handleTrailStatusChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setTrailStatusDraft(e.target.value as TrailStatus);
-  }, []);
-
-  const handleTrailCondChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setTrailCondDraft(e.target.value);
+  const handleCloseCreate = useCallback(() => {
+    setShowCreate(false);
+    setCreateForm(EMPTY_FORM);
+    setCreateError(null);
   }, []);
 
   const handleCloseEdit = useCallback(() => {
     setEditingTrail(null);
+    setEditForm(null);
+    setEditError(null);
   }, []);
 
   const handleCloseDelete = useCallback(() => {
     setDeleteTargetId(null);
   }, []);
 
-  const updateCreateField = useCallback(
-    (field: keyof typeof EMPTY_CREATE_FORM) =>
-      (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-        setCreateForm((prev) => ({ ...prev, [field]: e.target.value }));
-      },
-    [],
-  );
-
-  const handleCreateSubmit = useCallback(async () => {
-    const park = parks.data?.find((p) => p.id === createForm.parkId);
-    if (!createForm.name.trim() || !park) {
-      setCreateError("Preencha o nome e selecione um parque.");
-      return;
-    }
-
-    setCreateError(null);
-    await createTrail.mutateAsync({
-      name: createForm.name.trim(),
-      parkId: park.id,
-      parkName: park.name,
-      difficulty: createForm.difficulty,
-      distanceMeters: Number(createForm.distanceMeters) || 0,
-      duration: createForm.duration.trim(),
-      altitudeMeters: Number(createForm.altitudeMeters) || 0,
-      status: createForm.status,
-      description: createForm.description.trim(),
-      conditions: createForm.conditions.trim(),
-      tips: parseCommaList(createForm.tips),
-    });
-  }, [createForm, parks.data, createTrail]);
-
-  const handleCloseCreate = useCallback(() => {
-    setShowCreate(false);
-    setCreateForm(EMPTY_CREATE_FORM);
-    setCreateError(null);
-  }, []);
+  const executeDelete = useCallback(async () => {
+    if (!deleteTargetId) return;
+    await deleteTrail.mutateAsync(deleteTargetId);
+  }, [deleteTargetId, deleteTrail]);
 
   return (
     <>
@@ -200,138 +234,12 @@ export default function AdminTrailsPage() {
               {createError}
             </p>
           )}
-
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="trailName" className="text-sm font-medium text-gray-600">
-              Nome
-            </label>
-            <Input id="trailName" value={createForm.name} onChange={updateCreateField("name")} />
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="trailPark" className="text-sm font-medium text-gray-600">
-              Parque
-            </label>
-            <Select id="trailPark" value={createForm.parkId} onChange={updateCreateField("parkId")}>
-              <option value="">Selecione um parque</option>
-              {parks.data?.map((park) => (
-                <option key={park.id} value={park.id}>
-                  {park.name}
-                </option>
-              ))}
-            </Select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="trailDifficulty" className="text-sm font-medium text-gray-600">
-                Dificuldade
-              </label>
-              <Select
-                id="trailDifficulty"
-                value={createForm.difficulty}
-                onChange={updateCreateField("difficulty")}
-              >
-                {DIFFICULTY_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </Select>
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="trailStatusCreate" className="text-sm font-medium text-gray-600">
-                Status
-              </label>
-              <Select
-                id="trailStatusCreate"
-                value={createForm.status}
-                onChange={updateCreateField("status")}
-              >
-                {TRAIL_STATUS_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </Select>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="trailDistance" className="text-sm font-medium text-gray-600">
-                Distância (m)
-              </label>
-              <Input
-                id="trailDistance"
-                type="number"
-                min={0}
-                value={createForm.distanceMeters}
-                onChange={updateCreateField("distanceMeters")}
-              />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <label htmlFor="trailAltitude" className="text-sm font-medium text-gray-600">
-                Altitude (m)
-              </label>
-              <Input
-                id="trailAltitude"
-                type="number"
-                min={0}
-                value={createForm.altitudeMeters}
-                onChange={updateCreateField("altitudeMeters")}
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="trailDuration" className="text-sm font-medium text-gray-600">
-              Duração
-            </label>
-            <Input
-              id="trailDuration"
-              value={createForm.duration}
-              onChange={updateCreateField("duration")}
-              placeholder="Ex.: 5–6h"
-            />
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="trailDescription" className="text-sm font-medium text-gray-600">
-              Descrição
-            </label>
-            <TextArea
-              id="trailDescription"
-              value={createForm.description}
-              onChange={updateCreateField("description")}
-              rows={3}
-            />
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="trailConditionsCreate" className="text-sm font-medium text-gray-600">
-              Condições atuais
-            </label>
-            <TextArea
-              id="trailConditionsCreate"
-              value={createForm.conditions}
-              onChange={updateCreateField("conditions")}
-              rows={2}
-            />
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="trailTips" className="text-sm font-medium text-gray-600">
-              Dicas
-            </label>
-            <TextArea
-              id="trailTips"
-              value={createForm.tips}
-              onChange={updateCreateField("tips")}
-              rows={2}
-              placeholder="Separados por vírgula"
-            />
-          </div>
+          <TrailFormFields
+            idPrefix="create-trail"
+            form={createForm}
+            parks={parks.data}
+            onFieldChange={updateCreateField}
+          />
         </div>
         <ModalFooter
           onCancel={handleCloseCreate}
@@ -341,51 +249,31 @@ export default function AdminTrailsPage() {
       </Modal>
 
       <Modal
-        open={!!editingTrail}
+        open={!!editingTrail && !!editForm}
         title="Editar trilha"
         onClose={handleCloseEdit}
         ariaLabel="Editar trilha"
       >
-        <p className="text-sm font-medium text-gray-900">{editingTrail?.name}</p>
-        <p className="-mt-1.5 text-sm text-gray-500">
-          {editingTrail?.parkName} · {editingTrail?.difficulty}
-        </p>
-
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="trailStatus" className="text-sm font-medium text-gray-600">
-            Status da trilha
-          </label>
-          <Select
-            id="trailStatus"
-            value={trailStatusDraft ?? ""}
-            onChange={handleTrailStatusChange}
-          >
-            {TRAIL_STATUS_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
-            ))}
-          </Select>
-          <div className="mt-1 flex items-center gap-2">
-            <span className="text-xs text-gray-500">Pré-visualização:</span>
-            <StatusBadge status={trailStatusDraft ?? DEFAULT_TRAIL_STATUS} />
-          </div>
+        <div className="flex max-h-[60vh] flex-col gap-4 overflow-y-auto pr-1">
+          {editError && (
+            <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+              {editError}
+            </p>
+          )}
+          {editForm && (
+            <TrailFormFields
+              idPrefix="edit-trail"
+              form={editForm}
+              parks={parks.data}
+              onFieldChange={updateEditField}
+            />
+          )}
         </div>
-
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="trailCond" className="text-sm font-medium text-gray-600">
-            Condições atuais
-          </label>
-          <TextArea
-            id="trailCond"
-            value={trailCondDraft}
-            onChange={handleTrailCondChange}
-            rows={3}
-            placeholder="Descreva as condições atuais da trilha..."
-          />
-        </div>
-
-        <ModalFooter onCancel={handleCloseEdit} onConfirm={saveTrail} />
+        <ModalFooter
+          onCancel={handleCloseEdit}
+          onConfirm={handleEditSubmit}
+          confirmLabel={updateTrail.isPending ? "Salvando…" : "Salvar alterações"}
+        />
       </Modal>
 
       <ConfirmDialog
@@ -393,20 +281,15 @@ export default function AdminTrailsPage() {
         onCancel={handleCloseDelete}
         onConfirm={executeDelete}
         message={
-          <>
-            <p className="rounded-md border border-red-200 bg-red-50 px-4 py-3.5 text-sm leading-relaxed text-gray-700">
-              <span className="inline-flex items-start gap-1.5">
-                <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
-                <span>
-                  Esta ação é <strong>irreversível</strong>. O registro será removido
-                  permanentemente da listagem.
-                </span>
+          <p className="rounded-md border border-red-200 bg-red-50 px-4 py-3.5 text-sm leading-relaxed text-gray-700">
+            <span className="inline-flex items-start gap-1.5">
+              <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden />
+              <span>
+                Esta ação é <strong>irreversível</strong>. O registro será removido permanentemente
+                da listagem.
               </span>
-            </p>
-            <p className="text-sm leading-normal text-gray-500 italic">
-              Em produção, esta ação exigiria confirmação dupla e registro em log de auditoria.
-            </p>
-          </>
+            </span>
+          </p>
         }
       />
     </>

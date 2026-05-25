@@ -30,6 +30,7 @@ const config = defineConfig({
   rules: {
     "oxc/no-map-spread": "off",
     "react/react-in-jsx-scope": "off",
+    "react-perf/jsx-no-jsx-as-prop": "off",
     "react-perf/jsx-no-new-function-as-prop": "off",
     "typescript/explicit-function-return-type": "off",
     "typescript/explicit-module-boundary-types": "off",

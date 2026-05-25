@@ -42,7 +42,6 @@ export function AdminEventCard({ event, onEdit, onDelete }: AdminEventCardProps)
   return (
     <AdminListCard
       badge={
-        // oxlint-disable-next-line react-perf/jsx-no-jsx-as-prop
         <div className={eventStatusPillVariants({ status: event.status })}>
           {EVENT_STATUS_OPTIONS.find((o) => o.value === event.status)?.label ?? event.status}
         </div>
