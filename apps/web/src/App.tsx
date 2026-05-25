@@ -5,7 +5,9 @@ import ProtectedRoute from "@/components/admin/ProtectedRoute";
 import AboutPage from "@/pages/AboutPage";
 import AdminDashboardPage from "@/pages/admin/AdminDashboardPage";
 import AdminEventsPage from "@/pages/admin/AdminEventsPage";
+import AdminParksPage from "@/pages/admin/AdminParksPage";
 import AdminTrailsPage from "@/pages/admin/AdminTrailsPage";
+import AdminWaterfallsPage from "@/pages/admin/AdminWaterfallsPage";
 import AdminLoginPage from "@/pages/AdminLoginPage";
 import ContactPage from "@/pages/ContactPage";
 import EventsPage from "@/pages/EventsPage";
@@ -32,7 +34,9 @@ export default function App() {
       <Route path="/admin" Component={AdminLoginPage} />
       <Route Component={PrivateLayout}>
         <Route path="/admin/dashboard" Component={AdminDashboardPage} />
+        <Route path="/admin/parques" Component={AdminParksPage} />
         <Route path="/admin/trilhas" Component={AdminTrailsPage} />
+        <Route path="/admin/cachoeiras" Component={AdminWaterfallsPage} />
         <Route path="/admin/eventos" Component={AdminEventsPage} />
       </Route>
 

@@ -2,11 +2,11 @@ import { date, index, integer, jsonb, pgTable, text, uuid } from "drizzle-orm/pg
 
 import { parks } from "./park.js";
 
-const parkEventCategory = ["guided_trail", "education", "volunteer", "workshop"] as const;
-export type ParkEventCategory = (typeof parkEventCategory)[number];
+export const eventCategory = ["guided_trail", "education", "volunteer", "workshop"] as const;
+export type ParkEventCategory = (typeof eventCategory)[number];
 
-const parkEventStatus = ["open", "few_spots", "full", "cancelled"] as const;
-export type ParkEventStatus = (typeof parkEventStatus)[number];
+export const eventStatus = ["open", "few_spots", "full", "cancelled"] as const;
+export type ParkEventStatus = (typeof eventStatus)[number];
 
 export const events = pgTable(
   "events",
@@ -19,9 +19,9 @@ export const events = pgTable(
     date: date("date").notNull(),
     duration: text("duration").notNull(),
     category: text("category", {
-      enum: parkEventCategory,
+      enum: eventCategory,
     }).notNull(),
-    status: text("status", { enum: parkEventStatus }).notNull(),
+    status: text("status", { enum: eventStatus }).notNull(),
     spots: integer("spots").notNull(),
     spotsLeft: integer("spots_left").notNull(),
     description: text("description").notNull(),

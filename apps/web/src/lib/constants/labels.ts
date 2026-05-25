@@ -1,9 +1,16 @@
 import type {
   ParkEventCategory,
   ParkEventStatus,
+  ParkStatus,
   TrailDifficulty,
   WaterfallAccess,
 } from "@circuito/db/client";
+
+export const parkStatusLabels: Record<ParkStatus, string> = {
+  open: "Aberto",
+  closed: "Fechado",
+  maintenance: "Manutenção",
+};
 
 export const categoryLabels: Record<ParkEventCategory, string> = {
   guided_trail: "Trilha guiada",

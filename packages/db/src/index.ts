@@ -21,6 +21,7 @@ export type {
   ParkEvent,
   ParkEventCategory,
   ParkEventStatus,
+  ParkStatus,
   Trail,
   TrailDifficulty,
   TrailStatus,

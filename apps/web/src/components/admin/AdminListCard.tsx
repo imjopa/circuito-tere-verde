@@ -6,7 +6,7 @@ export interface AdminListCardProps {
   meta: string;
   detail?: string;
   onEdit: () => void;
-  onDelete: () => void;
+  onDelete?: () => void;
   disabled?: boolean;
   editLabel?: string;
   deleteLabel?: string;
@@ -51,15 +51,17 @@ export function AdminListCard({
           <Pencil className="size-3.5" aria-hidden />
           {editLabel}
         </button>
-        <button
-          type="button"
-          className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-red-200 bg-red-50 px-3.5 py-1.5 text-sm font-medium whitespace-nowrap text-red-700 transition hover:bg-red-100"
-          onClick={onDelete}
-          aria-label={`${deleteLabel} ${title}`}
-        >
-          <Trash2 className="size-3.5" aria-hidden />
-          {deleteLabel}
-        </button>
+        {onDelete && (
+          <button
+            type="button"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-md border border-red-200 bg-red-50 px-3.5 py-1.5 text-sm font-medium whitespace-nowrap text-red-700 transition hover:bg-red-100"
+            onClick={onDelete}
+            aria-label={`${deleteLabel} ${title}`}
+          >
+            <Trash2 className="size-3.5" aria-hidden />
+            {deleteLabel}
+          </button>
+        )}
       </div>
     </div>
   );

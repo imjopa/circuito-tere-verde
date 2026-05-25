@@ -1,6 +1,8 @@
 import type { Park } from "@circuito/db/client";
 import { tv } from "tailwind-variants";
 
+import { parkStatusLabels } from "@/lib/constants/labels";
+
 const variants = tv({
   base: "rounded-lg border border-t-4 border-gray-100 bg-white p-5 transition hover:-translate-y-0.5 hover:shadow-md",
   variants: {
@@ -23,10 +25,7 @@ export default function ParkCard({ park }: ParkCardProps) {
         <span className="text-xs font-medium tracking-wide text-gray-500 uppercase">
           {park.type}
         </span>
-        <span
-          className="size-2 rounded-full bg-green-400"
-          title={park.status === "open" ? "Aberto" : "Fechado"}
-        />
+        <span className="size-2 rounded-full bg-green-400" title={parkStatusLabels[park.status]} />
       </div>
 
       <h3 className="mb-2 text-lg text-green-800">{park.name}</h3>

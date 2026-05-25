@@ -1,4 +1,13 @@
-import { Calendar, Footprints, LayoutDashboard, Leaf, LogOut, type LucideIcon } from "lucide-react";
+import {
+  Calendar,
+  Droplets,
+  Footprints,
+  LayoutDashboard,
+  Leaf,
+  LogOut,
+  Trees,
+  type LucideIcon,
+} from "lucide-react";
 import { useCallback } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { tv } from "tailwind-variants";
@@ -6,11 +15,11 @@ import { tv } from "tailwind-variants";
 import { useAuth } from "@/hooks/useAuth";
 
 const sidebarItemVariants = tv({
-  base: "flex size-11 cursor-pointer items-center justify-center rounded-md border-none bg-transparent text-xl transition hover:bg-white/10",
+  base: "flex size-11 cursor-pointer items-center justify-center rounded-md border-none bg-transparent text-xl transition hover:bg-green-100/10",
   variants: {
     isActive: {
       true: "bg-white/20 opacity-100 hover:opacity-100",
-      false: "opacity-55 hover:opacity-90",
+      false: "opacity-75 hover:opacity-100 hover:bg-green-100/10",
     },
   },
   defaultVariants: { isActive: false },
@@ -18,13 +27,17 @@ const sidebarItemVariants = tv({
 
 const PAGE_TITLES: Record<string, string> = {
   "/admin/dashboard": "Dashboard",
+  "/admin/parques": "Gestão de Parques",
   "/admin/trilhas": "Gestão de Trilhas",
+  "/admin/cachoeiras": "Gestão de Cachoeiras",
   "/admin/eventos": "Gestão de Eventos",
 };
 
 const NAV_ITEMS = [
   { to: "/admin/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+  { to: "/admin/parques", icon: Trees, label: "Parques" },
   { to: "/admin/trilhas", icon: Footprints, label: "Trilhas" },
+  { to: "/admin/cachoeiras", icon: Droplets, label: "Cachoeiras" },
   { to: "/admin/eventos", icon: Calendar, label: "Eventos" },
 ] satisfies { to: string; icon: LucideIcon; label: string }[];
 
@@ -75,12 +88,12 @@ export default function AdminLayout() {
 
         <button
           type="button"
-          className="mt-auto flex size-11 cursor-pointer items-center justify-center rounded-md border-none bg-transparent text-xl opacity-45 transition hover:opacity-90"
+          className="mt-auto flex size-11 cursor-pointer items-center justify-center rounded-md border-none bg-transparent text-xl opacity-75 transition hover:opacity-100"
           onClick={handleLogout}
           title="Sair"
           aria-label="Sair do painel"
         >
-          <LogOut className="size-5" aria-hidden />
+          <LogOut className="size-5 text-green-100" aria-hidden />
         </button>
       </aside>
 
