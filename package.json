@@ -13,7 +13,8 @@
     "fix:format": "oxfmt --fix",
     "db:generate": "turbo db:generate",
     "db:migrate": "turbo db:migrate",
-    "db:seed": "turbo db:seed"
+    "db:seed": "turbo db:seed",
+    "preview": "turbo preview"
   },
   "devDependencies": {
     "oxfmt": "^0.51.0",

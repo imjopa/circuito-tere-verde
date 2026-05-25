@@ -26,6 +26,11 @@
     "db:seed": {
       "cache": false,
       "dependsOn": ["db:migrate"]
+    },
+    "preview": {
+      "cache": false,
+      "persistent": true,
+      "dependsOn": ["build"]
     }
   }
 }
