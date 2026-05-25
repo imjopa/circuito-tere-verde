@@ -3,6 +3,8 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 
 import ProtectedRoute from "@/components/admin/ProtectedRoute";
 
+import RootLayout from "./components/layout/RootLayout";
+
 const AdminLayout = lazy(() => import("@/components/admin/AdminLayout"));
 const AboutPage = lazy(() => import("@/pages/AboutPage"));
 const AdminDashboardPage = lazy(() => import("@/pages/admin/AdminDashboardPage"));
@@ -21,70 +23,75 @@ const WaterfallsPage = lazy(() => import("@/pages/WaterfallsPage"));
 
 export const router = createBrowserRouter([
   {
-    index: true,
-    Component: HomePage,
-  },
-  {
-    path: "/trilhas",
-    Component: TrailsPage,
-  },
-  {
-    path: "/cachoeiras",
-    Component: WaterfallsPage,
-  },
-  {
-    path: "/eventos",
-    Component: EventsPage,
-  },
-  {
-    path: "/horarios",
-    Component: SchedulePage,
-  },
-  {
-    path: "/mapas",
-    Component: MapsPage,
-  },
-  {
-    path: "/contato",
-    Component: ContactPage,
-  },
-  {
-    path: "/sobre",
-    Component: AboutPage,
-  },
-  {
-    path: "/admin",
-    Component: AdminLoginPage,
-  },
-  {
-    path: "/admin",
-    Component: PrivateLayout,
+    Component: RootLayout,
     children: [
       {
-        path: "/admin/dashboard",
-        Component: AdminDashboardPage,
+        index: true,
+        Component: HomePage,
       },
       {
-        path: "/admin/parques",
-        Component: AdminParksPage,
+        path: "/trilhas",
+        Component: TrailsPage,
       },
       {
-        path: "/admin/trilhas",
-        Component: AdminTrailsPage,
+        path: "/cachoeiras",
+        Component: WaterfallsPage,
       },
       {
-        path: "/admin/cachoeiras",
-        Component: AdminWaterfallsPage,
+        path: "/eventos",
+        Component: EventsPage,
       },
       {
-        path: "/admin/eventos",
-        Component: AdminEventsPage,
+        path: "/horarios",
+        Component: SchedulePage,
+      },
+      {
+        path: "/mapas",
+        Component: MapsPage,
+      },
+      {
+        path: "/contato",
+        Component: ContactPage,
+      },
+      {
+        path: "/sobre",
+        Component: AboutPage,
+      },
+      {
+        path: "/admin",
+        Component: AdminLoginPage,
+      },
+      {
+        path: "/admin",
+        Component: PrivateLayout,
+        children: [
+          {
+            path: "/admin/dashboard",
+            Component: AdminDashboardPage,
+          },
+          {
+            path: "/admin/parques",
+            Component: AdminParksPage,
+          },
+          {
+            path: "/admin/trilhas",
+            Component: AdminTrailsPage,
+          },
+          {
+            path: "/admin/cachoeiras",
+            Component: AdminWaterfallsPage,
+          },
+          {
+            path: "/admin/eventos",
+            Component: AdminEventsPage,
+          },
+        ],
+      },
+      {
+        path: "*",
+        Component: RedirectToHome,
       },
     ],
-  },
-  {
-    path: "*",
-    Component: RedirectToHome,
   },
 ]);
 
